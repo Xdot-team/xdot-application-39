@@ -1,6 +1,4 @@
 
-import { Report } from './organization';
-
 export interface ReportMetric {
   id: string;
   name: string;
