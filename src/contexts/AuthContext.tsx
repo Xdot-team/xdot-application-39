@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials, RegisterCredentials, UserRole } from '@/types/auth';
 import { toast } from '@/components/ui/sonner';
@@ -172,7 +171,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       error: null,
     });
     toast.info('You have been logged out.');
-    navigate('/login');
+    navigate('/dashboard'); // Changed from '/login' to '/dashboard' since we removed the login page
   };
 
   const register = async (userData: RegisterCredentials): Promise<void> => {
@@ -255,7 +254,7 @@ export const requireAuth = (role: UserRole | UserRole[] | null = null) =>
       
       useEffect(() => {
         if (!authState.isLoading && !authState.user) {
-          navigate('/dashboard'); // Changed from '/login' to '/dashboard'
+          navigate('/dashboard'); // Keep consistent with routing to dashboard
         } else if (
           !authState.isLoading && 
           authState.user && 
