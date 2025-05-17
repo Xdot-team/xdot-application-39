@@ -4,7 +4,7 @@ import { Report } from './organization';
 export interface ReportMetric {
   id: string;
   name: string;
-  category: 'financial' | 'project' | 'labor' | 'equipment' | 'safety';
+  category: 'financial' | 'project' | 'labor' | 'equipment' | 'safety' | 'custom';
   dataSource: string;
   description: string;
   unit?: string;
