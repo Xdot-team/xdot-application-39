@@ -10,39 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock } from 'lucide-react';
+import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap } from 'lucide-react';
+import { SiteVisit, PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
+import { FieldMap } from '@/components/field/FieldMap';
 
-// Types for field data
-interface SiteVisit {
-  id: string;
-  date: string;
-  project: string;
-  inspector: string;
-  notes: string;
-  status: 'completed' | 'pending' | 'needs-review';
-}
-
-interface PunchlistItem {
-  id: string;
-  project: string;
-  location: string;
-  description: string;
-  assignedTo: string;
-  dueDate: string;
-  status: 'open' | 'in-progress' | 'closed';
-}
-
-interface WorkOrder {
-  id: string;
-  project: string;
-  description: string;
-  assignedTo: string;
-  priority: 'low' | 'medium' | 'high';
-  dueDate: string;
-  status: 'pending' | 'in-progress' | 'completed';
-}
-
-// Mock data
+// Mock data 
 const mockSiteVisits: SiteVisit[] = [
   {
     id: "SV-1001",
@@ -227,10 +199,69 @@ const mockWorkOrders: WorkOrder[] = [
   }
 ];
 
-const FieldTools = () => {
+const mockUtilityAdjustments: UtilityAdjustment[] = [
+  {
+    id: "UA-4001",
+    project: "GA-400 Repaving",
+    utility: "water",
+    location: "Station 25+00",
+    scheduledDate: "2025-05-18",
+    contactName: "Michael Johnson",
+    contactPhone: "404-555-1234",
+    notes: "Water main lowering required for drainage installation",
+    status: "scheduled"
+  },
+  {
+    id: "UA-4002",
+    project: "Peachtree Street Improvements",
+    utility: "electric",
+    location: "Intersection with Ponce de Leon",
+    scheduledDate: "2025-05-22",
+    contactName: "Sarah Williams",
+    contactPhone: "404-555-5678",
+    notes: "Power pole relocation needed for sidewalk widening",
+    status: "in-progress"
+  },
+  {
+    id: "UA-4003",
+    project: "Gwinnett County Sidewalk Project",
+    utility: "gas",
+    location: "Station 12+50",
+    scheduledDate: "2025-05-25",
+    contactName: "Robert Davis",
+    contactPhone: "770-555-9876",
+    notes: "Gas line depth verification needed before excavation",
+    status: "scheduled"
+  },
+  {
+    id: "UA-4004",
+    project: "Augusta Highway Extension",
+    utility: "telecom",
+    location: "Station 30+25",
+    scheduledDate: "2025-05-20",
+    contactName: "Jennifer Smith",
+    contactPhone: "706-555-4321",
+    notes: "Fiber optic line protection during culvert installation",
+    status: "delayed"
+  },
+  {
+    id: "UA-4005",
+    project: "I-85 Bridge Repair",
+    utility: "sewer",
+    location: "South approach",
+    scheduledDate: "2025-05-19",
+    contactName: "Thomas Brown",
+    contactPhone: "404-555-8765",
+    notes: "Temporary bypass pumping during manhole adjustment",
+    status: "completed"
+  }
+];
+
+const Field = () => {
   const [siteVisits, setSiteVisits] = useState<SiteVisit[]>(mockSiteVisits);
   const [punchlistItems, setPunchlistItems] = useState<PunchlistItem[]>(mockPunchlistItems);
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>(mockWorkOrders);
+  const [utilityAdjustments, setUtilityAdjustments] = useState<UtilityAdjustment[]>(mockUtilityAdjustments);
   const [searchTerm, setSearchTerm] = useState("");
   const { authState } = useAuth();
   
@@ -252,12 +283,21 @@ const FieldTools = () => {
     order.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.assignedTo.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const filteredUtilityAdjustments = utilityAdjustments.filter(adjustment => 
+    adjustment.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    adjustment.utility.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    adjustment.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    adjustment.contactName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
   // Get counts for statistics
   const openPunchlistItems = punchlistItems.filter(item => item.status === 'open').length;
   const pendingWorkOrders = workOrders.filter(order => order.status === 'pending').length;
   const completedSiteVisits = siteVisits.filter(visit => visit.status === 'completed').length;
+  const scheduledUtilityAdjustments = utilityAdjustments.filter(adj => adj.status === 'scheduled').length;
   
+  // Action handlers
   const handleNewSiteVisit = () => {
     toast.info("Site visit functionality will be available once Supabase integration is set up.");
   };
@@ -269,6 +309,10 @@ const FieldTools = () => {
   const handleCreateWorkOrder = () => {
     toast.info("Work order creation will be available once Supabase integration is set up.");
   };
+
+  const handleScheduleUtilityAdjustment = () => {
+    toast.info("Utility adjustment scheduling will be available once Supabase integration is set up.");
+  };
   
   // Status badge renderer
   const renderStatusBadge = (status: string) => {
@@ -277,6 +321,7 @@ const FieldTools = () => {
     switch(status) {
       case 'open':
       case 'pending':
+      case 'scheduled':
         badgeClasses = "bg-yellow-100 text-yellow-800";
         break;
       case 'in-progress':
@@ -287,6 +332,7 @@ const FieldTools = () => {
         badgeClasses = "bg-green-100 text-green-800";
         break;
       case 'needs-review':
+      case 'delayed':
         badgeClasses = "bg-red-100 text-red-800";
         break;
       default:
@@ -331,17 +377,51 @@ const FieldTools = () => {
     );
   };
   
+  // Utility type badge renderer
+  const renderUtilityBadge = (utility: string) => {
+    let badgeClasses = "";
+    
+    switch(utility) {
+      case 'water':
+        badgeClasses = "bg-blue-100 text-blue-800";
+        break;
+      case 'gas':
+        badgeClasses = "bg-yellow-100 text-yellow-800";
+        break;
+      case 'electric':
+        badgeClasses = "bg-amber-100 text-amber-800";
+        break;
+      case 'telecom':
+        badgeClasses = "bg-purple-100 text-purple-800";
+        break;
+      case 'sewer':
+        badgeClasses = "bg-green-100 text-green-800";
+        break;
+      default:
+        badgeClasses = "bg-gray-100 text-gray-800";
+    }
+    
+    return (
+      <div className={cn(
+        "w-fit rounded-full px-2 py-1 text-xs font-medium",
+        badgeClasses
+      )}>
+        {utility.charAt(0).toUpperCase() + utility.slice(1)}
+      </div>
+    );
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Field Tools</h1>
-          <p className="text-muted-foreground">Manage site visits, punchlists, and field operations</p>
+          <h1 className="text-3xl font-bold">Field</h1>
+          <p className="text-muted-foreground">Manage site visits, punchlists, utility adjustments, and field operations</p>
         </div>
       </div>
       
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
@@ -380,14 +460,41 @@ const FieldTools = () => {
             <p className="text-xs text-muted-foreground">Completed in the last 7 days</p>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div className="space-y-1">
+              <CardDescription>Scheduled Utilities</CardDescription>
+              <CardTitle className="text-2xl">{scheduledUtilityAdjustments}</CardTitle>
+            </div>
+            <Zap className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Upcoming utility adjustments</p>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Field Map */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>On-site Tracking</CardTitle>
+          <CardDescription>Real-time location of workers and equipment</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80 rounded-md overflow-hidden border">
+            <FieldMap />
+          </div>
+        </CardContent>
+      </Card>
       
       {/* Tabs for different tools */}
       <Tabs defaultValue="site-visits" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="site-visits">Site Visits</TabsTrigger>
           <TabsTrigger value="punchlist">Punchlist</TabsTrigger>
           <TabsTrigger value="work-orders">Work Orders</TabsTrigger>
+          <TabsTrigger value="utility-adjustments">Utility Adjustments</TabsTrigger>
         </TabsList>
         
         {/* Site Visits Tab */}
@@ -586,9 +693,81 @@ const FieldTools = () => {
                 </Table>
               </div>
             </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Utility Adjustments Tab */}
+        <TabsContent value="utility-adjustments">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Utility Adjustments</CardTitle>
+                <CardDescription>Schedule and track utility relocations and adjustments</CardDescription>
+              </div>
+              <Button onClick={handleScheduleUtilityAdjustment}>
+                <Zap className="mr-2 h-4 w-4" />
+                Schedule Adjustment
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4 flex items-center gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search utility adjustments..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              {/* Utility Adjustments Table */}
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ID</TableHead>
+                      <TableHead>Project</TableHead>
+                      <TableHead>Utility</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Scheduled Date</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUtilityAdjustments.length > 0 ? (
+                      filteredUtilityAdjustments.map((adjustment) => (
+                        <TableRow key={adjustment.id}>
+                          <TableCell>{adjustment.id}</TableCell>
+                          <TableCell>{adjustment.project}</TableCell>
+                          <TableCell>{renderUtilityBadge(adjustment.utility)}</TableCell>
+                          <TableCell>{adjustment.location}</TableCell>
+                          <TableCell>{adjustment.scheduledDate}</TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{adjustment.contactName}</p>
+                              <p className="text-xs text-muted-foreground">{adjustment.contactPhone}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>{renderStatusBadge(adjustment.status)}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-4">
+                          No utility adjustments found matching your search.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
             <CardFooter className="border-t px-6 py-4 flex justify-between items-center">
               <p className="text-sm text-muted-foreground">
-                Showing {filteredWorkOrders.length} of {workOrders.length} work orders
+                Showing {filteredUtilityAdjustments.length} of {utilityAdjustments.length} utility adjustments
               </p>
               <p className="text-xs text-muted-foreground italic">
                 Construct for Centuries
@@ -605,4 +784,4 @@ const FieldTools = () => {
   );
 };
 
-export default FieldTools;
+export default Field;

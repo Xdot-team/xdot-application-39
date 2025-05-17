@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Documents from "./pages/Documents";
 import Estimating from "./pages/Estimating";
-import FieldTools from "./pages/FieldTools";
+import Field from "./pages/Field";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,7 +27,7 @@ const App = () => (
               <Route path="/projects" element={<Projects />} />
               <Route path="/documents" element={<Documents />} />
               <Route path="/estimating" element={<Estimating />} />
-              <Route path="/field-tools" element={<FieldTools />} />
+              <Route path="/field" element={<Field />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

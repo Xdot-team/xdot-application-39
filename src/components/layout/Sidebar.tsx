@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -54,8 +55,8 @@ const navItems: NavItem[] = [
     allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
-    title: 'Field Tools',
-    href: '/field-tools',
+    title: 'Field',
+    href: '/field',
     icon: MapPin,
     allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
