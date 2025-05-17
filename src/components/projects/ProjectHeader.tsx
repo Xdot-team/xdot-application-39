@@ -11,7 +11,7 @@ const ProjectHeader = () => {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Project Hub</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
         <p className="text-muted-foreground">
           Manage and track all your roadway construction projects
         </p>

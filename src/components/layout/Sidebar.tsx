@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -17,8 +16,7 @@ import {
   Settings, 
   Menu, 
   X,
-  FolderOpen,
-  Layout
+  FolderOpen
 } from 'lucide-react';
 
 interface NavItem {
@@ -39,12 +37,6 @@ const navItems: NavItem[] = [
     title: 'Projects',
     href: '/projects',
     icon: FileText,
-    allowedRoles: ['admin', 'project_manager', 'accountant'],
-  },
-  {
-    title: 'Project Hub',
-    href: '/project-hub',
-    icon: Layout,
     allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
   },
   {
