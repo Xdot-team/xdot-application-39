@@ -1,5 +1,6 @@
 
 export type EstimateStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
+export type EstimateItemCategory = 'material' | 'labor' | 'equipment' | 'subcontractor' | 'overhead';
 
 export interface Estimate {
   id: string;
@@ -12,6 +13,10 @@ export interface Estimate {
   totalCost: number;
   createdBy: string;
   notes?: string;
+  items?: EstimateItem[];
+  vendorBids?: VendorBid[];
+  costBreakdown?: CostBreakdown;
+  quickEstimateParams?: QuickEstimateParams;
 }
 
 export interface EstimateItem {
@@ -22,7 +27,9 @@ export interface EstimateItem {
   unit: string;
   unitPrice: number;
   totalPrice: number;
-  category: 'material' | 'labor' | 'equipment' | 'subcontractor' | 'other';
+  category: EstimateItemCategory;
+  notes?: string;
+  takeoffReference?: string;
 }
 
 export interface VendorBid {
@@ -33,6 +40,30 @@ export interface VendorBid {
   bidAmount: number;
   status: 'pending' | 'accepted' | 'rejected';
   submissionDate: string;
+  expirationDate?: string;
+  items?: VendorBidItem[];
+  notes?: string;
+  contactInfo?: string;
+  files?: string[];
+  communicationLogs?: CommunicationLog[];
+}
+
+export interface VendorBidItem {
+  id: string;
+  bidId: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface CommunicationLog {
+  id: string;
+  date: string;
+  contactName: string;
+  method: 'email' | 'phone' | 'meeting' | 'other';
+  summary: string;
   notes?: string;
 }
 
@@ -44,4 +75,41 @@ export interface CostBreakdown {
   otherCost: number;
   overhead: number;
   profit: number;
+}
+
+export interface QuickEstimateParams {
+  id: string;
+  estimateId: string;
+  projectType: string;
+  parameters: {
+    [key: string]: {
+      name: string;
+      value: number;
+      unit: string;
+    }
+  };
+  calculatedTotal: number;
+}
+
+export interface TakeoffMeasurement {
+  id: string;
+  estimateId: string;
+  drawingId: string;
+  drawingName: string;
+  type: 'length' | 'area' | 'count' | 'volume';
+  value: number;
+  unit: string;
+  notes?: string;
+  coordinates?: string; // JSON string of coordinates
+  linkedItemId?: string;
+}
+
+export interface PreliminaryVendor {
+  id: string;
+  estimateId: string;
+  vendorId: string;
+  vendorName: string;
+  category: EstimateItemCategory;
+  notes?: string;
+  contactInfo?: string;
 }
