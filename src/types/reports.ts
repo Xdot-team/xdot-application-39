@@ -39,6 +39,9 @@ export interface CustomReport extends Report {
   metrics: ReportMetric[];
   filters: ReportFilter[];
   visualizations: ReportVisualization[];
+  parameters?: Record<string, any>;
+  recipients?: string[];
+  fileUrl?: string;
   schedule?: {
     frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
     dayOfWeek?: number;
