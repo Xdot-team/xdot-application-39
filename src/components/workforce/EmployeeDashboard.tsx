@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +19,7 @@ import { formatDate } from "@/lib/formatters";
 
 export function EmployeeDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
   const [employees, setEmployees] = useState<EmployeeProfile[]>(mockEmployees);
 
   const filteredEmployees = employees.filter(

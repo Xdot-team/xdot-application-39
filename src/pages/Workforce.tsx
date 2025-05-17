@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { EmployeeDashboard } from "@/components/workforce/EmployeeDashboard";
 import { TimeCardManagement } from "@/components/workforce/TimeCardManagement";
 import { SubcontractorManagement } from "@/components/workforce/SubcontractorManagement";
@@ -13,7 +12,7 @@ import { UserRound, Clock, Award, FileCheck, Users } from "lucide-react";
 
 export default function Workforce() {
   const [activeTab, setActiveTab] = useState("employees");
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   return (
     <div className="space-y-6">

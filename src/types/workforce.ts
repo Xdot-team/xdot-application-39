@@ -30,7 +30,10 @@ export type CertificationType =
   | 'Confined Space'
   | 'Fall Protection'
   | 'Hazmat'
-  | 'Project Management';
+  | 'Project Management'
+  | 'SHRM-CP'   // Added for HR certification
+  | 'CPE'       // Added for estimator certification
+  | 'CPA';      // Added for accountant certification
 
 export type OnboardingStatus =
   | 'pending'
