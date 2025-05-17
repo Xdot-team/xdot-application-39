@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -18,7 +17,8 @@ import {
   Menu, 
   X,
   FolderOpen,
-  BarChart
+  BarChart,
+  MapPin
 } from 'lucide-react';
 
 interface NavItem {
@@ -52,6 +52,12 @@ const navItems: NavItem[] = [
     href: '/estimating',
     icon: BarChart,
     allowedRoles: ['admin', 'project_manager', 'accountant'],
+  },
+  {
+    title: 'Field Tools',
+    href: '/field-tools',
+    icon: MapPin,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {
     title: 'Equipment',
