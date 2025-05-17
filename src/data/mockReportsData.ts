@@ -1,4 +1,3 @@
-
 import { CustomReport, ReportTemplate, ScheduledReport } from '@/types/reports';
 
 export const mockReports: CustomReport[] = [
@@ -733,6 +732,70 @@ export const mockReportTemplates: ReportTemplate[] = [
         config: {
           xAxis: 'date',
           showMarkers: true
+        }
+      }
+    ],
+    createdBy: 'System',
+    createdAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 't4',
+    name: 'Equipment Utilization Report',
+    description: 'Template for equipment usage and maintenance analysis',
+    type: 'equipment',
+    metrics: [
+      {
+        id: 'tm10',
+        name: 'Utilization Rate',
+        category: 'equipment',
+        dataSource: 'assets_tracking',
+        description: 'Percentage of time equipment was in active use',
+        unit: '%'
+      },
+      {
+        id: 'tm11',
+        name: 'Maintenance Costs',
+        category: 'financial',
+        dataSource: 'assets_maintenance',
+        description: 'Total cost of equipment maintenance',
+        unit: 'USD'
+      },
+      {
+        id: 'tm12',
+        name: 'Downtime Hours',
+        category: 'equipment',
+        dataSource: 'assets_tracking',
+        description: 'Hours equipment was unavailable due to maintenance or issues',
+        unit: 'hours'
+      }
+    ],
+    defaultFilters: [
+      {
+        id: 'tf4',
+        field: 'date',
+        operator: 'in_range',
+        value: {start: '{{period_start}}', end: '{{period_end}}'}
+      }
+    ],
+    defaultVisualizations: [
+      {
+        id: 'tv8',
+        type: 'bar',
+        title: 'Equipment Utilization by Type',
+        metrics: ['tm10'],
+        config: {
+          xAxis: 'equipment_type',
+          stacked: false
+        }
+      },
+      {
+        id: 'tv9',
+        type: 'pie',
+        title: 'Maintenance Cost Distribution',
+        metrics: ['tm11'],
+        config: {
+          showLegend: true,
+          showTotal: true
         }
       }
     ],
