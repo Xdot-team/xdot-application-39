@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap } from 'lucide-react';
 import { SiteVisit, PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
 import { FieldMap } from '@/components/field/FieldMap';
+import { DispatchManager } from '@/components/field/DispatchManager';
 
 // Mock data 
 const mockSiteVisits: SiteVisit[] = [
@@ -490,11 +490,12 @@ const Field = () => {
       
       {/* Tabs for different tools */}
       <Tabs defaultValue="site-visits" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="site-visits">Site Visits</TabsTrigger>
           <TabsTrigger value="punchlist">Punchlist</TabsTrigger>
           <TabsTrigger value="work-orders">Work Orders</TabsTrigger>
           <TabsTrigger value="utility-adjustments">Utility Adjustments</TabsTrigger>
+          <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
         </TabsList>
         
         {/* Site Visits Tab */}
@@ -774,6 +775,11 @@ const Field = () => {
               </p>
             </CardFooter>
           </Card>
+        </TabsContent>
+
+        {/* Dispatch Tab */}
+        <TabsContent value="dispatch">
+          <DispatchManager />
         </TabsContent>
       </Tabs>
       
