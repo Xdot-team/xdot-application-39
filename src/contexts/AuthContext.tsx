@@ -4,7 +4,7 @@ import { toast } from '@/components/ui/sonner';
 import { useNavigate } from 'react-router-dom';
 
 // Mock users for the prototype
-const MOCK_USERS: User[] = [
+export const MOCK_USERS: User[] = [
   {
     id: '1',
     email: 'admin@xdotcontractor.com',
