@@ -91,35 +91,38 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for user in localStorage (simulating persistent auth)
-    const checkAuth = async () => {
+    // For prototype: automatically log in as admin
+    const autoLogin = async () => {
       try {
-        const savedUser = localStorage.getItem('xdot-user');
-        if (savedUser) {
-          const user = JSON.parse(savedUser) as User;
-          setAuthState({
-            user,
-            isLoading: false,
-            error: null,
-          });
-        } else {
-          setAuthState({
-            user: null,
-            isLoading: false,
-            error: null,
-          });
-        }
+        const adminUser = MOCK_USERS.find(user => user.role === 'admin')!;
+        
+        // Update with current timestamp
+        const updatedUser = {
+          ...adminUser,
+          lastLogin: new Date().toISOString(),
+        };
+        
+        // Save to localStorage
+        localStorage.setItem('xdot-user', JSON.stringify(updatedUser));
+        
+        setAuthState({
+          user: updatedUser,
+          isLoading: false,
+          error: null,
+        });
+        
+        // No need to navigate as App.tsx handles initial routing
       } catch (error) {
-        console.error('Auth error:', error);
+        console.error('Auto-login error:', error);
         setAuthState({
           user: null,
           isLoading: false,
-          error: 'Failed to authenticate',
+          error: 'Failed to auto-authenticate',
         });
       }
     };
 
-    checkAuth();
+    autoLogin();
   }, []);
 
   const login = async (credentials: LoginCredentials): Promise<void> => {
@@ -252,7 +255,7 @@ export const requireAuth = (role: UserRole | UserRole[] | null = null) =>
       
       useEffect(() => {
         if (!authState.isLoading && !authState.user) {
-          navigate('/login');
+          navigate('/dashboard'); // Changed from '/login' to '/dashboard'
         } else if (
           !authState.isLoading && 
           authState.user && 
