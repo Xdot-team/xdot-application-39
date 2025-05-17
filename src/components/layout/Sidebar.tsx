@@ -1,0 +1,176 @@
+
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types/auth';
+import { 
+  LucideIcon,
+  Home, 
+  BarChart2, 
+  Users, 
+  FileText, 
+  Calendar, 
+  Truck, 
+  HardHat, 
+  Settings, 
+  Menu, 
+  X
+} from 'lucide-react';
+
+interface NavItem {
+  title: string;
+  href: string;
+  icon: LucideIcon;
+  allowedRoles: UserRole[];
+}
+
+const navItems: NavItem[] = [
+  {
+    title: 'Dashboard',
+    href: '/dashboard',
+    icon: Home,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker', 'hr'],
+  },
+  {
+    title: 'Projects',
+    href: '/projects',
+    icon: FileText,
+    allowedRoles: ['admin', 'project_manager', 'accountant'],
+  },
+  {
+    title: 'Equipment',
+    href: '/equipment',
+    icon: Truck,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
+  },
+  {
+    title: 'Employees',
+    href: '/employees',
+    icon: Users,
+    allowedRoles: ['admin', 'hr', 'project_manager'],
+  },
+  {
+    title: 'Safety',
+    href: '/safety',
+    icon: HardHat,
+    allowedRoles: ['admin', 'project_manager', 'field_worker', 'hr'],
+  },
+  {
+    title: 'Schedule',
+    href: '/schedule',
+    icon: Calendar,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
+  },
+  {
+    title: 'Reports',
+    href: '/reports',
+    icon: BarChart2,
+    allowedRoles: ['admin', 'project_manager', 'accountant'],
+  },
+  {
+    title: 'Settings',
+    href: '/settings',
+    icon: Settings,
+    allowedRoles: ['admin'],
+  },
+];
+
+export function Sidebar() {
+  const [isOpen, setIsOpen] = useState(true);
+  const { authState } = useAuth();
+  const location = useLocation();
+  
+  // If no user, don't render sidebar
+  if (!authState.user) return null;
+  
+  const { role } = authState.user;
+  
+  // Filter menu items based on user role
+  const filteredNavItems = navItems.filter(item => 
+    item.allowedRoles.includes(role)
+  );
+
+  return (
+    <div className="relative">
+      {/* Mobile toggle button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50"
+      >
+        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </Button>
+      
+      {/* Sidebar */}
+      <aside 
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 w-64 bg-sidebar transition-transform duration-300 ease-in-out transform",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          "lg:translate-x-0 lg:static lg:h-screen"
+        )}
+      >
+        <div className="flex flex-col h-full">
+          {/* Logo */}
+          <div className="p-6 border-b border-sidebar-border">
+            <Link to="/dashboard" className="flex items-center space-x-2">
+              <HardHat size={24} className="text-construction-primary" />
+              <span className="text-xl font-bold text-white">xDOTContractor</span>
+            </Link>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 py-4 overflow-y-auto">
+            <ul className="space-y-1 px-3">
+              {filteredNavItems.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    to={item.href}
+                    className={cn(
+                      "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      location.pathname === item.href
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                    )}
+                  >
+                    <item.icon className="mr-2 h-5 w-5" />
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* User info */}
+          <div className="p-4 border-t border-sidebar-border">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-full bg-sidebar-accent overflow-hidden">
+                {authState.user?.profilePicture ? (
+                  <img 
+                    src={authState.user.profilePicture} 
+                    alt={authState.user.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-sidebar-accent text-sidebar-accent-foreground">
+                    {authState.user?.name.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                  {authState.user?.name}
+                </p>
+                <p className="text-xs text-sidebar-foreground/70 truncate capitalize">
+                  {authState.user?.role.replace('_', ' ')}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  );
+}
