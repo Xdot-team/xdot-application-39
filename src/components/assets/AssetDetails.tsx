@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Calendar, Clock, Edit, MapPin, Tool, Truck, User, Wrench } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Edit, MapPin, User, Wrench, Truck, Package } from 'lucide-react';
 import { Vehicle, Tool as ToolType, Material } from '@/types/field';
 import { Badge } from '@/components/ui/badge';
 
@@ -399,7 +398,7 @@ export const AssetDetails = ({ asset, onBack }: AssetDetailsProps) => {
           {isTool && (
             <>
               <div className="flex items-center">
-                <Tool className="h-4 w-4 mr-1 text-muted-foreground" />
+                <Package className="h-4 w-4 mr-1 text-muted-foreground" />
                 <span className="text-sm">Type: {(asset as ToolType).type}</span>
               </div>
             </>
