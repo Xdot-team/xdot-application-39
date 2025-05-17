@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,10 +23,6 @@ export default function Workforce() {
       />
       
       <div className="relative">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] overflow-hidden">
-          <p className="text-6xl font-bold uppercase whitespace-nowrap transform -rotate-12">Construct for Centuries</p>
-        </div>
-        
         <Tabs
           defaultValue="employees"
           value={activeTab}
