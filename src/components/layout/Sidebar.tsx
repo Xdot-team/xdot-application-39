@@ -20,7 +20,8 @@ import {
   FolderOpen,
   BarChart,
   MapPin,
-  DollarSign
+  DollarSign,
+  UserRound
 } from 'lucide-react';
 
 interface NavItem {
@@ -74,9 +75,9 @@ const navItems: NavItem[] = [
     allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {
-    title: 'Employees',
-    href: '/employees',
-    icon: Users,
+    title: 'Workforce',
+    href: '/workforce',
+    icon: UserRound,
     allowedRoles: ['admin', 'hr', 'project_manager'],
   },
   {
