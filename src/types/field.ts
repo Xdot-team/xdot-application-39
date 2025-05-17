@@ -114,3 +114,89 @@ export interface Dispatch {
   createdAt: string;
   updatedAt: string;
 }
+
+// New interfaces for Assets module
+export interface Vehicle {
+  id: string;
+  name: string;
+  type: string;
+  make: string;
+  model: string;
+  year: number;
+  licensePlate: string;
+  vin: string;
+  status: 'in-use' | 'available' | 'maintenance' | 'offline';
+  currentLocation?: {
+    lat: number;
+    lng: number;
+    timestamp: string;
+  };
+  currentProject?: string;
+  lastMaintenance?: string;
+  nextMaintenance?: string;
+  maintenanceHistory?: MaintenanceRecord[];
+  assignedTo?: string;
+  notes?: string;
+  fuelLevel?: number;
+  mileage?: number;
+  purchaseDate?: string;
+  purchaseCost?: number;
+}
+
+export interface Tool {
+  id: string;
+  name: string;
+  type: string;
+  brand: string;
+  model?: string;
+  serialNumber?: string;
+  status: 'in-use' | 'available' | 'maintenance' | 'offline';
+  currentLocation?: string;
+  assignedTo?: string;
+  lastMaintenance?: string;
+  nextMaintenance?: string;
+  maintenanceHistory?: MaintenanceRecord[];
+  checkoutHistory?: CheckoutRecord[];
+  purchaseDate?: string;
+  purchaseCost?: number;
+  notes?: string;
+}
+
+export interface Material {
+  id: string;
+  name: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  location: string; // Yard or Warehouse location
+  minimumStock?: number;
+  supplier?: string;
+  cost?: number;
+  lastOrderDate?: string;
+  notes?: string;
+}
+
+export interface MaintenanceRecord {
+  id: string;
+  assetId: string;
+  assetType: 'vehicle' | 'tool';
+  date: string;
+  description: string;
+  performedBy: string;
+  cost: number;
+  notes?: string;
+  parts?: string[];
+}
+
+export interface CheckoutRecord {
+  id: string;
+  assetId: string;
+  assetType: 'vehicle' | 'tool' | 'material';
+  checkedOutBy: string;
+  checkedOutDate: string;
+  returnDate?: string;
+  returnedBy?: string;
+  projectId: string;
+  notes?: string;
+  condition?: 'excellent' | 'good' | 'fair' | 'poor';
+}

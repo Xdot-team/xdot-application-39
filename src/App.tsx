@@ -13,6 +13,7 @@ import Documents from "./pages/Documents";
 import Estimating from "./pages/Estimating";
 import Field from "./pages/Field";
 import Finance from "./pages/Finance";
+import Assets from "./pages/Assets";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/estimating" element={<Estimating />} />
               <Route path="/field" element={<Field />} />
               <Route path="/finance" element={<Finance />} />
+              <Route path="/assets" element={<Assets />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

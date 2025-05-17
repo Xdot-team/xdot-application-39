@@ -68,8 +68,8 @@ const navItems: NavItem[] = [
     allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
-    title: 'Equipment',
-    href: '/equipment',
+    title: 'Assets',
+    href: '/assets',
     icon: Truck,
     allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },

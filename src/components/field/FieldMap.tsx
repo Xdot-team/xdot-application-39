@@ -1,10 +1,10 @@
-
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { MapPin, TruckIcon, User, RefreshCcw } from 'lucide-react';
 import { FieldWorker, Equipment } from '@/types/field';
+import { toast } from "sonner";
 
 // Enhanced mock data for field workers
 const mockWorkers: FieldWorker[] = [
@@ -335,5 +335,3 @@ export const FieldMap = () => {
     </div>
   );
 };
-
-import { toast } from "sonner";
