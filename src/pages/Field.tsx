@@ -66,7 +66,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Edge of pavement showing raveling",
     assignedTo: "Paving Crew A",
     dueDate: "2025-05-20",
-    status: 'open'
+    status: 'open',
+    severity: 'minor'
   },
   {
     id: "PL-2002",
@@ -75,7 +76,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Drainage inlet not at proper elevation",
     assignedTo: "Drainage Crew",
     dueDate: "2025-05-19",
-    status: 'in-progress'
+    status: 'in-progress',
+    severity: 'major'
   },
   {
     id: "PL-2003",
@@ -84,7 +86,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Concrete spalling not fully removed",
     assignedTo: "Bridge Crew B",
     dueDate: "2025-05-18",
-    status: 'closed'
+    status: 'closed',
+    severity: 'major'
   },
   {
     id: "PL-2004",
@@ -93,7 +96,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Joint material improperly installed",
     assignedTo: "Bridge Crew A",
     dueDate: "2025-05-17",
-    status: 'open'
+    status: 'open',
+    severity: 'critical'
   },
   {
     id: "PL-2005",
@@ -102,7 +106,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "ADA ramp slope exceeds 8.33%",
     assignedTo: "Concrete Crew",
     dueDate: "2025-05-18",
-    status: 'open'
+    status: 'open',
+    severity: 'critical'
   },
   {
     id: "PL-2006",
@@ -111,7 +116,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Tactile warning strip not aligned properly",
     assignedTo: "Concrete Crew",
     dueDate: "2025-05-19",
-    status: 'in-progress'
+    status: 'in-progress',
+    severity: 'minor'
   },
   {
     id: "PL-2007",
@@ -120,7 +126,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Sidewalk width less than 5 feet",
     assignedTo: "Concrete Crew B",
     dueDate: "2025-05-22",
-    status: 'open'
+    status: 'open',
+    severity: 'major'
   },
   {
     id: "PL-2008",
@@ -129,7 +136,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Tree root damage to new sidewalk",
     assignedTo: "Landscape Crew",
     dueDate: "2025-05-21",
-    status: 'in-progress'
+    status: 'in-progress',
+    severity: 'minor'
   },
   {
     id: "PL-2009",
@@ -138,7 +146,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Guardrail height incorrect",
     assignedTo: "Guardrail Crew",
     dueDate: "2025-05-17",
-    status: 'closed'
+    status: 'closed',
+    severity: 'major'
   },
   {
     id: "PL-2010",
@@ -147,7 +156,8 @@ const mockPunchlistItems: PunchlistItem[] = [
     description: "Erosion control measures insufficient",
     assignedTo: "Erosion Control Team",
     dueDate: "2025-05-16",
-    status: 'closed'
+    status: 'closed',
+    severity: 'critical'
   }
 ];
 
