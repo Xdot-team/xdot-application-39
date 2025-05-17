@@ -23,6 +23,18 @@ export interface ReportVisualization {
   config: Record<string, any>;
 }
 
+export interface Report {
+  id: string;
+  title: string;
+  description: string;
+  type: 'financial' | 'project' | 'labor' | 'equipment' | 'safety' | 'custom';
+  createdBy: string;
+  createdAt: string;
+  lastGenerated?: string;
+  isAutomated?: boolean;
+  frequency?: string;
+}
+
 export interface CustomReport extends Report {
   metrics: ReportMetric[];
   filters: ReportFilter[];
