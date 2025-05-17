@@ -17,7 +17,8 @@ import {
   Settings, 
   Menu, 
   X,
-  FolderOpen
+  FolderOpen,
+  BarChart
 } from 'lucide-react';
 
 interface NavItem {
@@ -45,6 +46,12 @@ const navItems: NavItem[] = [
     href: '/documents',
     icon: FolderOpen,
     allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
+  },
+  {
+    title: 'Estimating',
+    href: '/estimating',
+    icon: BarChart,
+    allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
     title: 'Equipment',
