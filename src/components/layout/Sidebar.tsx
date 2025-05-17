@@ -106,7 +106,7 @@ const navItems: NavItem[] = [
     allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
-    title: 'Admin',
+    title: 'Administration',
     href: '/admin',
     icon: Settings,
     allowedRoles: ['admin', 'hr'],

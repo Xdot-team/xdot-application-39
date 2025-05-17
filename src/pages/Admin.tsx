@@ -22,7 +22,7 @@ function Admin() {
       {/* Header with Construct for Centuries text */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <PageHeader 
-          heading="Admin"
+          heading="Administration"
           subheading="System management and user engagement tools"
         />
         <div className="py-2 px-4 bg-slate-100 rounded-md text-sm text-slate-600 font-medium">
