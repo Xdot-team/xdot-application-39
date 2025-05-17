@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -40,8 +41,8 @@ const navItems: NavItem[] = [
     allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
   },
   {
-    title: 'Document Center',
-    href: '/document-center',
+    title: 'Documents',
+    href: '/documents',
     icon: FolderOpen,
     allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
   },

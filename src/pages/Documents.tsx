@@ -1,4 +1,3 @@
-
 import { requireAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,13 +5,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Search, FolderOpen, FileText, Upload, Download, Clock, Star } from "lucide-react";
 
-const DocumentCenter = () => {
+const Documents = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Document Center</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
           <p className="text-muted-foreground">
             Central repository for all project documents, drawings, and specifications
           </p>
@@ -305,4 +304,4 @@ const DocumentCenter = () => {
   );
 };
 
-export default requireAuth()(DocumentCenter);
+export default requireAuth()(Documents);
