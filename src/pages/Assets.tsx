@@ -599,7 +599,7 @@ const Assets = () => {
                 <span>Vehicles</span>
               </TabsTrigger>
               <TabsTrigger value="tools" className="flex items-center gap-1">
-                <Tool className="h-4 w-4" />
+                <Package className="h-4 w-4" />
                 <span>Tools</span>
               </TabsTrigger>
               <TabsTrigger value="materials" className="flex items-center gap-1">
