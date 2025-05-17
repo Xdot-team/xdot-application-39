@@ -16,7 +16,9 @@ import {
   HardHat, 
   Settings, 
   Menu, 
-  X
+  X,
+  FolderOpen,
+  Layout
 } from 'lucide-react';
 
 interface NavItem {
@@ -38,6 +40,18 @@ const navItems: NavItem[] = [
     href: '/projects',
     icon: FileText,
     allowedRoles: ['admin', 'project_manager', 'accountant'],
+  },
+  {
+    title: 'Project Hub',
+    href: '/project-hub',
+    icon: Layout,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
+  },
+  {
+    title: 'Document Center',
+    href: '/document-center',
+    icon: FolderOpen,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
   },
   {
     title: 'Equipment',
