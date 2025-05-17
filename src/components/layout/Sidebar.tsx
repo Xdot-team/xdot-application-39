@@ -21,7 +21,8 @@ import {
   BarChart,
   MapPin,
   DollarSign,
-  UserRound
+  UserRound,
+  LineChart
 } from 'lucide-react';
 
 interface NavItem {
@@ -91,6 +92,12 @@ const navItems: NavItem[] = [
     href: '/schedule',
     icon: Calendar,
     allowedRoles: ['admin', 'project_manager', 'field_worker'],
+  },
+  {
+    title: 'Organization',
+    href: '/organization',
+    icon: LineChart,
+    allowedRoles: ['admin', 'project_manager'],
   },
   {
     title: 'Reports',
