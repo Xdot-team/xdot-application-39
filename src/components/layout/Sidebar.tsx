@@ -19,7 +19,8 @@ import {
   X,
   FolderOpen,
   BarChart,
-  MapPin
+  MapPin,
+  DollarSign
 } from 'lucide-react';
 
 interface NavItem {
@@ -59,6 +60,12 @@ const navItems: NavItem[] = [
     href: '/field',
     icon: MapPin,
     allowedRoles: ['admin', 'project_manager', 'field_worker'],
+  },
+  {
+    title: 'Finance',
+    href: '/finance',
+    icon: DollarSign,
+    allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
     title: 'Equipment',
