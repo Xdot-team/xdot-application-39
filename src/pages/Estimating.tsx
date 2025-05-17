@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useAuth } from '@/contexts/AuthContext';
 import { BarChart2, FilePlus, FileText, Search } from 'lucide-react';
+import { cn } from '@/lib/utils'; // Added import for cn function
 
 interface EstimateItem {
   id: string;
