@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { SankeyFlowDiagram } from "@/components/dashboard/SankeyFlowDiagram";
 
 export function ProjectsTab() {
   // Mock data for recent projects
@@ -57,9 +56,6 @@ export function ProjectsTab() {
           </div>
         </CardContent>
       </Card>
-      
-      {/* Sankey Diagram for Resource & Financial Flow */}
-      <SankeyFlowDiagram />
     </div>
   );
 }

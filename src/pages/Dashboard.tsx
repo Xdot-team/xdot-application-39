@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { requireAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,8 +68,9 @@ const Dashboard = () => {
   };
 
   return (
+    
     <div className="space-y-6">
-      {/* Header */}
+      
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
@@ -82,7 +82,7 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      {/* Demo notification */}
+      
       {showNotification && (
         <div className="bg-blue-100 border-l-4 border-blue-500 p-4 mb-4 rounded shadow-md">
           <div className="flex">
@@ -104,7 +104,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Stats overview */}
+      
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -156,7 +156,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Module navigation */}
+      
       <div>
         <h2 className="text-lg font-semibold mb-4">Module Navigation</h2>
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
@@ -259,7 +259,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent projects */}
+      
       <div>
         <Card>
           <CardHeader>
