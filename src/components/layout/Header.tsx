@@ -10,68 +10,9 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { 
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Bell, Settings, LogOut, User, Map } from 'lucide-react';
+import { Bell, Settings, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
-
-// States data with abbreviations
-const states = [
-  { name: "Alabama", abbr: "AL" },
-  { name: "Alaska", abbr: "AK" },
-  { name: "Arizona", abbr: "AZ" },
-  { name: "Arkansas", abbr: "AR" },
-  { name: "California", abbr: "CA" },
-  { name: "Colorado", abbr: "CO" },
-  { name: "Connecticut", abbr: "CT" },
-  { name: "Delaware", abbr: "DE" },
-  { name: "Florida", abbr: "FL" },
-  { name: "Georgia", abbr: "GA" },
-  { name: "Hawaii", abbr: "HI" },
-  { name: "Idaho", abbr: "ID" },
-  { name: "Illinois", abbr: "IL" },
-  { name: "Indiana", abbr: "IN" },
-  { name: "Iowa", abbr: "IA" },
-  { name: "Kansas", abbr: "KS" },
-  { name: "Kentucky", abbr: "KY" },
-  { name: "Louisiana", abbr: "LA" },
-  { name: "Maine", abbr: "ME" },
-  { name: "Maryland", abbr: "MD" },
-  { name: "Massachusetts", abbr: "MA" },
-  { name: "Michigan", abbr: "MI" },
-  { name: "Minnesota", abbr: "MN" },
-  { name: "Mississippi", abbr: "MS" },
-  { name: "Missouri", abbr: "MO" },
-  { name: "Montana", abbr: "MT" },
-  { name: "Nebraska", abbr: "NE" },
-  { name: "Nevada", abbr: "NV" },
-  { name: "New Hampshire", abbr: "NH" },
-  { name: "New Jersey", abbr: "NJ" },
-  { name: "New Mexico", abbr: "NM" },
-  { name: "New York", abbr: "NY" },
-  { name: "North Carolina", abbr: "NC" },
-  { name: "North Dakota", abbr: "ND" },
-  { name: "Ohio", abbr: "OH" },
-  { name: "Oklahoma", abbr: "OK" },
-  { name: "Oregon", abbr: "OR" },
-  { name: "Pennsylvania", abbr: "PA" },
-  { name: "Rhode Island", abbr: "RI" },
-  { name: "South Carolina", abbr: "SC" },
-  { name: "South Dakota", abbr: "SD" },
-  { name: "Tennessee", abbr: "TN" },
-  { name: "Texas", abbr: "TX" },
-  { name: "Utah", abbr: "UT" },
-  { name: "Vermont", abbr: "VT" },
-  { name: "Virginia", abbr: "VA" },
-  { name: "Washington", abbr: "WA" },
-  { name: "West Virginia", abbr: "WV" },
-  { name: "Wisconsin", abbr: "WI" },
-  { name: "Wyoming", abbr: "WY" }
-];
 
 // Sample notifications
 const notifications = [
@@ -103,51 +44,15 @@ export function Header() {
   const [unreadCount, setUnreadCount] = useState(
     notifications.filter(n => !n.read).length
   );
-  const [selectedState, setSelectedState] = useState<string | null>(null);
   
   // If no user, don't render header
   if (!authState.user) return null;
-
-  const handleStateSelect = (stateAbbr: string) => {
-    setSelectedState(stateAbbr);
-  };
   
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="hidden lg:block">
-          <h1 className="text-xl font-semibold">
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="font-bold text-blue-500 hover:text-blue-700 focus:outline-none">x</button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-0">
-                <div className="p-4 border-b">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Map className="h-4 w-4" />
-                    <h4 className="font-medium">Select a State</h4>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Click on a state to see the DOT contractor name</p>
-                </div>
-                <div className="max-h-60 overflow-y-auto p-2">
-                  <div className="grid grid-cols-3 gap-1">
-                    {states.map((state) => (
-                      <button 
-                        key={state.abbr} 
-                        className={`text-sm p-2 rounded hover:bg-muted transition-colors ${
-                          selectedState === state.abbr ? 'bg-blue-100 font-medium' : ''
-                        }`}
-                        onClick={() => handleStateSelect(state.abbr)}
-                      >
-                        {state.abbr} - {state.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-            {selectedState || 'x'}DOTContractor
-          </h1>
+          <h1 className="text-xl font-semibold">xDOTContractor</h1>
         </div>
         
         <div className="flex items-center space-x-4">
