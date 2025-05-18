@@ -164,3 +164,116 @@ export interface RiskAlert {
   acknowledgedBy?: string;
   acknowledgedAt?: string;
 }
+
+// New Job Safety Analysis Types
+export type TaskStatus = 'not_started' | 'in_progress' | 'completed';
+
+export interface JobSafetyAnalysisItem {
+  id: string;
+  jsaId: string;
+  taskStep: string;
+  potentialHazards: string[];
+  controlMeasures: string[];
+  responsible?: string;
+  status: TaskStatus;
+  photos?: string[];
+}
+
+export interface JobSafetyAnalysisData {
+  id: string;
+  title: string;
+  projectId: string;
+  projectName: string;
+  location: string;
+  taskDescription: string;
+  createdBy: string;
+  createdDate: string;
+  reviewedBy?: string;
+  reviewDate?: string;
+  approvedBy?: string;
+  approvalDate?: string;
+  status: 'draft' | 'submitted' | 'approved' | 'rejected' | 'in_progress' | 'completed';
+  requiredPPE: string[];
+  requiredEquipment: string[];
+  items: JobSafetyAnalysisItem[];
+  templateId?: string;
+  isTemplate: boolean;
+  lastUpdated: string;
+  comments?: string;
+}
+
+// New Toolbox Meeting Types
+export type MeetingStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+export type AttendanceStatus = 'present' | 'absent' | 'excused' | 'pending';
+
+export interface MeetingAttendee {
+  id: string;
+  meetingId: string;
+  employeeId: string;
+  employeeName: string;
+  role?: string;
+  status: AttendanceStatus;
+  signatureTimestamp?: string;
+  feedback?: string;
+}
+
+export interface ToolboxMeetingData {
+  id: string;
+  title: string;
+  projectId: string;
+  projectName: string;
+  location: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  conductor: string;
+  topics: string[];
+  safetyFocus: string;
+  status: MeetingStatus;
+  attendees: MeetingAttendee[];
+  notes?: string;
+  attachments?: string[];
+  createdBy: string;
+  createdDate: string;
+  lastUpdated: string;
+  weatherConditions?: string;
+  questionsAsked?: string[];
+  followUpActions?: {
+    id: string;
+    description: string;
+    assignedTo: string;
+    dueDate: string;
+    status: 'pending' | 'in_progress' | 'completed';
+  }[];
+}
+
+export interface JSATemplate {
+  id: string;
+  title: string;
+  category: string;
+  taskDescription: string;
+  items: {
+    taskStep: string;
+    potentialHazards: string[];
+    controlMeasures: string[];
+  }[];
+  requiredPPE: string[];
+  requiredEquipment: string[];
+  createdBy: string;
+  createdDate: string;
+  lastUpdated: string;
+}
+
+export interface ToolboxMeetingTemplate {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  topics: string[];
+  safetyFocus: string;
+  suggestedDuration: number; // in minutes
+  materials: string[];
+  createdBy: string;
+  createdDate: string;
+  lastUpdated: string;
+}

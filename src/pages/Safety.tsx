@@ -12,7 +12,9 @@ import { CertificationManagement } from "@/components/safety/CertificationManage
 import { RiskDashboard } from "@/components/safety/RiskDashboard";
 import { RiskMitigation } from "@/components/safety/RiskMitigation";
 import { MobileRiskViewer } from "@/components/safety/MobileRiskViewer";
-import { AlertTriangle, Clipboard, FileCheck, ShieldCheck, Award, ShieldAlert, Sparkles, Bell } from "lucide-react";
+import { JobSafetyAnalysis } from "@/components/safety/JobSafetyAnalysis";
+import { ToolboxMeetings } from "@/components/safety/ToolboxMeetings";
+import { AlertTriangle, Clipboard, FileCheck, ShieldCheck, Award, ShieldAlert, Sparkles, Bell, ClipboardList, Users } from "lucide-react";
 
 export default function Safety() {
   const [activeTab, setActiveTab] = useState("incidents");
@@ -22,7 +24,7 @@ export default function Safety() {
     <div className="space-y-6">
       <PageHeader
         heading="Safety & Risk Management"
-        subheading="Manage safety incidents, hazards, risks, compliance, and certifications"
+        subheading="Manage safety incidents, hazards, risks, compliance, certifications, and safety meetings"
       />
       
       <div className="relative">
@@ -44,6 +46,14 @@ export default function Safety() {
             <TabsTrigger value="mitigation" className="flex items-center gap-1">
               <Sparkles className="h-4 w-4" />
               <span>{isMobile ? "Mitigate" : "Risk Mitigation"}</span>
+            </TabsTrigger>
+            <TabsTrigger value="jsa" className="flex items-center gap-1">
+              <ClipboardList className="h-4 w-4" />
+              <span>{isMobile ? "JSA" : "Job Safety Analysis"}</span>
+            </TabsTrigger>
+            <TabsTrigger value="toolbox" className="flex items-center gap-1">
+              <Users className="h-4 w-4" />
+              <span>{isMobile ? "Meetings" : "Toolbox Meetings"}</span>
             </TabsTrigger>
             <TabsTrigger value="hazards" className="flex items-center gap-1">
               <Clipboard className="h-4 w-4" />
@@ -87,6 +97,22 @@ export default function Safety() {
             <Card>
               <CardContent className="p-0">
                 <RiskMitigation />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="jsa" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <JobSafetyAnalysis />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="toolbox" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <ToolboxMeetings />
               </CardContent>
             </Card>
           </TabsContent>
