@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from '@/contexts/AuthContext';
-import { FilePlus, FileText, Search } from 'lucide-react';
+import { FilePlus, FileText, Search, FileCheck, FilePen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Import estimate components
@@ -16,6 +16,8 @@ import VendorEngagement from '@/components/estimating/VendorEngagement';
 import CostAnalysis from '@/components/estimating/CostAnalysis';
 import TakeoffAI from '@/components/estimating/TakeoffAI';
 import SiteVisits from '@/components/estimating/SiteVisits';
+import BidDocuments from '@/components/estimating/BidDocuments';
+import Buyout from '@/components/estimating/Buyout';
 import { Estimate, EstimateStatus } from '@/types/estimates';
 
 // Mock data for the estimates
@@ -179,6 +181,18 @@ const Estimating = () => {
           <TabsTrigger value="vendorEngagement">Vendor Engagement</TabsTrigger>
           <TabsTrigger value="costAnalysis">Cost Analysis</TabsTrigger>
           <TabsTrigger value="takeoff">Takeoff AI</TabsTrigger>
+          <TabsTrigger value="bidDocuments">
+            <span className="flex items-center gap-1">
+              <FileText className="h-4 w-4" />
+              <span>Bid Docs</span>
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="buyout">
+            <span className="flex items-center gap-1">
+              <FileCheck className="h-4 w-4" />
+              <span>Buyout</span>
+            </span>
+          </TabsTrigger>
         </TabsList>
 
         {/* Estimates List Tab */}
@@ -290,6 +304,16 @@ const Estimating = () => {
         {/* Takeoff AI Tab */}
         <TabsContent value="takeoff">
           <TakeoffAI />
+        </TabsContent>
+
+        {/* Bid Documents Tab - NEW */}
+        <TabsContent value="bidDocuments">
+          <BidDocuments />
+        </TabsContent>
+
+        {/* Buyout Tab - NEW */}
+        <TabsContent value="buyout">
+          <Buyout />
         </TabsContent>
       </Tabs>
     </div>

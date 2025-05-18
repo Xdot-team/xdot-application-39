@@ -17,6 +17,8 @@ export interface Estimate {
   vendorBids?: VendorBid[];
   costBreakdown?: CostBreakdown;
   quickEstimateParams?: QuickEstimateParams;
+  bidDocuments?: BidDocument[];
+  buyoutPackages?: BuyoutPackage[];
 }
 
 export interface EstimateItem {
@@ -113,3 +115,41 @@ export interface PreliminaryVendor {
   notes?: string;
   contactInfo?: string;
 }
+
+// New interfaces for Bid Documents
+export interface BidDocument {
+  id: string;
+  estimateId: string;
+  fileName: string;
+  fileType: string;
+  uploadDate: string;
+  fileSize: number;
+  fileUrl: string;
+  extractedData?: {
+    [key: string]: any;
+  };
+  tags?: string[];
+  notes?: string;
+}
+
+// New interfaces for Buyout
+export interface BuyoutPackage {
+  id: string;
+  estimateId: string;
+  packageName: string;
+  description?: string;
+  scope: string;
+  status: 'pending' | 'approved' | 'rejected' | 'awarded';
+  vendor?: {
+    id: string;
+    name: string;
+    contact: string;
+  };
+  amount: number;
+  originalEstimate: number;
+  variance: number;
+  dueDate: string;
+  awardDate?: string;
+  notes?: string;
+}
+
