@@ -159,7 +159,7 @@ const Projects = () => {
               Total project value
             </p>
           </CardContent>
-        </div>
+        </Card>
       </div>
 
       {/* Project Dashboard Section - Direct copy of the tab system from ProjectDetails.tsx */}
@@ -814,4 +814,3 @@ const Projects = () => {
 };
 
 export default requireAuth(['admin', 'project_manager', 'accountant', 'field_worker'])(Projects);
-
