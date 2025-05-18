@@ -21,7 +21,8 @@ import {
   UserRound,
   LineChart,
   Satellite,
-  ShieldAlert
+  ShieldAlert,
+  Mail
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { UserRole } from '@/types/auth';
@@ -112,6 +113,12 @@ const defaultNavItems: NavItem[] = [
     href: '/reports',
     icon: BarChart2,
     allowedRoles: ['admin', 'project_manager', 'accountant'],
+  },
+  {
+    title: 'Outlook Plugin',
+    href: '/outlook-plugin',
+    icon: Mail,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker', 'hr'],
   },
   {
     title: 'Administration',
