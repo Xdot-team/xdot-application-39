@@ -16,6 +16,7 @@ import { JobSafetyAnalysis } from "@/components/safety/JobSafetyAnalysis";
 import { ToolboxMeetings } from "@/components/safety/ToolboxMeetings";
 import { DriverTrends } from "@/components/safety/DriverTrends";
 import { MobileDriverView } from "@/components/safety/MobileDriverView";
+import { RiskDriverIntegration } from "@/components/safety/RiskDriverIntegration";
 import { 
   AlertTriangle, 
   Clipboard, 
@@ -63,6 +64,14 @@ export default function Safety() {
               <Sparkles className="h-4 w-4" />
               <span>{isMobile ? "Mitigate" : "Risk Mitigation"}</span>
             </TabsTrigger>
+            <TabsTrigger value="drivers" className="flex items-center gap-1">
+              <Car className="h-4 w-4" />
+              <span>{isMobile ? "Drivers" : "Driver Trends"}</span>
+            </TabsTrigger>
+            <TabsTrigger value="integration" className="flex items-center gap-1">
+              <BarChart className="h-4 w-4" />
+              <span>{isMobile ? "AI Risk" : "Risk & Driver Integration"}</span>
+            </TabsTrigger>
             <TabsTrigger value="jsa" className="flex items-center gap-1">
               <ClipboardList className="h-4 w-4" />
               <span>{isMobile ? "JSA" : "Job Safety Analysis"}</span>
@@ -70,10 +79,6 @@ export default function Safety() {
             <TabsTrigger value="toolbox" className="flex items-center gap-1">
               <Users className="h-4 w-4" />
               <span>{isMobile ? "Meetings" : "Toolbox Meetings"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="drivers" className="flex items-center gap-1">
-              <Car className="h-4 w-4" />
-              <span>{isMobile ? "Drivers" : "Driver Trends"}</span>
             </TabsTrigger>
             <TabsTrigger value="hazards" className="flex items-center gap-1">
               <Clipboard className="h-4 w-4" />
@@ -125,6 +130,22 @@ export default function Safety() {
             </Card>
           </TabsContent>
           
+          <TabsContent value="drivers" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <DriverTrends />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="integration" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <RiskDriverIntegration />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
           <TabsContent value="jsa" className="space-y-4">
             <Card>
               <CardContent className="p-0">
@@ -137,14 +158,6 @@ export default function Safety() {
             <Card>
               <CardContent className="p-0">
                 <ToolboxMeetings />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="drivers" className="space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                <DriverTrends />
               </CardContent>
             </Card>
           </TabsContent>

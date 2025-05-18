@@ -438,7 +438,7 @@ export function RiskDashboard() {
                         ))}
                       </Pie>
                       <Tooltip formatter={(value, name) => {
-                        const prettyName = name.replace(/-/g, ' ');
+                        const prettyName = typeof name === 'string' ? name.replace(/-/g, ' ') : String(name);
                         return [`${value} risks`, prettyName];
                       }} />
                       <Legend 
@@ -531,7 +531,7 @@ export function RiskDashboard() {
                           {risk.category}
                         </Badge>
                         <Badge className={getSourceColor(risk.source)}>
-                          {risk.source.replace(/-/g, ' ')}
+                          {typeof risk.source === 'string' ? risk.source.replace(/-/g, ' ') : risk.source}
                           {risk.aiConfidence && (
                             <span className="ml-1">({risk.aiConfidence}%)</span>
                           )}
