@@ -47,8 +47,8 @@ export default function TakeoffAI() {
   const handleAiDetect = () => {
     toast.success('AI has detected 2 new quantities in the blueprint.');
     
-    // Add example AI-detected items
-    const newItems = [
+    // Add example AI-detected items - fixing the calculatedBy type
+    const newItems: TakeoffItem[] = [
       {
         id: (items.length + 1).toString(),
         name: 'Drainage Piping',
@@ -73,7 +73,7 @@ export default function TakeoffAI() {
   const handleManualAdd = () => {
     toast.info('Added a new takeoff item.');
     
-    const newItem = {
+    const newItem: TakeoffItem = {
       id: (items.length + 1).toString(),
       name: 'Manual Item',
       quantity: 100.0,
