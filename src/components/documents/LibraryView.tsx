@@ -104,14 +104,14 @@ const mockLibraryResources: LibraryResource[] = [
 
 export function LibraryView() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   
   // Filtering logic
   const filteredResources = mockLibraryResources.filter(resource => {
     const matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = selectedType === "" || resource.type === selectedType;
-    const matchesCategory = selectedCategory === "" || resource.category === selectedCategory;
+    const matchesType = selectedType === "all" || resource.type === selectedType;
+    const matchesCategory = selectedCategory === "all" || resource.category === selectedCategory;
     
     return matchesSearch && matchesType && matchesCategory;
   });
@@ -139,7 +139,7 @@ export function LibraryView() {
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Types</SelectItem>
+            <SelectItem value="all">All Types</SelectItem>
             <SelectItem value="specification">Specifications</SelectItem>
             <SelectItem value="license">Licenses</SelectItem>
             <SelectItem value="insurance">Insurance</SelectItem>
@@ -153,7 +153,7 @@ export function LibraryView() {
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category} value={category}>
                 {category}
