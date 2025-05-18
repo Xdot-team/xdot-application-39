@@ -59,3 +59,87 @@ export interface ChangeOrder {
   reason: string;
   impactDays: number;
 }
+
+// New type definitions for AIA Billing
+export interface AIABilling {
+  id: string;
+  projectId: string;
+  formType: 'G702' | 'G703';
+  applicationNumber: number;
+  billingPeriodStart: string;
+  billingPeriodEnd: string;
+  submissionDate: string;
+  approvalDate?: string;
+  approvedBy?: string;
+  status: 'draft' | 'submitted' | 'approved' | 'rejected';
+  originalContractSum: number;
+  changeOrdersSum: number;
+  contractSumToDate: number;
+  totalCompletedStored: number;
+  retainagePercentage: number;
+  retainageAmount: number;
+  totalEarnedLessRetainage: number;
+  previousCertificates: number;
+  currentPaymentDue: number;
+  balanceToFinish: number;
+  lineItems: AIABillingLineItem[];
+  notes?: string;
+  attachments?: string[];
+}
+
+export interface AIABillingLineItem {
+  id: string;
+  aiaBillingId: string;
+  description: string;
+  scheduledValue: number;
+  workCompletedPrevious: number;
+  workCompletedCurrent: number;
+  materialsPresently: number;
+  totalCompletedStored: number;
+  percentComplete: number;
+  balanceToFinish: number;
+  retainage: number;
+}
+
+// Expanded Change Order type
+export interface ExpandedChangeOrder {
+  id: string;
+  projectId: string;
+  changeOrderNumber: string;
+  title: string;
+  description: string;
+  status: 'draft' | 'submitted' | 'pending_approval' | 'approved' | 'rejected';
+  costImpact: number;
+  timeImpact: number; // in days
+  requestDate: string;
+  submittedDate?: string;
+  submittedBy?: string;
+  approvalDate?: string;
+  approvedBy?: string;
+  rejectionDate?: string;
+  rejectedBy?: string;
+  reason: string;
+  justification?: string;
+  attachments?: string[];
+  lineItems: ChangeOrderLineItem[];
+  auditTrail: ChangeOrderAudit[];
+}
+
+export interface ChangeOrderLineItem {
+  id: string;
+  changeOrderId: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+  costCode?: string;
+}
+
+export interface ChangeOrderAudit {
+  id: string;
+  changeOrderId: string;
+  actionType: 'created' | 'updated' | 'submitted' | 'approved' | 'rejected' | 'comment';
+  actionBy: string;
+  actionDate: string;
+  details?: string;
+}

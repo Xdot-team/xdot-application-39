@@ -8,6 +8,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 // Page imports
 import Dashboard from '@/pages/Dashboard';
 import Projects from '@/pages/Projects';
+import ProjectDetails from '@/components/projects/ProjectDetails';
 import Documents from '@/pages/Documents';
 import Field from '@/pages/Field';
 import Finance from '@/pages/Finance';
@@ -32,6 +33,7 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:projectId" element={<ProjectDetails />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/estimating" element={<Estimating />} />
           <Route path="/field" element={<Field />} />
