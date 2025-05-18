@@ -262,6 +262,7 @@ export interface JSATemplate {
     taskStep: string;
     potentialHazards: string[];
     controlMeasures: string[];
+    responsibleRole?: string; // Changed from responsiblePerson to match the implementation
   }[];
   requiredPPE: string[];
   requiredEquipment: string[];

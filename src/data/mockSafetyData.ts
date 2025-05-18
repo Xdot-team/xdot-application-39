@@ -1,4 +1,3 @@
-
 import { 
   SafetyIncident, 
   Hazard, 
@@ -315,7 +314,6 @@ export const mockJSAData: JobSafetyAnalysisData[] = [
     createdDate: "2023-02-10",
     lastUpdated: "2023-02-10",
     status: "approved",
-    supervisorName: "Jane Smith",
     requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
     items: [
       {
@@ -351,7 +349,6 @@ export const mockJSAData: JobSafetyAnalysisData[] = [
     createdDate: "2023-03-05",
     lastUpdated: "2023-03-05",
     status: "in_progress",
-    supervisorName: "Robert Williams",
     requiredPPE: ["Hard hat", "Safety glasses", "Gloves", "Rubber boots"],
     items: [
       {
@@ -390,13 +387,13 @@ export const mockJSATemplates: JSATemplate[] = [
         taskStep: "Utility identification",
         potentialHazards: ["Striking underground utilities"],
         controlMeasures: ["Call 811 before digging", "Review utility maps"],
-        responsiblePerson: "Site Supervisor"
+        responsibleRole: "Site Supervisor"
       },
       {
         taskStep: "Soil inspection",
         potentialHazards: ["Cave-ins", "Unstable ground"],
         controlMeasures: ["Proper shoring", "Daily inspections"],
-        responsiblePerson: "Safety Officer"
+        responsibleRole: "Safety Officer"
       }
     ],
     createdBy: "System Admin",
@@ -415,13 +412,13 @@ export const mockJSATemplates: JSATemplate[] = [
         taskStep: "Ladder setup",
         potentialHazards: ["Falls", "Ladder failure"],
         controlMeasures: ["Inspect ladder", "3-point contact", "Secure ladder"],
-        responsiblePerson: "Worker"
+        responsibleRole: "Worker"
       },
       {
         taskStep: "Harness inspection",
         potentialHazards: ["Equipment failure", "Improper fit"],
         controlMeasures: ["Pre-use inspection", "Proper adjustment"],
-        responsiblePerson: "Worker"
+        responsibleRole: "Worker"
       }
     ],
     createdBy: "System Admin",
