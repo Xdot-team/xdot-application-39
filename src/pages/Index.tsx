@@ -10,7 +10,11 @@ const Index = () => {
   useEffect(() => {
     // If user is logged in, go to dashboard, otherwise to login
     if (!authState.isLoading) {
-      navigate(authState.user ? '/dashboard' : '/login');
+      if (authState.user) {
+        navigate('/dashboard');
+      } else {
+        navigate('/login');
+      }
     }
   }, [navigate, authState.isLoading, authState.user]);
 
