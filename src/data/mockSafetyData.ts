@@ -1,3 +1,4 @@
+
 import { 
   SafetyIncident, 
   Hazard, 
@@ -319,19 +320,25 @@ export const mockJSAData: JobSafetyAnalysisData[] = [
     items: [
       {
         id: "1",
+        jsaId: "1",
         taskStep: "Mark utilities before digging",
-        hazards: ["Striking underground utilities"],
-        controls: ["Call 811 for utility marking", "Review utility maps"],
-        responsiblePerson: "Site Supervisor"
+        potentialHazards: ["Striking underground utilities"],
+        controlMeasures: ["Call 811 for utility marking", "Review utility maps"],
+        responsible: "Site Supervisor",
+        status: "not_started"
       },
       {
         id: "2",
+        jsaId: "1",
         taskStep: "Operate excavator",
-        hazards: ["Equipment rollover", "Striking workers"],
-        controls: ["Maintain 20ft clearance from workers", "Use spotter when needed"],
-        responsiblePerson: "Equipment Operator"
+        potentialHazards: ["Equipment rollover", "Striking workers"],
+        controlMeasures: ["Maintain 20ft clearance from workers", "Use spotter when needed"],
+        responsible: "Equipment Operator",
+        status: "not_started"
       }
-    ]
+    ],
+    requiredEquipment: [],
+    isTemplate: false
   },
   {
     id: "2",
@@ -349,19 +356,25 @@ export const mockJSAData: JobSafetyAnalysisData[] = [
     items: [
       {
         id: "1",
+        jsaId: "2",
         taskStep: "Setup concrete pump",
-        hazards: ["Pinch points", "High pressure lines"],
-        controls: ["Inspect equipment before use", "Clear communication"],
-        responsiblePerson: "Concrete Foreman"
+        potentialHazards: ["Pinch points", "High pressure lines"],
+        controlMeasures: ["Inspect equipment before use", "Clear communication"],
+        responsible: "Concrete Foreman",
+        status: "in_progress"
       },
       {
         id: "2",
+        jsaId: "2",
         taskStep: "Pour concrete",
-        hazards: ["Chemical burns from concrete", "Manual handling"],
-        controls: ["Wear protective clothing", "Use proper lifting techniques"],
-        responsiblePerson: "Crew Lead"
+        potentialHazards: ["Chemical burns from concrete", "Manual handling"],
+        controlMeasures: ["Wear protective clothing", "Use proper lifting techniques"],
+        responsible: "Crew Lead",
+        status: "not_started"
       }
-    ]
+    ],
+    requiredEquipment: [],
+    isTemplate: false
   }
 ];
 
@@ -374,23 +387,22 @@ export const mockJSATemplates: JSATemplate[] = [
     requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
     items: [
       {
-        id: "1",
         taskStep: "Utility identification",
-        hazards: ["Striking underground utilities"],
-        controls: ["Call 811 before digging", "Review utility maps"],
+        potentialHazards: ["Striking underground utilities"],
+        controlMeasures: ["Call 811 before digging", "Review utility maps"],
         responsiblePerson: "Site Supervisor"
       },
       {
-        id: "2",
         taskStep: "Soil inspection",
-        hazards: ["Cave-ins", "Unstable ground"],
-        controls: ["Proper shoring", "Daily inspections"],
+        potentialHazards: ["Cave-ins", "Unstable ground"],
+        controlMeasures: ["Proper shoring", "Daily inspections"],
         responsiblePerson: "Safety Officer"
       }
     ],
     createdBy: "System Admin",
     createdDate: "2023-01-05",
-    lastUpdated: "2023-01-05"
+    lastUpdated: "2023-01-05",
+    requiredEquipment: []
   },
   {
     id: "2",
@@ -400,22 +412,21 @@ export const mockJSATemplates: JSATemplate[] = [
     requiredPPE: ["Hard hat", "Safety harness", "Lanyard", "Safety glasses"],
     items: [
       {
-        id: "1",
         taskStep: "Ladder setup",
-        hazards: ["Falls", "Ladder failure"],
-        controls: ["Inspect ladder", "3-point contact", "Secure ladder"],
+        potentialHazards: ["Falls", "Ladder failure"],
+        controlMeasures: ["Inspect ladder", "3-point contact", "Secure ladder"],
         responsiblePerson: "Worker"
       },
       {
-        id: "2",
         taskStep: "Harness inspection",
-        hazards: ["Equipment failure", "Improper fit"],
-        controls: ["Pre-use inspection", "Proper adjustment"],
+        potentialHazards: ["Equipment failure", "Improper fit"],
+        controlMeasures: ["Pre-use inspection", "Proper adjustment"],
         responsiblePerson: "Worker"
       }
     ],
     createdBy: "System Admin",
     createdDate: "2023-01-10",
-    lastUpdated: "2023-01-10"
+    lastUpdated: "2023-01-10",
+    requiredEquipment: []
   }
 ];
