@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import QuickEstimate from '@/components/estimating/QuickEstimate';
 import DetailedEstimate from '@/components/estimating/DetailedEstimate';
 import VendorEngagement from '@/components/estimating/VendorEngagement';
 import CostAnalysis from '@/components/estimating/CostAnalysis';
+import TakeoffAI from '@/components/estimating/TakeoffAI';
 import { Estimate, EstimateStatus } from '@/types/estimates';
 
 // Mock data for the estimates
@@ -175,6 +176,7 @@ const Estimating = () => {
           <TabsTrigger value="detailedEstimate">Detailed Estimate</TabsTrigger>
           <TabsTrigger value="vendorEngagement">Vendor Engagement</TabsTrigger>
           <TabsTrigger value="costAnalysis">Cost Analysis</TabsTrigger>
+          <TabsTrigger value="takeoff">Takeoff AI</TabsTrigger>
         </TabsList>
 
         {/* Estimates List Tab */}
@@ -255,14 +257,6 @@ const Estimating = () => {
                 </table>
               </div>
             </CardContent>
-            <div className="border-t px-6 py-4 flex justify-between items-center">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredEstimates.length} of {estimates.length} estimates
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </div>
           </Card>
         </TabsContent>
         
@@ -285,11 +279,12 @@ const Estimating = () => {
         <TabsContent value="costAnalysis">
           <CostAnalysis />
         </TabsContent>
+        
+        {/* Takeoff AI Tab */}
+        <TabsContent value="takeoff">
+          <TakeoffAI />
+        </TabsContent>
       </Tabs>
-      
-      <footer className="text-center py-4 text-xs text-muted-foreground italic">
-        Construct for Centuries
-      </footer>
     </div>
   );
 };

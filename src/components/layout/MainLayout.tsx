@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
+import { Chatbot } from '@/components/chatbot/Chatbot';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface MainLayoutProps {
@@ -43,6 +44,9 @@ export function MainLayout({ children }: MainLayoutProps) {
           <p>xDOTContractor &copy; {new Date().getFullYear()}. All rights reserved.</p>
         </footer>
       </div>
+      
+      {/* Add Chatbot */}
+      <Chatbot />
     </div>
   );
 }
