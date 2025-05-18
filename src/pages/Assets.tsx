@@ -19,12 +19,14 @@ import {
   PackageOpen,
   CalendarClock,
   ArrowUpDown,
-  Filter
+  Filter,
+  SendToBack
 } from 'lucide-react';
 import { Vehicle, Tool, Material } from '@/types/field';
 import { AssetsMap } from '@/components/assets/AssetsMap';
 import { AssetDetails } from '@/components/assets/AssetDetails';
 import { MaintenanceSchedule } from '@/components/assets/MaintenanceSchedule';
+import { DispatchManager } from '@/components/assets/DispatchManager';
 
 const mockVehicles: Vehicle[] = [
   {
@@ -606,6 +608,10 @@ const Assets = () => {
                 <PackageOpen className="h-4 w-4" />
                 <span>Materials</span>
               </TabsTrigger>
+              <TabsTrigger value="dispatch" className="flex items-center gap-1">
+                <SendToBack className="h-4 w-4" />
+                <span>Dispatch</span>
+              </TabsTrigger>
               <TabsTrigger value="map" className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
                 <span>Location Map</span>
@@ -932,6 +938,14 @@ const Assets = () => {
                     </TableBody>
                   </Table>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="dispatch" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <DispatchManager vehicles={mockVehicles} tools={mockTools} />
               </CardContent>
             </Card>
           </TabsContent>
