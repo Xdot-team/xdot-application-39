@@ -24,7 +24,7 @@ export default function Organization() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Construct for Centuries text */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Organization</h1>
@@ -33,7 +33,7 @@ export default function Organization() {
           </p>
         </div>
         <div className="py-2 px-4 bg-slate-100 rounded-md text-sm text-slate-600 font-medium">
-          Construct for Centuries
+          
         </div>
       </div>
 

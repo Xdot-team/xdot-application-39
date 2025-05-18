@@ -1,109 +1,109 @@
-import { useState } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Filter, Plus, ThumbsUp, Heart, Award } from "lucide-react";
-import { mockAppreciations } from "@/data/mockWorkforceData";
-import { EmployeeAppreciation } from "@/types/workforce";
-import { formatDate } from "@/lib/formatters";
+
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Award, Check, Heart, Medal, Star, ThumbsUp, Trophy } from 'lucide-react';
 
 export function AppreciationHub() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const isMobile = useIsMobile();
-  const [appreciations, setAppreciations] = useState<EmployeeAppreciation[]>(mockAppreciations);
-
-  const filteredAppreciations = appreciations.filter(
-    (appreciation) =>
-      appreciation.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      appreciation.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      appreciation.type.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const getAppreciationIcon = (type: string) => {
-    switch (type) {
-      case "performance":
-        return <Award className="h-5 w-5 text-amber-500" />;
-      case "safety":
-        return <Badge className="h-5 w-5 text-green-600" />;
-      case "teamwork":
-        return <Heart className="h-5 w-5 text-red-500" />;
-      default:
-        return <ThumbsUp className="h-5 w-5 text-blue-500" />;
-    }
-  };
-
-  const getAppreciationTypeLabel = (type: string) => {
-    return type.charAt(0).toUpperCase() + type.slice(1);
-  };
-
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search appreciations..."
-            className="pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-          <Button size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            New Appreciation
-          </Button>
+    <div className="container p-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Employee Appreciation</h2>
+          <p className="text-muted-foreground">Recognize and celebrate team achievements</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredAppreciations.map((appreciation) => (
-          <Card key={appreciation.id}>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarFallback>
-                      {appreciation.employeeName.split(" ").map(name => name[0]).join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-base">{appreciation.employeeName}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {formatDate(appreciation.date)}
-                    </p>
-                  </div>
-                </div>
-                <Badge variant="outline" className="flex items-center gap-1">
-                  {getAppreciationIcon(appreciation.type)}
-                  <span className="ml-1">{getAppreciationTypeLabel(appreciation.type)}</span>
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm">"{appreciation.message}"</p>
-            </CardContent>
-            <CardFooter className="pt-2 text-xs text-muted-foreground flex justify-between items-center">
-              <div>From: {appreciation.givenByName}</div>
-              <div className="flex gap-2 items-center">
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <ThumbsUp className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <Heart className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <Tabs defaultValue="achievements" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="achievements">Achievements</TabsTrigger>
+          <TabsTrigger value="badges">Badges</TabsTrigger>
+          <TabsTrigger value="recognition">Recognition</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="achievements" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <AchievementCard 
+              icon={Trophy} 
+              title="Performance Champion" 
+              description="Exceeded project completion targets by 15% for Q3"
+              recipient="Michael Chen"
+              date="2023-10-15"
+            />
+            <AchievementCard 
+              icon={Star} 
+              title="Safety Star" 
+              description="1000 days without a recordable incident on Highway 20 project"
+              recipient="Crew 5 - Robert Johnson"
+              date="2023-10-01"
+            />
+            <AchievementCard 
+              icon={Medal} 
+              title="Quality Excellence" 
+              description="Perfect inspection score on Georgia DOT bridge project"
+              recipient="Engineering Team"
+              date="2023-09-22"
+            />
+            <AchievementCard 
+              icon={Heart} 
+              title="Team Player" 
+              description="Volunteered to cover multiple shifts during crew shortage"
+              recipient="Sarah Martinez"
+              date="2023-09-10"
+            />
+            <AchievementCard 
+              icon={ThumbsUp} 
+              title="Client Satisfaction" 
+              description="Received commendation letter from Atlanta Public Works"
+              recipient="Project Team B"
+              date="2023-08-30"
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="badges" className="space-y-4">
+          {/* Badges content */}
+        </TabsContent>
+
+        <TabsContent value="recognition" className="space-y-4">
+          {/* Recognition content */}
+        </TabsContent>
+      </Tabs>
     </div>
+  );
+}
+
+interface AchievementCardProps {
+  icon: React.FC<any>;
+  title: string;
+  description: string;
+  recipient: string;
+  date: string;
+}
+
+function AchievementCard({ icon: Icon, title, description, recipient, date }: AchievementCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center gap-4">
+        <div className="bg-primary/10 p-2 rounded-full">
+          <Icon className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <CardTitle className="text-lg">{title}</CardTitle>
+          <CardDescription className="text-sm">{recipient}</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm">{description}</p>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <p className="text-xs text-muted-foreground">{new Date(date).toLocaleDateString()}</p>
+        <div className="flex items-center">
+          <Check className="h-4 w-4 text-green-500 mr-1" />
+          <span className="text-xs">Verified</span>
+        </div>
+      </CardFooter>
+    </Card>
   );
 }

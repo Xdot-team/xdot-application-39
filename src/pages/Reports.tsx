@@ -24,7 +24,7 @@ function Reports() {
           subheading="Generate and manage detailed operational reports"
         />
         <div className="py-2 px-4 bg-slate-100 rounded-md text-sm text-slate-600 font-medium">
-          Construct for Centuries
+          
         </div>
       </div>
 

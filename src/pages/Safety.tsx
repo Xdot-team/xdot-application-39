@@ -143,7 +143,7 @@ export default function Safety() {
       </div>
 
       <footer className="py-4 text-sm text-center text-muted-foreground border-t mt-8">
-        <p>Construct for Centuries</p>
+        <p></p>
       </footer>
     </div>
   );

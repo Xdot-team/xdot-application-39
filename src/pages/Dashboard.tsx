@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { requireAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/auth";
@@ -48,7 +49,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground italic">"Construct for Centuries"</p>
+          <p className="text-muted-foreground italic"></p>
         </div>
         <Button onClick={triggerNotification}>
           <BellRing className="mr-2" />
