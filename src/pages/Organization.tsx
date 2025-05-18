@@ -8,6 +8,7 @@ import { ReportsList } from '@/components/organization/ReportsList';
 import { KPIOverview } from '@/components/organization/KPIOverview';
 import { EOSTracker } from '@/components/organization/EOSTracker';
 import { ProjectionCharts } from '@/components/organization/ProjectionCharts';
+import { ProjectsTab } from '@/components/organization/ProjectsTab';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function Organization() {
@@ -38,8 +39,9 @@ export default function Organization() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 lg:w-[600px] mb-4">
+        <TabsList className="grid grid-cols-2 md:grid-cols-6 lg:w-[720px] mb-4">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="kpis">KPIs</TabsTrigger>
           <TabsTrigger value="eos">EOS Goals</TabsTrigger>
@@ -48,6 +50,10 @@ export default function Organization() {
 
         <TabsContent value="dashboard" className="space-y-4">
           <LiveDashboard handleExport={handleExport} />
+        </TabsContent>
+
+        <TabsContent value="projects" className="space-y-4">
+          <ProjectsTab />
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-4">

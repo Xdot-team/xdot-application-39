@@ -24,7 +24,6 @@ import {
   LineChart,
   ShieldAlert
 } from "lucide-react";
-import { SankeyFlowDiagram } from "@/components/dashboard/SankeyFlowDiagram";
 import { useNavigate } from "react-router-dom";
 
 // Mock data for the dashboard
@@ -308,9 +307,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
-      
-      {/* Sankey Diagram for Resource & Financial Flow */}
-      <SankeyFlowDiagram />
     </div>
   );
 };
