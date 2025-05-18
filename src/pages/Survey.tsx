@@ -2,7 +2,7 @@
 import { requireAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Cube, MapPin, Satellite, Construction, Link2 } from "lucide-react";
+import { Activity, Box, MapPin, Satellite, Construction, Link2 } from "lucide-react";
 import { useState } from "react";
 import { StatusDashboard } from "@/components/survey/StatusDashboard";
 import { VisualizationView } from "@/components/survey/VisualizationView";
@@ -34,7 +34,7 @@ const Survey = () => {
             <span>Status Dashboard</span>
           </TabsTrigger>
           <TabsTrigger value="visualization" className="flex items-center gap-1">
-            <Cube className="h-4 w-4" />
+            <Box className="h-4 w-4" />
             <span>3D Visualization</span>
           </TabsTrigger>
           <TabsTrigger value="gps" className="flex items-center gap-1">

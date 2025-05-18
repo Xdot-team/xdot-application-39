@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Cube, Download, Share2, Eye } from "lucide-react";
+import { Box, Download, Share2, Eye } from "lucide-react";
 import { useState } from "react";
 
 export function VisualizationView() {
@@ -51,7 +51,7 @@ export function VisualizationView() {
             <CardContent className="p-0">
               <div className="bg-muted h-[500px] flex items-center justify-center">
                 <div className="text-center">
-                  <Cube className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <Box className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-lg font-medium">3D Terrain Visualization</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Interactive 3D model would render here
@@ -71,7 +71,7 @@ export function VisualizationView() {
             <CardContent className="p-0">
               <div className="bg-muted h-[500px] flex items-center justify-center">
                 <div className="text-center">
-                  <Cube className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <Box className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-lg font-medium">Buildings 3D Model</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Building models would render here
@@ -87,7 +87,7 @@ export function VisualizationView() {
             <CardContent className="p-0">
               <div className="bg-muted h-[500px] flex items-center justify-center">
                 <div className="text-center">
-                  <Cube className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <Box className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-lg font-medium">Data Overlay Visualization</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Data overlay visualization would render here
@@ -103,7 +103,7 @@ export function VisualizationView() {
             <CardContent className="p-0">
               <div className="bg-muted h-[500px] flex items-center justify-center">
                 <div className="text-center">
-                  <Cube className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <Box className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-lg font-medium">Cross-Sections View</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Cross-sections would render here
