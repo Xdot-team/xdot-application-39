@@ -8,7 +8,8 @@ import { IncidentDashboard } from "@/components/safety/IncidentDashboard";
 import { HazardReporting } from "@/components/safety/HazardReporting";
 import { ComplianceChecklist } from "@/components/safety/ComplianceChecklist";
 import { SafetyTrainingList } from "@/components/safety/SafetyTrainingList";
-import { AlertTriangle, Clipboard, FileCheck, ShieldCheck } from "lucide-react";
+import { CertificationManagement } from "@/components/safety/CertificationManagement";
+import { AlertTriangle, Clipboard, FileCheck, ShieldCheck, Award } from "lucide-react";
 
 export default function Safety() {
   const [activeTab, setActiveTab] = useState("incidents");
@@ -18,7 +19,7 @@ export default function Safety() {
     <div className="space-y-6">
       <PageHeader
         heading="Safety Management"
-        subheading="Manage safety incidents, hazards, training, and compliance"
+        subheading="Manage safety incidents, hazards, training, compliance, and certifications"
       />
       
       <div className="relative">
@@ -44,6 +45,10 @@ export default function Safety() {
             <TabsTrigger value="training" className="flex items-center gap-1">
               <FileCheck className="h-4 w-4" />
               <span>{isMobile ? "Training" : "Safety Training"}</span>
+            </TabsTrigger>
+            <TabsTrigger value="certifications" className="flex items-center gap-1">
+              <Award className="h-4 w-4" />
+              <span>{isMobile ? "Certs" : "Certifications"}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -75,6 +80,14 @@ export default function Safety() {
             <Card>
               <CardContent className="p-0">
                 <SafetyTrainingList />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="certifications" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <CertificationManagement />
               </CardContent>
             </Card>
           </TabsContent>
