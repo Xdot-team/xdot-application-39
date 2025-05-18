@@ -4,7 +4,7 @@ import { ProjectWIP } from '@/types/finance';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { formatCurrency, formatPercentage } from '@/lib/formatters';
+import { formatCurrency, formatPercent } from '@/lib/formatters';
 import { ChevronRight } from 'lucide-react';
 
 interface MobileWIPViewProps {
@@ -58,7 +58,7 @@ const MobileWIPView = ({ wipReports }: MobileWIPViewProps) => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Completion</span>
-                  <span className="font-medium">{formatPercentage(report.completionPercentage)}</span>
+                  <span className="font-medium">{formatPercent(report.completionPercentage)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Revenue</span>

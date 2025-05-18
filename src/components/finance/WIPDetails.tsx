@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, formatPercentage } from "@/lib/formatters";
+import { formatCurrency, formatPercent } from "@/lib/formatters";
 import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 interface WIPDetailsProps {
@@ -85,7 +85,7 @@ export const WIPDetails = ({ wip, isOpen, onClose, canEdit }: WIPDetailsProps) =
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Completion:</span>
-                  <span className="font-medium">{formatPercentage(wip.completionPercentage)}</span>
+                  <span className="font-medium">{formatPercent(wip.completionPercentage)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Revenue Earned:</span>

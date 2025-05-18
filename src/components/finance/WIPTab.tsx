@@ -6,7 +6,7 @@ import { SortableTable } from "@/components/finance/SortableTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatCurrency, formatPercentage } from "@/lib/formatters";
+import { formatCurrency, formatPercent } from "@/lib/formatters";
 import { FileText, Download, Filter } from "lucide-react";
 import { SearchFilter } from "@/components/finance/SearchFilter";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from "recharts";
@@ -108,7 +108,7 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
     {
       key: "completionPercentage",
       header: "Completion",
-      cell: (report: ProjectWIP) => formatPercentage(report.completionPercentage),
+      cell: (report: ProjectWIP) => formatPercent(report.completionPercentage),
       sortable: true,
     },
     {
@@ -162,6 +162,11 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
     },
   ];
 
+  // Fixed the event handler to use the correct event type
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -180,7 +185,7 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
           <SearchFilter
             placeholder="Search projects..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
           />
           <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
@@ -221,7 +226,7 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Completion:</span>
-                    <span className="font-medium">{formatPercentage(report.completionPercentage)}</span>
+                    <span className="font-medium">{formatPercent(report.completionPercentage)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Revenue:</span>
