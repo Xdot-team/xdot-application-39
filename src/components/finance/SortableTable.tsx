@@ -9,7 +9,7 @@ interface SortConfig {
 }
 
 interface SortableTableColumn<T> {
-  key: keyof T;
+  key: string | keyof T;  // Modified to accept string or keyof T
   header: string;
   cell: (item: T) => React.ReactNode;
   sortable?: boolean;
