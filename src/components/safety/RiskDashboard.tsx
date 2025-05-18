@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Risk, RiskProbability, RiskImpact, RiskCategory } from "@/types/safety";
+import { Risk, RiskProbability, RiskImpact, RiskCategory, RiskSource } from "@/types/safety";
 import { ChartContainer, ChartLegendContent, ChartTooltipContent } from "@/components/ui/chart";
-import { AlertTriangle, Filter, ShieldAlert, SortAsc, FileText, CalendarClock, ListFilter } from "lucide-react";
+import { AlertTriangle, Filter, ShieldAlert, SortAsc, FileText, CalendarClock, ListFilter, BarChart, Car, Users } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockRisks } from "@/data/mockSafetyData";
@@ -19,7 +19,9 @@ import {
   Tooltip, 
   Legend,
   ResponsiveContainer,
-  Cell 
+  Cell,
+  PieChart,
+  Pie
 } from "recharts";
 
 export function RiskDashboard() {
@@ -28,6 +30,7 @@ export function RiskDashboard() {
   const [activeTab, setActiveTab] = useState("all");
   const [sortBy, setSortBy] = useState<string>("riskScore");
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [filterSource, setFilterSource] = useState<string>("all");
   
   const sortedRisks = [...risks].sort((a, b) => {
     if (sortBy === "riskScore") return b.riskScore - a.riskScore;
@@ -40,6 +43,7 @@ export function RiskDashboard() {
       return impactOrder[b.impact as RiskImpact] - impactOrder[a.impact as RiskImpact];
     }
     if (sortBy === "date") return new Date(b.dateIdentified).getTime() - new Date(a.dateIdentified).getTime();
+    if (sortBy === "aiConfidence" && a.aiConfidence && b.aiConfidence) return b.aiConfidence - a.aiConfidence;
     return 0;
   });
   
@@ -49,11 +53,13 @@ export function RiskDashboard() {
       risk.description.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesCategory = filterCategory === "all" || risk.category === filterCategory;
+    const matchesSource = filterSource === "all" || risk.source === filterSource;
     const matchesTab = activeTab === "all" || 
       (activeTab === "high-priority" && risk.isHighPriority) ||
-      (activeTab === "mitigating" && risk.status === "mitigating");
+      (activeTab === "mitigating" && risk.status === "mitigating") ||
+      (activeTab === "ai-predicted" && risk.source === "ai-prediction");
     
-    return matchesSearch && matchesCategory && matchesTab;
+    return matchesSearch && matchesCategory && matchesSource && matchesTab;
   });
 
   const getProbabilityColor = (probability: RiskProbability) => {
@@ -85,7 +91,20 @@ export function RiskDashboard() {
       case "equipment": return "bg-yellow-100 text-yellow-800";
       case "environmental": return "bg-teal-100 text-teal-800";
       case "regulatory": return "bg-indigo-100 text-indigo-800";
+      case "driver": return "bg-cyan-100 text-cyan-800";
       case "other": return "bg-gray-100 text-gray-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getSourceColor = (source: RiskSource) => {
+    switch (source) {
+      case "ai-prediction": return "bg-violet-100 text-violet-800";
+      case "manual-entry": return "bg-blue-100 text-blue-800";
+      case "incident-escalation": return "bg-orange-100 text-orange-800";
+      case "compliance-issue": return "bg-red-100 text-red-800";
+      case "driver-data": return "bg-cyan-100 text-cyan-800";
+      case "jsa-analysis": return "bg-amber-100 text-amber-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -102,9 +121,50 @@ export function RiskDashboard() {
       y: impactValues[risk.impact as RiskImpact],
       z: risk.riskScore,
       category: risk.category,
+      source: risk.source,
       id: risk.id
     };
   });
+
+  // Prepare data for category distribution chart
+  const categoryData = Array.from(
+    risks.reduce((acc, risk) => {
+      const current = acc.get(risk.category) || 0;
+      acc.set(risk.category, current + 1);
+      return acc;
+    }, new Map<string, number>())
+  ).map(([name, value]) => ({ name, value }));
+
+  // Prepare data for source distribution chart
+  const sourceData = Array.from(
+    risks.reduce((acc, risk) => {
+      const current = acc.get(risk.source) || 0;
+      acc.set(risk.source, current + 1);
+      return acc;
+    }, new Map<string, number>())
+  ).map(([name, value]) => ({ name, value }));
+
+  // Colors for pie charts
+  const CATEGORY_COLORS = {
+    safety: "#ef4444", 
+    schedule: "#3b82f6", 
+    budget: "#10b981", 
+    resource: "#8b5cf6", 
+    equipment: "#eab308", 
+    environmental: "#14b8a6",
+    regulatory: "#6366f1",
+    driver: "#06b6d4",
+    other: "#6b7280"
+  };
+
+  const SOURCE_COLORS = {
+    "ai-prediction": "#8b5cf6",
+    "manual-entry": "#3b82f6",
+    "incident-escalation": "#f97316",
+    "compliance-issue": "#ef4444",
+    "driver-data": "#06b6d4",
+    "jsa-analysis": "#eab308" 
+  };
 
   return (
     <div className="space-y-4 p-4">
@@ -120,6 +180,7 @@ export function RiskDashboard() {
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <Select value={filterCategory} onValueChange={setFilterCategory}>
             <SelectTrigger className="w-full sm:w-[180px]">
+              <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Filter by Category" />
             </SelectTrigger>
             <SelectContent>
@@ -131,6 +192,23 @@ export function RiskDashboard() {
               <SelectItem value="equipment">Equipment</SelectItem>
               <SelectItem value="environmental">Environmental</SelectItem>
               <SelectItem value="regulatory">Regulatory</SelectItem>
+              <SelectItem value="driver">Driver</SelectItem>
+              <SelectItem value="other">Other</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filterSource} onValueChange={setFilterSource}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <ListFilter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filter by Source" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Sources</SelectItem>
+              <SelectItem value="ai-prediction">AI Prediction</SelectItem>
+              <SelectItem value="manual-entry">Manual Entry</SelectItem>
+              <SelectItem value="incident-escalation">Incident Escalation</SelectItem>
+              <SelectItem value="compliance-issue">Compliance Issue</SelectItem>
+              <SelectItem value="driver-data">Driver Data</SelectItem>
+              <SelectItem value="jsa-analysis">JSA Analysis</SelectItem>
             </SelectContent>
           </Select>
           <Button variant="default">
@@ -190,16 +268,8 @@ export function RiskDashboard() {
                   <Scatter name="Risks" data={heatMapData}>
                     {heatMapData.map((entry, index) => {
                       let color;
-                      switch(entry.category) {
-                        case 'safety': color = '#ef4444'; break;
-                        case 'schedule': color = '#3b82f6'; break;
-                        case 'budget': color = '#10b981'; break;
-                        case 'resource': color = '#8b5cf6'; break;
-                        case 'equipment': color = '#eab308'; break;
-                        case 'environmental': color = '#14b8a6'; break;
-                        case 'regulatory': color = '#6366f1'; break;
-                        default: color = '#6b7280';
-                      }
+                      // @ts-ignore
+                      color = CATEGORY_COLORS[entry.category] || "#6b7280";
                       
                       // Size based on risk score
                       const size = 30 + (entry.z * 5);
@@ -224,6 +294,7 @@ export function RiskDashboard() {
               <Badge className="bg-yellow-100 text-yellow-800">Equipment</Badge>
               <Badge className="bg-teal-100 text-teal-800">Environmental</Badge>
               <Badge className="bg-indigo-100 text-indigo-800">Regulatory</Badge>
+              <Badge className="bg-cyan-100 text-cyan-800">Driver</Badge>
             </div>
           </CardContent>
         </Card>
@@ -262,33 +333,83 @@ export function RiskDashboard() {
               </Card>
               <Card>
                 <CardContent className="p-4 flex flex-col items-center">
-                  <div className="text-3xl font-bold text-green-600">
-                    {risks.filter(r => r.status === "closed").length}
+                  <div className="text-3xl font-bold text-violet-600">
+                    {risks.filter(r => r.source === "ai-prediction").length}
                   </div>
-                  <div className="text-sm text-muted-foreground text-center">Closed</div>
+                  <div className="text-sm text-muted-foreground text-center">AI Predicted</div>
                 </CardContent>
               </Card>
             </div>
 
-            <div className="mt-6">
-              <h3 className="text-sm font-medium mb-2">Top Risk Categories</h3>
-              <div className="space-y-2">
-                {['safety', 'schedule', 'budget', 'resource', 'equipment'].map(category => {
-                  const count = risks.filter(r => r.category === category).length;
-                  const percentage = Math.round((count / risks.length) * 100);
-                  return (
-                    <div key={category} className="flex items-center gap-2">
-                      <div className="w-24 capitalize">{category}:</div>
-                      <div className="flex-1 bg-gray-100 rounded-full h-2.5">
-                        <div 
-                          className="h-2.5 rounded-full bg-blue-600" 
-                          style={{ width: `${percentage}%` }}
-                        ></div>
-                      </div>
-                      <div className="w-12 text-right text-sm">{count}</div>
-                    </div>
-                  );
-                })}
+            <div className="flex flex-col md:flex-row gap-4 mt-6">
+              <div className="w-full md:w-1/2">
+                <h3 className="text-sm font-medium mb-2">Risk Categories</h3>
+                <div className="h-40">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={30}
+                        outerRadius={60}
+                        dataKey="value"
+                      >
+                        {categoryData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`}
+                            // @ts-ignore 
+                            fill={CATEGORY_COLORS[entry.name] || "#6b7280"}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value, name) => [`${value} risks`, name]} />
+                      <Legend 
+                        layout="vertical" 
+                        verticalAlign="middle" 
+                        align="right"
+                        wrapperStyle={{ fontSize: "12px" }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="w-full md:w-1/2">
+                <h3 className="text-sm font-medium mb-2">Risk Sources</h3>
+                <div className="h-40">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={sourceData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={30}
+                        outerRadius={60}
+                        dataKey="value"
+                      >
+                        {sourceData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`}
+                            // @ts-ignore
+                            fill={SOURCE_COLORS[entry.name] || "#6b7280"}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value, name) => {
+                        const prettyName = name.replace(/-/g, ' ');
+                        return [`${value} risks`, prettyName];
+                      }} />
+                      <Legend 
+                        layout="vertical" 
+                        verticalAlign="middle" 
+                        align="right"
+                        wrapperStyle={{ fontSize: "12px" }}
+                        formatter={(value) => value.replace(/-/g, ' ')}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -311,6 +432,7 @@ export function RiskDashboard() {
                   <SelectItem value="probability">Probability</SelectItem>
                   <SelectItem value="impact">Impact</SelectItem>
                   <SelectItem value="date">Date Identified</SelectItem>
+                  <SelectItem value="aiConfidence">AI Confidence</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -321,6 +443,7 @@ export function RiskDashboard() {
                 <TabsTrigger value="all">All Risks</TabsTrigger>
                 <TabsTrigger value="high-priority">High Priority</TabsTrigger>
                 <TabsTrigger value="mitigating">Mitigating</TabsTrigger>
+                <TabsTrigger value="ai-predicted">AI Predicted</TabsTrigger>
               </TabsList>
             </Tabs>
           </CardDescription>
@@ -337,6 +460,15 @@ export function RiskDashboard() {
                           {risk.isHighPriority && (
                             <AlertTriangle className="h-4 w-4 text-red-500" />
                           )}
+                          {risk.source === "ai-prediction" && (
+                            <BarChart className="h-4 w-4 text-violet-500" />
+                          )}
+                          {risk.source === "driver-data" && (
+                            <Car className="h-4 w-4 text-cyan-500" />
+                          )}
+                          {risk.source === "jsa-analysis" && (
+                            <Users className="h-4 w-4 text-amber-500" />
+                          )}
                           <h3 className="font-medium">{risk.title}</h3>
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-2">
@@ -352,6 +484,12 @@ export function RiskDashboard() {
                         <Badge className={getCategoryColor(risk.category)}>
                           {risk.category}
                         </Badge>
+                        <Badge className={getSourceColor(risk.source)}>
+                          {risk.source.replace(/-/g, ' ')}
+                          {risk.aiConfidence && (
+                            <span className="ml-1">({risk.aiConfidence}%)</span>
+                          )}
+                        </Badge>
                         <div className="flex gap-1.5">
                           <Badge className={getProbabilityColor(risk.probability)}>
                             P: {risk.probability}
@@ -366,6 +504,30 @@ export function RiskDashboard() {
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Show related data sections if available */}
+                    {(risk.relatedDriverData?.length || risk.relatedJsaData?.length) && (
+                      <div className="mt-3 pt-1 border-t border-border">
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          {risk.relatedDriverData && risk.relatedDriverData.length > 0 && (
+                            <div className="flex items-center">
+                              <Car className="h-3 w-3 mr-1 text-cyan-600" />
+                              <span className="text-muted-foreground">
+                                {risk.relatedDriverData.length} related driver records
+                              </span>
+                            </div>
+                          )}
+                          {risk.relatedJsaData && risk.relatedJsaData.length > 0 && (
+                            <div className="flex items-center">
+                              <ClipboardList className="h-3 w-3 mr-1 text-amber-600" />
+                              <span className="text-muted-foreground">
+                                {risk.relatedJsaData.length} related JSA records
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                     
                     <div className="mt-3 pt-3 border-t border-border flex flex-wrap justify-between gap-2">
                       <div className="flex items-center">
@@ -416,6 +578,9 @@ const CustomTooltip = ({ active, payload }: any) => {
         </p>
         <p className="text-sm capitalize">
           <span className="font-medium">Category:</span> {data.category}
+        </p>
+        <p className="text-sm capitalize">
+          <span className="font-medium">Source:</span> {data.source.replace(/-/g, ' ')}
         </p>
       </div>
     );

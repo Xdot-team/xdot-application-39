@@ -14,7 +14,23 @@ import { RiskMitigation } from "@/components/safety/RiskMitigation";
 import { MobileRiskViewer } from "@/components/safety/MobileRiskViewer";
 import { JobSafetyAnalysis } from "@/components/safety/JobSafetyAnalysis";
 import { ToolboxMeetings } from "@/components/safety/ToolboxMeetings";
-import { AlertTriangle, Clipboard, FileCheck, ShieldCheck, Award, ShieldAlert, Sparkles, Bell, ClipboardList, Users } from "lucide-react";
+import { DriverTrends } from "@/components/safety/DriverTrends";
+import { MobileDriverView } from "@/components/safety/MobileDriverView";
+import { 
+  AlertTriangle, 
+  Clipboard, 
+  FileCheck, 
+  ShieldCheck, 
+  Award, 
+  ShieldAlert, 
+  Sparkles, 
+  Bell, 
+  ClipboardList, 
+  Users,
+  Car,
+  BarChart,
+  Smartphone
+} from "lucide-react";
 
 export default function Safety() {
   const [activeTab, setActiveTab] = useState("incidents");
@@ -55,6 +71,10 @@ export default function Safety() {
               <Users className="h-4 w-4" />
               <span>{isMobile ? "Meetings" : "Toolbox Meetings"}</span>
             </TabsTrigger>
+            <TabsTrigger value="drivers" className="flex items-center gap-1">
+              <Car className="h-4 w-4" />
+              <span>{isMobile ? "Drivers" : "Driver Trends"}</span>
+            </TabsTrigger>
             <TabsTrigger value="hazards" className="flex items-center gap-1">
               <Clipboard className="h-4 w-4" />
               <span>{isMobile ? "Hazards" : "Hazard Reporting"}</span>
@@ -71,9 +91,13 @@ export default function Safety() {
               <Award className="h-4 w-4" />
               <span>{isMobile ? "Certs" : "Certifications"}</span>
             </TabsTrigger>
-            <TabsTrigger value="mobile" className="flex items-center gap-1">
+            <TabsTrigger value="mobile-risk" className="flex items-center gap-1">
               <Bell className="h-4 w-4" />
-              <span>{isMobile ? "Mobile" : "Mobile View"}</span>
+              <span>{isMobile ? "Mobile Risk" : "Mobile Risk View"}</span>
+            </TabsTrigger>
+            <TabsTrigger value="mobile-driver" className="flex items-center gap-1">
+              <Smartphone className="h-4 w-4" />
+              <span>{isMobile ? "Mobile Driver" : "Mobile Driver View"}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -117,6 +141,14 @@ export default function Safety() {
             </Card>
           </TabsContent>
           
+          <TabsContent value="drivers" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <DriverTrends />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
           <TabsContent value="hazards" className="space-y-4">
             <Card>
               <CardContent className="p-0">
@@ -149,7 +181,7 @@ export default function Safety() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="mobile" className="space-y-4">
+          <TabsContent value="mobile-risk" className="space-y-4">
             <Card>
               <CardContent className="p-0">
                 <div className="max-w-md mx-auto">
@@ -159,6 +191,23 @@ export default function Safety() {
                     </div>
                     <div className="bg-background h-[600px] overflow-y-auto">
                       <MobileRiskViewer />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="mobile-driver" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <div className="max-w-md mx-auto">
+                  <div className="border-4 border-gray-300 rounded-3xl overflow-hidden">
+                    <div className="bg-gray-200 py-2 text-center text-sm font-medium border-b border-gray-300">
+                      Mobile Driver Trends Viewer
+                    </div>
+                    <div className="bg-background h-[600px] overflow-y-auto">
+                      <MobileDriverView />
                     </div>
                   </div>
                 </div>
