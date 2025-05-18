@@ -1,3 +1,4 @@
+
 export interface ProjectWIP {
   id: string;
   projectId: string;
@@ -10,6 +11,11 @@ export interface ProjectWIP {
   billingStatus: 'not_billed' | 'partially_billed' | 'fully_billed' | 'over_billed';
   lastUpdated: string;
   notes?: string;
+  periodEndDate?: string;
+  contractValue?: number;
+  billedToDate?: number;
+  remainingToBill?: number;
+  updatedBy?: string;
 }
 
 export interface FinancialSummary {
@@ -55,6 +61,50 @@ export interface InvoiceLineItem {
   taxAmount?: number;
 }
 
+export interface ClientInvoice extends Invoice {}
+
+export interface VendorInvoice {
+  id: string;
+  invoiceNumber: string;
+  vendorId: string;
+  vendorName: string;
+  projectId?: string;
+  projectName?: string;
+  issueDate: string;
+  dueDate: string;
+  amount: number;
+  status: 'pending' | 'approved' | 'paid' | 'rejected';
+  approvalDate?: string;
+  paymentDate?: string;
+  notes?: string;
+  poNumber?: string;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  poNumber: string;
+  vendorId: string;
+  vendorName: string;
+  projectId?: string;
+  projectName?: string;
+  issueDate: string;
+  expectedDeliveryDate?: string;
+  totalAmount: number;
+  status: 'draft' | 'issued' | 'received' | 'cancelled';
+  notes?: string;
+  items: PurchaseOrderItem[];
+}
+
+export interface PurchaseOrderItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+  deliveryStatus: 'pending' | 'partial' | 'complete';
+  receivedQuantity: number;
+}
+
 export interface Expense {
   id: string;
   projectId?: string;
@@ -90,9 +140,10 @@ export interface Budget {
 export interface BudgetCategory {
   id: string;
   name: string;
-  budgetedAmount: number;
-  actualAmount: number;
-  variance: number;
+  budgeted: number;
+  spent: number;
+  remaining: number;
+  type: 'income' | 'expense';
   subcategories?: BudgetSubcategory[];
 }
 
@@ -130,6 +181,20 @@ export interface PayrollEntry {
   status: 'pending' | 'processed' | 'paid';
 }
 
+export interface Payroll {
+  id: string;
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+  status: 'draft' | 'processing' | 'completed' | 'cancelled';
+  totalGrossPay: number;
+  totalDeductions: number;
+  totalNetPay: number;
+  totalTaxes: number;
+  employeeCount: number;
+  entries: PayrollEntry[];
+}
+
 export interface TaxFiling {
   id: string;
   taxType: string;
@@ -141,12 +206,48 @@ export interface TaxFiling {
   notes?: string;
 }
 
+export interface TaxForm {
+  id: string;
+  formNumber: string;
+  formName: string;
+  taxYear: string;
+  dueDate: string;
+  status: 'not_started' | 'in_progress' | 'ready_for_review' | 'filed';
+  assignedTo?: string;
+  notes?: string;
+  attachmentUrl?: string;
+}
+
 export interface FinancialReport {
   id: string;
   name: string;
-  type: 'income_statement' | 'balance_sheet' | 'cash_flow' | 'wip' | 'custom';
+  type: 'income_statement' | 'balance_sheet' | 'cash_flow' | 'wip' | 'custom' | 'profit_loss' | 'ar_aging' | 'ap_aging' | 'job_cost' | 'tax';
   period: string;
   generatedDate: string;
+  dateGenerated: string;
+  dateRange?: {
+    startDate: string;
+    endDate: string;
+  };
   data: any; // This would be structured based on report type
   notes?: string;
+  createdBy?: string;
+  format?: 'pdf' | 'xlsx' | 'csv';
+}
+
+export interface Transaction {
+  id: string;
+  date: string;
+  type: 'income' | 'expense' | 'transfer';
+  category: string;
+  amount: number;
+  description: string;
+  accountId: string;
+  accountName: string;
+  projectId?: string;
+  projectName?: string;
+  reference?: string;
+  status: 'pending' | 'cleared' | 'reconciled' | 'void';
+  createdBy: string;
+  createdAt: string;
 }
