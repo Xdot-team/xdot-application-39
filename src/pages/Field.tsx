@@ -9,11 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap } from 'lucide-react';
+import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap, Users } from 'lucide-react';
 import { PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
 import { FieldMap } from '@/components/field/FieldMap';
 import { DispatchManager } from '@/components/field/DispatchManager';
 import { SiteWalkthrough } from '@/components/field/SiteWalkthrough';
+import { SubcontractorManagement } from '@/components/field/SubcontractorManagement';
 
 // Mock data 
 const mockPunchlistItems: PunchlistItem[] = [
@@ -433,11 +434,12 @@ const Field = () => {
       
       {/* Tabs for different tools */}
       <Tabs defaultValue="site-walkthrough" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="site-walkthrough">Site Walkthrough</TabsTrigger>
           <TabsTrigger value="punchlist">Punchlist</TabsTrigger>
           <TabsTrigger value="work-orders">Work Orders</TabsTrigger>
           <TabsTrigger value="utility-adjustments">Utility Adjustments</TabsTrigger>
+          <TabsTrigger value="subcontractors">Subcontractors</TabsTrigger>
           <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
         </TabsList>
         
@@ -657,6 +659,21 @@ const Field = () => {
                 Construct for Centuries
               </p>
             </CardFooter>
+          </Card>
+        </TabsContent>
+
+        {/* Subcontractors Tab */}
+        <TabsContent value="subcontractors">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Subcontractors</CardTitle>
+                <CardDescription>Manage subcontractors and their contracts</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <SubcontractorManagement />
+            </CardContent>
           </Card>
         </TabsContent>
 

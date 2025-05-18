@@ -6,10 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EmployeeDashboard } from "@/components/workforce/EmployeeDashboard";
 import { TimeCardManagement } from "@/components/workforce/TimeCardManagement";
-import { SubcontractorManagement } from "@/components/workforce/SubcontractorManagement";
 import { OnboardingWorkflow } from "@/components/workforce/OnboardingWorkflow";
 import { AppreciationHub } from "@/components/workforce/AppreciationHub";
-import { UserRound, Clock, Award, FileCheck, Users } from "lucide-react";
+import { UserRound, Clock, Award, FileCheck } from "lucide-react";
 
 export default function Workforce() {
   const [activeTab, setActiveTab] = useState("employees");
@@ -19,7 +18,7 @@ export default function Workforce() {
     <div className="space-y-6">
       <PageHeader
         heading="Workforce Management"
-        subheading="Manage employees, time cards, onboarding, and subcontractors"
+        subheading="Manage employees, time cards, onboarding, and recognition"
       />
       
       <div className="relative">
@@ -45,10 +44,6 @@ export default function Workforce() {
             <TabsTrigger value="appreciation" className="flex items-center gap-1">
               <Award className="h-4 w-4" />
               <span>{isMobile ? "Kudos" : "Appreciation"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="subcontractors" className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              <span>{isMobile ? "Subs" : "Subcontractors"}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -80,14 +75,6 @@ export default function Workforce() {
             <Card>
               <CardContent className="p-0">
                 <AppreciationHub />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="subcontractors" className="space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                <SubcontractorManagement />
               </CardContent>
             </Card>
           </TabsContent>
