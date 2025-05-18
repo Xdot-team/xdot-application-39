@@ -8,7 +8,7 @@ import { ProjectList } from '@/components/projects/ProjectList';
 import ProjectHeader from '@/components/projects/ProjectHeader';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, BarChart2, FileText, Users, MessageCircle, Clock, DollarSign, TrendingUp } from "lucide-react";
+import { CalendarDays, BarChart2, FileText, Users, MessageCircle, Clock, DollarSign, TrendingUp, Bell } from "lucide-react";
 import { generateMockProjects } from '@/data/mockProjects';
 import { formatCurrency } from '@/lib/formatters';
 
@@ -79,7 +79,35 @@ const Projects = () => {
           </CardContent>
         </Card>
         
-        {/* New card for Cost Performance */}
+        {/* New card for notifications */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Notifications</CardTitle>
+            <Bell className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-amber-600">12</div>
+            <p className="text-xs text-muted-foreground">
+              4 require attention
+            </p>
+          </CardContent>
+        </Card>
+        
+        {/* New card for upcoming meetings */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Utility Meetings</CardTitle>
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">5</div>
+            <p className="text-xs text-muted-foreground">
+              2 scheduled this week
+            </p>
+          </CardContent>
+        </Card>
+        
+        {/* Cost Performance card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Cost Performance</CardTitle>
@@ -93,7 +121,7 @@ const Projects = () => {
           </CardContent>
         </Card>
         
-        {/* New card for Cost Forecasts */}
+        {/* Cost Forecasts card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Forecasted Value</CardTitle>
@@ -265,7 +293,7 @@ const Projects = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Recent Updates Section - let's add cost-related updates */}
+      {/* Recent Updates Section - add meetings and notifications updates */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Updates</CardTitle>
@@ -273,7 +301,31 @@ const Projects = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* New cost-related update */}
+            {/* New utility meeting update */}
+            <div className="flex items-start gap-4">
+              <div className="mt-1 rounded-full bg-purple-100 p-2">
+                <CalendarDays className="h-4 w-4 text-purple-600" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium leading-none">Utility Meeting Scheduled for I-85 North Expansion</p>
+                <p className="text-sm text-muted-foreground">Georgia Power coordination meeting on May 30</p>
+                <p className="text-xs text-muted-foreground">Today by Maria Rodriguez</p>
+              </div>
+            </div>
+            
+            {/* New notification update */}
+            <div className="flex items-start gap-4">
+              <div className="mt-1 rounded-full bg-red-100 p-2">
+                <Bell className="h-4 w-4 text-red-600" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium leading-none">Urgent RFI Response Required for I-85 North Expansion</p>
+                <p className="text-sm text-muted-foreground">Response needed for foundation specifications</p>
+                <p className="text-xs text-muted-foreground">2 hours ago by System</p>
+              </div>
+            </div>
+            
+            {/* Cost forecast update */}
             <div className="flex items-start gap-4">
               <div className="mt-1 rounded-full bg-green-100 p-2">
                 <DollarSign className="h-4 w-4 text-green-600" />

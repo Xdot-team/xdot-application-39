@@ -210,3 +210,59 @@ export interface CostToCompletion {
   lastUpdated: string;
   updatedBy: string;
 }
+
+// New type definitions for Utility Meetings
+export interface UtilityMeeting {
+  id: string;
+  projectId: string;
+  title: string;
+  utilityType: 'water' | 'gas' | 'electric' | 'telecom' | 'sewer' | 'other';
+  date: string;
+  time: string;
+  location: string;
+  agenda: string;
+  minutes?: string;
+  attendees: MeetingAttendee[];
+  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  documents?: string[];
+  followUpActions?: FollowUpAction[];
+}
+
+export interface MeetingAttendee {
+  id: string;
+  name: string;
+  company: string;
+  email: string;
+  phone?: string;
+  role: string;
+  attendance?: 'confirmed' | 'tentative' | 'declined' | 'attended' | 'no-show';
+}
+
+export interface FollowUpAction {
+  id: string;
+  description: string;
+  assignedTo: string;
+  dueDate: string;
+  status: 'pending' | 'in-progress' | 'completed';
+}
+
+// New type definitions for Notifications
+export interface Notification {
+  id: string;
+  projectId: string;
+  title: string;
+  message: string;
+  type: 'rfi' | 'submittal' | 'changeOrder' | 'meeting' | 'deadline' | 'update' | 'other';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'unread' | 'read' | 'archived';
+  createdAt: string;
+  expiresAt?: string;
+  relatedItemId?: string;
+  relatedItemType?: string;
+  relatedItemUrl?: string;
+  actionRequired?: boolean;
+  dueDate?: string;
+}

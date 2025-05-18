@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, CalendarDays, Users, MapPin, DollarSign } from "lucide-react";
+import { ChevronLeft, CalendarDays, Users, MapPin, DollarSign, Bell } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
 import AIABillingTab from './aia-billing/AIABillingTab';
 import ChangeOrdersTab from './change-orders/ChangeOrdersTab';
@@ -12,6 +12,8 @@ import ProjectNotesTab from './notes/ProjectNotesTab';
 import ScopeWipTab from './scope-wip/ScopeWipTab';
 import ProgressScheduleTab from './progress-schedule/ProgressScheduleTab';
 import CostCompletionTab from './cost-completion/CostCompletionTab';
+import UtilityMeetingsTab from './utility-meetings/UtilityMeetingsTab';
+import NotificationsTab from './notifications/NotificationsTab';
 import { Project } from '@/types/projects';
 import { generateMockProjects } from '@/data/mockProjects';
 import { formatCurrency } from '@/lib/formatters';
@@ -48,6 +50,8 @@ const ProjectDetails = () => {
     );
   }
 
+  const notificationCount = 4; // Mock value for unread notification count
+
   return (
     <div className="space-y-6">
       {/* Header with back button */}
@@ -76,6 +80,21 @@ const ProjectDetails = () => {
             </p>
           </div>
         </div>
+        
+        {/* Add notification indicator button */}
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="relative"
+          onClick={() => setActiveTab('notifications')}
+        >
+          <Bell className="h-4 w-4 mr-1" /> Notifications
+          {notificationCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {notificationCount}
+            </span>
+          )}
+        </Button>
       </div>
       
       {/* Project summary card */}
@@ -149,6 +168,15 @@ const ProjectDetails = () => {
           <TabsTrigger value="scopeWip">Scope WIP</TabsTrigger>
           <TabsTrigger value="progressSchedule">Progress Schedule</TabsTrigger>
           <TabsTrigger value="costCompletion">Cost to Completion</TabsTrigger>
+          <TabsTrigger value="utilityMeetings">Utility Meetings</TabsTrigger>
+          <TabsTrigger value="notifications">
+            Notifications
+            {notificationCount > 0 && (
+              <span className="ml-1.5 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {notificationCount}
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="aiaBilling">AIA Billing</TabsTrigger>
           <TabsTrigger value="changeOrders">Change Orders</TabsTrigger>
           <TabsTrigger value="submittals">Submittals</TabsTrigger>
@@ -235,6 +263,14 @@ const ProjectDetails = () => {
           
           <TabsContent value="costCompletion">
             <CostCompletionTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="utilityMeetings">
+            <UtilityMeetingsTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="notifications">
+            <NotificationsTab projectId={project.id} />
           </TabsContent>
           
           <TabsContent value="aiaBilling">
