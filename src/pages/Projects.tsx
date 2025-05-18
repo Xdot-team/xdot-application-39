@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -148,7 +149,7 @@ const Projects = () => {
         </Card>
       </div>
 
-      {/* NEW: Project Dashboard Section - Using ProjectsTab instead of card grid */}
+      {/* Project Dashboard Section - Using ProjectsTab that now has the same tab system as ProjectDetails.tsx */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold tracking-tight">Project Dashboard</h2>
@@ -157,7 +158,7 @@ const Projects = () => {
           </Button>
         </div>
 
-        {/* Using the ProjectsTab component that has the tab system */}
+        {/* Using the updated ProjectsTab component that has the exact same tab system as ProjectDetails.tsx */}
         <ProjectsTab />
       </div>
 
