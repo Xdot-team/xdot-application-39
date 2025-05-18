@@ -166,18 +166,21 @@ const Projects = () => {
           </Button>
         </div>
 
-        {/* Dashboard Grid Layout */}
+        {/* Dashboard Grid Layout - Updated styling to match the image */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {/* Overview */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Overview</CardTitle>
+                <CardTitle className="text-lg font-medium">Overview</CardTitle>
                 <BarChart2 className="h-5 w-5 text-blue-600" />
               </div>
-              <CardDescription>Project performance summary</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Project performance summary</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-2 p-4">
               <div className="flex justify-between items-center text-sm">
                 <span>Overall Progress:</span>
                 <span className="font-medium">67%</span>
@@ -197,15 +200,18 @@ const Projects = () => {
           </Card>
 
           {/* Notifications */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/notifications')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/notifications')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Notifications</CardTitle>
+                <CardTitle className="text-lg font-medium">Notifications</CardTitle>
                 <Bell className="h-5 w-5 text-amber-500" />
               </div>
-              <CardDescription>Alerts requiring attention</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Alerts requiring attention</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <p className="text-sm font-medium">RFI Response Required</p>
@@ -224,15 +230,18 @@ const Projects = () => {
           </Card>
 
           {/* Notes */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/notes')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/notes')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Notes</CardTitle>
+                <CardTitle className="text-lg font-medium">Notes</CardTitle>
                 <FileEdit className="h-5 w-5 text-blue-600" />
               </div>
-              <CardDescription>Project notes and comments</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Project notes and comments</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div>
                 <p className="text-sm font-medium">Site Meeting Follow-up</p>
                 <p className="text-xs text-muted-foreground line-clamp-2">
@@ -251,15 +260,18 @@ const Projects = () => {
           </Card>
 
           {/* Scope WIP */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/scope-wip')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/scope-wip')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Scope WIP</CardTitle>
+                <CardTitle className="text-lg font-medium">Scope WIP</CardTitle>
                 <ListChecks className="h-5 w-5 text-green-600" />
               </div>
-              <CardDescription>Work in progress items</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Work in progress items</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div>
                 <div className="flex justify-between">
                   <p className="text-sm font-medium">Foundation Work</p>
@@ -285,15 +297,18 @@ const Projects = () => {
           </Card>
 
           {/* Progress Schedule */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/progress-schedule')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/progress-schedule')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Progress Schedule</CardTitle>
+                <CardTitle className="text-lg font-medium">Progress Schedule</CardTitle>
                 <Clock className="h-5 w-5 text-blue-600" />
               </div>
-              <CardDescription>Timeline and milestones</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Timeline and milestones</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3 p-4">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div>
@@ -321,15 +336,18 @@ const Projects = () => {
           </Card>
 
           {/* Cost to Completion */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/cost-completion')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/cost-completion')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Cost to Completion</CardTitle>
+                <CardTitle className="text-lg font-medium">Cost to Completion</CardTitle>
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
-              <CardDescription>Financial forecasting</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Financial forecasting</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <p className="text-xs text-muted-foreground">Budget</p>
@@ -352,15 +370,18 @@ const Projects = () => {
           </Card>
 
           {/* Utility Meetings */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/utility-meetings')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/utility-meetings')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Utility Meetings</CardTitle>
+                <CardTitle className="text-lg font-medium">Utility Meetings</CardTitle>
                 <CalendarDays className="h-5 w-5 text-purple-600" />
               </div>
-              <CardDescription>Coordination meetings</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Coordination meetings</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div>
                 <p className="text-sm font-medium">Georgia Power Coordination</p>
                 <div className="flex items-center gap-2 mt-1">
@@ -379,15 +400,18 @@ const Projects = () => {
           </Card>
 
           {/* AIA Billing */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/aia-billing')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/aia-billing')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">AIA Billing</CardTitle>
+                <CardTitle className="text-lg font-medium">AIA Billing</CardTitle>
                 <Receipt className="h-5 w-5 text-blue-600" />
               </div>
-              <CardDescription>Payment applications</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Payment applications</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm font-medium">Pay App #4</p>
@@ -406,15 +430,18 @@ const Projects = () => {
           </Card>
 
           {/* Change Orders */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/change-orders')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/change-orders')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Change Orders</CardTitle>
+                <CardTitle className="text-lg font-medium">Change Orders</CardTitle>
                 <FileMinus className="h-5 w-5 text-amber-600" />
               </div>
-              <CardDescription>Contract modifications</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Contract modifications</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm font-medium">CO #5 - Sound Barrier</p>
@@ -433,15 +460,18 @@ const Projects = () => {
           </Card>
 
           {/* Submittals */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/submittals')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/submittals')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Submittals</CardTitle>
+                <CardTitle className="text-lg font-medium">Submittals</CardTitle>
                 <FileSymlink className="h-5 w-5 text-blue-600" />
               </div>
-              <CardDescription>Material and shop drawings</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Material and shop drawings</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div className="flex justify-between items-center">
                 <p className="text-sm font-medium">Concrete Mix Design</p>
                 <Badge>In Review</Badge>
@@ -458,15 +488,18 @@ const Projects = () => {
           </Card>
 
           {/* RFIs */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/rfis')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/rfis')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">RFIs</CardTitle>
+                <CardTitle className="text-lg font-medium">RFIs</CardTitle>
                 <HelpCircle className="h-5 w-5 text-amber-600" />
               </div>
-              <CardDescription>Requests for information</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Requests for information</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm font-medium">RFI #23 - Drainage Design</p>
@@ -485,15 +518,18 @@ const Projects = () => {
           </Card>
 
           {/* Schedule */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/schedule')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/schedule')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Schedule</CardTitle>
+                <CardTitle className="text-lg font-medium">Schedule</CardTitle>
                 <Calendar className="h-5 w-5 text-blue-600" />
               </div>
-              <CardDescription>Project timeline</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Project timeline</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div>
                 <p className="text-sm font-medium">Foundation Phase</p>
                 <div className="flex items-center gap-2 mt-1">
@@ -519,15 +555,18 @@ const Projects = () => {
           </Card>
 
           {/* Documents */}
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/projects/details/documents')}>
-            <CardHeader className="pb-2">
+          <Card 
+            className="hover:bg-muted/50 transition-colors cursor-pointer border border-gray-200 shadow-sm bg-white overflow-hidden" 
+            onClick={() => navigate('/projects/details/documents')}
+          >
+            <CardHeader className="pb-2 bg-gray-50 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-md">Documents</CardTitle>
+                <CardTitle className="text-lg font-medium">Documents</CardTitle>
                 <Archive className="h-5 w-5 text-blue-600" />
               </div>
-              <CardDescription>Project files and records</CardDescription>
+              <CardDescription className="text-sm text-gray-600">Project files and records</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4">
               <div className="flex gap-2 items-center">
                 <FileText className="h-4 w-4 text-muted-foreground" />
                 <div>
@@ -795,4 +834,3 @@ const Projects = () => {
 };
 
 export default requireAuth(['admin', 'project_manager', 'accountant', 'field_worker'])(Projects);
-
