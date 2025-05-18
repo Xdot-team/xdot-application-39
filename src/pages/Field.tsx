@@ -10,9 +10,10 @@ import { toast } from "sonner";
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap } from 'lucide-react';
-import { SiteWalkthrough, PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
+import { PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
 import { FieldMap } from '@/components/field/FieldMap';
 import { DispatchManager } from '@/components/field/DispatchManager';
+import { SiteWalkthrough } from '@/components/field/SiteWalkthrough';
 
 // Mock data 
 const mockPunchlistItems: PunchlistItem[] = [
