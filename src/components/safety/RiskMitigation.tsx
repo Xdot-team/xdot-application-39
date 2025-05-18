@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ interface MitigationFormData {
 }
 
 export function RiskMitigation() {
-  const [risks] = useState<Risk[]>(mockRisks);
+  const [risks] = useState<Risk[]>(mockRisks as Risk[]);
   const [selectedRiskId, setSelectedRiskId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("create");
   const [actions, setActions] = useState<RiskAction[]>([]);

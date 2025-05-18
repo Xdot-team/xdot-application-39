@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Risk, RiskProbability, RiskImpact, RiskCategory, RiskSource } from "@/types/safety";
 import { ChartContainer, ChartLegendContent, ChartTooltipContent } from "@/components/ui/chart";
-import { AlertTriangle, Filter, ShieldAlert, SortAsc, FileText, CalendarClock, ListFilter, BarChart, Car, Users } from "lucide-react";
+import { AlertTriangle, Filter, ShieldAlert, SortAsc, FileText, CalendarClock, ListFilter, BarChart, Car, Users, ClipboardList } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockRisks } from "@/data/mockSafetyData";
@@ -24,8 +23,36 @@ import {
   Pie
 } from "recharts";
 
+// Add CustomTooltip component that was missing
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-background border border-border p-3 rounded-md shadow-md">
+        <p className="font-medium">{data.name}</p>
+        <p className="text-sm">
+          <span className="font-medium">Probability:</span> {["", "Low", "Medium", "High", "Very High"][data.x]}
+        </p>
+        <p className="text-sm">
+          <span className="font-medium">Impact:</span> {["", "Minimal", "Moderate", "Significant", "Severe"][data.y]}
+        </p>
+        <p className="text-sm">
+          <span className="font-medium">Risk Score:</span> {data.z}
+        </p>
+        <p className="text-sm capitalize">
+          <span className="font-medium">Category:</span> {data.category}
+        </p>
+        <p className="text-sm capitalize">
+          <span className="font-medium">Source:</span> {data.source.replace(/-/g, ' ')}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function RiskDashboard() {
-  const [risks, setRisks] = useState<Risk[]>(mockRisks);
+  const [risks, setRisks] = useState<Risk[]>(mockRisks as Risk[]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [sortBy, setSortBy] = useState<string>("riskScore");
@@ -164,6 +191,14 @@ export function RiskDashboard() {
     "compliance-issue": "#ef4444",
     "driver-data": "#06b6d4",
     "jsa-analysis": "#eab308" 
+  };
+
+  // Fix source label display by using optional chaining and ensure we don't call replace on numbers
+  const getSourceLabel = (name: string | number) => {
+    if (typeof name === 'string') {
+      return name.replace(/_/g, ' ');
+    }
+    return String(name);
   };
 
   return (
@@ -559,31 +594,3 @@ export function RiskDashboard() {
     </div>
   );
 }
-
-// Custom tooltip for risk heat map
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    return (
-      <div className="bg-background border border-border p-3 rounded-md shadow-md">
-        <p className="font-medium">{data.name}</p>
-        <p className="text-sm">
-          <span className="font-medium">Probability:</span> {["", "Low", "Medium", "High", "Very High"][data.x]}
-        </p>
-        <p className="text-sm">
-          <span className="font-medium">Impact:</span> {["", "Minimal", "Moderate", "Significant", "Severe"][data.y]}
-        </p>
-        <p className="text-sm">
-          <span className="font-medium">Risk Score:</span> {data.z}
-        </p>
-        <p className="text-sm capitalize">
-          <span className="font-medium">Category:</span> {data.category}
-        </p>
-        <p className="text-sm capitalize">
-          <span className="font-medium">Source:</span> {data.source.replace(/-/g, ' ')}
-        </p>
-      </div>
-    );
-  }
-  return null;
-};

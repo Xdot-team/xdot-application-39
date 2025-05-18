@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,15 +6,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ToolboxMeetingData } from "@/types/safety";
 import { Calendar, Clock, MapPin, User, Pencil, Plus, Users, FileCheck } from "lucide-react";
-import { mockToolboxMeetings, mockToolboxMeetingTemplates } from "@/data/mockSafetyData";
+import { mockToolboxMeetingData, mockToolboxMeetingTemplates } from "@/data/mockSafetyData";
 import { format, isAfter, isPast, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToolboxMeetingForm } from "./forms/ToolboxMeetingForm";
 
 export function ToolboxMeetings() {
+  const [meetings, setMeetings] = useState<ToolboxMeetingData[]>(mockToolboxMeetingData as ToolboxMeetingData[]);
+  
   const [activeTab, setActiveTab] = useState("upcoming");
-  const [meetings, setMeetings] = useState<ToolboxMeetingData[]>(mockToolboxMeetings);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedProject, setSelectedProject] = useState<string>("all");

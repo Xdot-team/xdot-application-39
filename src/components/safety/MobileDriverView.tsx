@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,8 +25,8 @@ import { mockDriverTrends, mockRisks } from "@/data/mockSafetyData";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 export function MobileDriverView() {
-  const [driverTrends] = useState<DriverTrendData[]>(mockDriverTrends);
-  const [risks] = useState<Risk[]>(mockRisks.filter(r => r.category === 'driver'));
+  const [driverTrends] = useState<DriverTrendData[]>(mockDriverTrends as DriverTrendData[]);
+  const [risks] = useState<Risk[]>(mockRisks.filter(r => r.category === 'driver') as Risk[]);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("trends");
   
