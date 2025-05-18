@@ -3,10 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface NotificationsTabProps {
+  projectId?: string;
   notificationCount?: number;
 }
 
-const NotificationsTab = ({ notificationCount = 4 }: NotificationsTabProps) => {
+const NotificationsTab = ({ projectId, notificationCount = 4 }: NotificationsTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

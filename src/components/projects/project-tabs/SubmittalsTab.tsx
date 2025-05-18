@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const SubmittalsTab = () => {
+interface SubmittalsTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const SubmittalsTab = ({ projectId }: SubmittalsTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

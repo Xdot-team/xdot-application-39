@@ -5,23 +5,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Tab contents
+// Import full-featured tab components instead of simplified versions
 import ProjectOverviewTab from "./project-tabs/ProjectOverviewTab";
-import ProjectNotesTab from "./project-tabs/ProjectNotesTab";
-import ScopeWipTab from "./project-tabs/ScopeWipTab";
-import ProgressScheduleTab from "./project-tabs/ProgressScheduleTab";
-import CostCompletionTab from "./project-tabs/CostCompletionTab";
-import UtilityMeetingsTab from "./project-tabs/UtilityMeetingsTab";
-import NotificationsTab from "./project-tabs/NotificationsTab";
-import AIABillingTab from "./project-tabs/AIABillingTab";
-import ChangeOrdersTab from "./project-tabs/ChangeOrdersTab";
+import ProjectNotesTab from "./notes/ProjectNotesTab";
+import ScopeWipTab from "./scope-wip/ScopeWipTab";
+import ProgressScheduleTab from "./progress-schedule/ProgressScheduleTab";
+import CostCompletionTab from "./cost-completion/CostCompletionTab";
+import UtilityMeetingsTab from "./utility-meetings/UtilityMeetingsTab";
+import NotificationsTab from "./notifications/NotificationsTab";
+import AIABillingTab from "./aia-billing/AIABillingTab";
+import ChangeOrdersTab from "./change-orders/ChangeOrdersTab";
 import SubmittalsTab from "./project-tabs/SubmittalsTab";
 import RFIsTab from "./project-tabs/RFIsTab";
 import ScheduleTab from "./project-tabs/ScheduleTab";
 import DocumentsTab from "./project-tabs/DocumentsTab";
 import RecentUpdatesTab from "./project-tabs/RecentUpdatesTab";
 
-const ProjectTabsContainer = () => {
+interface ProjectTabsContainerProps {
+  projectId: string;
+}
+
+const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
   const [activeProjectTab, setActiveProjectTab] = useState("overview");
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -30,8 +34,8 @@ const ProjectTabsContainer = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold tracking-tight">Project Dashboard</h2>
-        <Button variant="outline" onClick={() => navigate('/projects/details')}>
+        <h2 className="text-xl font-semibold tracking-tight">Project Dashboard</h2>
+        <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>
           View All Details
         </Button>
       </div>
@@ -72,35 +76,35 @@ const ProjectTabsContainer = () => {
           </TabsContent>
           
           <TabsContent value="notes">
-            <ProjectNotesTab />
+            <ProjectNotesTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="scopeWip">
-            <ScopeWipTab />
+            <ScopeWipTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="progressSchedule">
-            <ProgressScheduleTab />
+            <ProgressScheduleTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="costCompletion">
-            <CostCompletionTab />
+            <CostCompletionTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="utilityMeetings">
-            <UtilityMeetingsTab />
+            <UtilityMeetingsTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="notifications">
-            <NotificationsTab notificationCount={notificationCount} />
+            <NotificationsTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="aiaBilling">
-            <AIABillingTab />
+            <AIABillingTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="changeOrders">
-            <ChangeOrdersTab />
+            <ChangeOrdersTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="submittals">

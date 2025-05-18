@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const AIABillingTab = () => {
+interface AIABillingTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const AIABillingTab = ({ projectId }: AIABillingTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

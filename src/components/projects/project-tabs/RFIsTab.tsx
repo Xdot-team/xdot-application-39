@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const RFIsTab = () => {
+interface RFIsTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const RFIsTab = ({ projectId }: RFIsTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

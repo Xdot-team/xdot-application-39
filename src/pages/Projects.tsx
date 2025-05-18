@@ -16,6 +16,9 @@ const Projects = () => {
   const completedProjects = projects.filter(p => p.status === 'completed');
   const upcomingProjects = projects.filter(p => p.status === 'upcoming');
   
+  // Use the first project ID as a sample for the ProjectTabsContainer
+  const sampleProjectId = activeProjects.length > 0 ? activeProjects[0].id : 'sample-project-1';
+  
   return (
     <div className="space-y-6">
       <ProjectHeader />
@@ -26,15 +29,18 @@ const Projects = () => {
         completedProjects={completedProjects.length} 
       />
 
-      {/* Project Dashboard Section - Direct copy of the tab system from ProjectDetails.tsx */}
-      <ProjectTabsContainer />
-
       {/* Projects List Tabs */}
       <ProjectsGrid 
         activeProjects={activeProjects}
         completedProjects={completedProjects}
         upcomingProjects={upcomingProjects}
       />
+      
+      {/* Project Dashboard Section - Moved to bottom for more space */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold tracking-tight mb-6">Project Dashboard</h2>
+        <ProjectTabsContainer projectId={sampleProjectId} />
+      </div>
     </div>
   );
 };

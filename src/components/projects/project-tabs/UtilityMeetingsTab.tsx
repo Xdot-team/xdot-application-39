@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 
-const UtilityMeetingsTab = () => {
+interface UtilityMeetingsTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const UtilityMeetingsTab = ({ projectId }: UtilityMeetingsTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

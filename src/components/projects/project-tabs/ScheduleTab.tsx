@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock } from "lucide-react";
 
-const ScheduleTab = () => {
+interface ScheduleTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const ScheduleTab = ({ projectId }: ScheduleTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

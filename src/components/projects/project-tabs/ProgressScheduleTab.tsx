@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const ProgressScheduleTab = () => {
+interface ProgressScheduleTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const ProgressScheduleTab = ({ projectId }: ProgressScheduleTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

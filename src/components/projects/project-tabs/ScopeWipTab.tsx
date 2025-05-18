@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-const ScopeWipTab = () => {
+interface ScopeWipTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const ScopeWipTab = ({ projectId }: ScopeWipTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

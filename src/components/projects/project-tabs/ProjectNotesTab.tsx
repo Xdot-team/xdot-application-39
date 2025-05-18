@@ -1,7 +1,11 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 
-const ProjectNotesTab = () => {
+interface ProjectNotesTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const ProjectNotesTab = ({ projectId }: ProjectNotesTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">

@@ -2,7 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarDays, Bell, DollarSign, FileText, MessageCircle, Clock } from "lucide-react";
 
-const RecentUpdatesTab = () => {
+interface RecentUpdatesTabProps {
+  projectId?: string; // Made optional for backward compatibility
+}
+
+const RecentUpdatesTab = ({ projectId }: RecentUpdatesTabProps = {}) => {
   return (
     <Card>
       <CardContent className="p-6">
