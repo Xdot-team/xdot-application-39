@@ -1,11 +1,11 @@
-
 import { 
   ForumPost, 
   HeadOfficeTask, 
   FrontDeskLog, 
   EmployeeAppreciation, 
   Permission,
-  SystemSettings
+  SystemSettings,
+  KickoffMeeting
 } from '@/types/admin';
 import { User } from '@/types/auth';
 
@@ -548,5 +548,373 @@ export const mockSystemSettings: SystemSettings[] = [
     category: 'api',
     updatedAt: new Date(2023, 5, 20).toISOString(),
     updatedBy: 'Admin User'
+  }
+];
+
+// Mock Kickoff Meetings
+export const mockKickoffMeetings: KickoffMeeting[] = [
+  {
+    id: '1',
+    projectId: '1',
+    projectName: 'GA-400 Highway Expansion',
+    title: 'GA-400 Highway Expansion Kickoff',
+    date: new Date(2023, 5, 15).toISOString(),
+    time: '09:00',
+    location: 'Main Conference Room + Virtual',
+    status: 'completed',
+    agenda: [
+      {
+        id: '1',
+        topic: 'Project Overview',
+        description: 'Overview of the GA-400 Highway Expansion project scope',
+        duration: 30,
+        presenter: 'Sarah Supervisor',
+        order: 1
+      },
+      {
+        id: '2',
+        topic: 'Permits and Regulatory Requirements',
+        description: 'Discussion of required permits and regulatory compliance',
+        duration: 45,
+        presenter: 'Mike Money',
+        order: 2
+      },
+      {
+        id: '3',
+        topic: 'Site Preparation and Logistics',
+        description: 'Plans for site preparation and logistics coordination',
+        duration: 60,
+        presenter: 'John Contractor',
+        order: 3
+      }
+    ],
+    attendees: [
+      {
+        id: '1',
+        name: 'Sarah Supervisor',
+        company: 'xDOTContractor',
+        email: 'supervisor1@xdotcontractor.com',
+        phone: '678-890-1234',
+        role: 'Project Manager',
+        attendance: 'attended'
+      },
+      {
+        id: '2',
+        name: 'John Contractor',
+        company: 'xDOTContractor',
+        email: 'contractor1@xdotcontractor.com',
+        phone: '678-789-0123',
+        role: 'Senior Contractor',
+        attendance: 'attended'
+      },
+      {
+        id: '3',
+        name: 'Mike Money',
+        company: 'xDOTContractor',
+        email: 'finance1@xdotcontractor.com',
+        phone: '678-901-2345',
+        role: 'Financial Analyst',
+        attendance: 'attended'
+      },
+      {
+        id: '4',
+        name: 'Robert Chen',
+        company: 'Georgia DOT',
+        email: 'rchen@gadot.gov',
+        phone: '404-555-1234',
+        role: 'DOT Representative',
+        attendance: 'attended'
+      }
+    ],
+    minutes: 'Meeting was productive with all key stakeholders. We discussed project timelines, budget constraints, and regulatory requirements. The Georgia DOT team expressed concerns about traffic management during construction phases.',
+    actionItems: [
+      {
+        id: '1',
+        description: 'Submit final permit applications',
+        assignedTo: 'Sarah Supervisor',
+        dueDate: new Date(2023, 5, 30).toISOString(),
+        status: 'completed',
+        completedDate: new Date(2023, 5, 28).toISOString(),
+        priority: 'high'
+      },
+      {
+        id: '2',
+        description: 'Prepare traffic management plan',
+        assignedTo: 'John Contractor',
+        dueDate: new Date(2023, 6, 15).toISOString(),
+        status: 'completed',
+        completedDate: new Date(2023, 6, 14).toISOString(),
+        priority: 'high'
+      },
+      {
+        id: '3',
+        description: 'Finalize subcontractor agreements',
+        assignedTo: 'Mike Money',
+        dueDate: new Date(2023, 6, 10).toISOString(),
+        status: 'completed',
+        completedDate: new Date(2023, 6, 8).toISOString(),
+        priority: 'medium'
+      }
+    ],
+    documents: ['GA400_project_brief.pdf', 'GA400_permits_checklist.pdf', 'Traffic_management_template.docx'],
+    createdBy: '8', // Sarah Supervisor
+    createdAt: new Date(2023, 4, 20).toISOString(),
+    updatedAt: new Date(2023, 6, 16).toISOString()
+  },
+  {
+    id: '2',
+    projectId: '3',
+    projectName: 'Atlanta BeltLine Extension',
+    title: 'BeltLine Eastside Extension Kickoff',
+    date: new Date(2023, 7, 10).toISOString(),
+    time: '10:30',
+    location: 'Field Office + Virtual',
+    status: 'completed',
+    agenda: [
+      {
+        id: '1',
+        topic: 'Project Scope and Timeline',
+        description: 'Overview of the BeltLine extension scope and timeline',
+        duration: 45,
+        presenter: 'Sarah Supervisor',
+        order: 1
+      },
+      {
+        id: '2',
+        topic: 'Community Engagement Strategy',
+        description: 'Plans for community outreach and engagement',
+        duration: 30,
+        presenter: 'Hannah Health',
+        order: 2
+      },
+      {
+        id: '3',
+        topic: 'Environmental Considerations',
+        description: 'Environmental impact assessment and mitigation strategies',
+        duration: 45,
+        presenter: 'John Contractor',
+        order: 3
+      }
+    ],
+    attendees: [
+      {
+        id: '1',
+        name: 'Sarah Supervisor',
+        company: 'xDOTContractor',
+        email: 'supervisor1@xdotcontractor.com',
+        phone: '678-890-1234',
+        role: 'Project Manager',
+        attendance: 'attended'
+      },
+      {
+        id: '2',
+        name: 'John Contractor',
+        company: 'xDOTContractor',
+        email: 'contractor1@xdotcontractor.com',
+        phone: '678-789-0123',
+        role: 'Senior Contractor',
+        attendance: 'attended'
+      },
+      {
+        id: '3',
+        name: 'Hannah Health',
+        company: 'xDOTContractor',
+        email: 'safety1@xdotcontractor.com',
+        phone: '678-012-3456',
+        role: 'Safety Coordinator',
+        attendance: 'attended'
+      },
+      {
+        id: '4',
+        name: 'Maria Rodriguez',
+        company: 'Atlanta BeltLine Inc.',
+        email: 'mrodriguez@beltline.org',
+        phone: '404-555-5678',
+        role: 'BeltLine Representative',
+        attendance: 'attended'
+      },
+      {
+        id: '5',
+        name: 'James Wilson',
+        company: 'City of Atlanta',
+        email: 'jwilson@atlantaga.gov',
+        phone: '404-555-9012',
+        role: 'City Representative',
+        attendance: 'attended'
+      }
+    ],
+    minutes: 'Meeting focused on the unique challenges of the BeltLine extension, particularly regarding community impact and environmental concerns. City representatives emphasized the importance of maintaining pedestrian access during construction.',
+    actionItems: [
+      {
+        id: '1',
+        description: 'Develop community outreach materials',
+        assignedTo: 'Hannah Health',
+        dueDate: new Date(2023, 7, 25).toISOString(),
+        status: 'completed',
+        completedDate: new Date(2023, 7, 23).toISOString(),
+        priority: 'high'
+      },
+      {
+        id: '2',
+        description: 'Schedule environmental survey',
+        assignedTo: 'John Contractor',
+        dueDate: new Date(2023, 8, 5).toISOString(),
+        status: 'completed',
+        completedDate: new Date(2023, 8, 3).toISOString(),
+        priority: 'high'
+      },
+      {
+        id: '3',
+        description: 'Create pedestrian detour plans',
+        assignedTo: 'Sarah Supervisor',
+        dueDate: new Date(2023, 8, 10).toISOString(),
+        status: 'completed',
+        completedDate: new Date(2023, 8, 9).toISOString(),
+        priority: 'medium'
+      }
+    ],
+    documents: ['Beltline_extension_plans.pdf', 'Community_engagement_strategy.pptx', 'Environmental_checklist.pdf'],
+    createdBy: '8', // Sarah Supervisor
+    createdAt: new Date(2023, 6, 25).toISOString(),
+    updatedAt: new Date(2023, 8, 15).toISOString()
+  },
+  {
+    id: '3',
+    projectId: '5',
+    projectName: 'Savannah Port Access Road',
+    title: 'Savannah Port Access Project Kickoff',
+    date: new Date(2023, 10, 5).toISOString(),
+    time: '09:30',
+    location: 'Savannah Office + Virtual',
+    status: 'scheduled',
+    agenda: [
+      {
+        id: '1',
+        topic: 'Project Overview and Objectives',
+        description: 'Overview of the Savannah Port Access Road project',
+        duration: 30,
+        presenter: 'Sarah Supervisor',
+        order: 1
+      },
+      {
+        id: '2',
+        topic: 'Port Authority Requirements',
+        description: 'Special requirements from the Savannah Port Authority',
+        duration: 45,
+        presenter: 'Mike Money',
+        order: 2
+      },
+      {
+        id: '3',
+        topic: 'Construction Phasing',
+        description: 'Proposed construction phases to minimize port operations disruption',
+        duration: 60,
+        presenter: 'John Contractor',
+        order: 3
+      },
+      {
+        id: '4',
+        topic: 'Safety Protocols for Port Proximity',
+        description: 'Special safety considerations for working near an active port',
+        duration: 45,
+        presenter: 'Hannah Health',
+        order: 4
+      }
+    ],
+    attendees: [
+      {
+        id: '1',
+        name: 'Sarah Supervisor',
+        company: 'xDOTContractor',
+        email: 'supervisor1@xdotcontractor.com',
+        phone: '678-890-1234',
+        role: 'Project Manager',
+        attendance: 'confirmed'
+      },
+      {
+        id: '2',
+        name: 'John Contractor',
+        company: 'xDOTContractor',
+        email: 'contractor1@xdotcontractor.com',
+        phone: '678-789-0123',
+        role: 'Senior Contractor',
+        attendance: 'confirmed'
+      },
+      {
+        id: '3',
+        name: 'Mike Money',
+        company: 'xDOTContractor',
+        email: 'finance1@xdotcontractor.com',
+        phone: '678-901-2345',
+        role: 'Financial Analyst',
+        attendance: 'confirmed'
+      },
+      {
+        id: '4',
+        name: 'Hannah Health',
+        company: 'xDOTContractor',
+        email: 'safety1@xdotcontractor.com',
+        phone: '678-012-3456',
+        role: 'Safety Coordinator',
+        attendance: 'confirmed'
+      },
+      {
+        id: '5',
+        name: 'Thomas Lee',
+        company: 'Georgia Ports Authority',
+        email: 'tlee@gaports.com',
+        phone: '912-555-3456',
+        role: 'Port Operations Director',
+        attendance: 'tentative'
+      },
+      {
+        id: '6',
+        name: 'Lisa Johnson',
+        company: 'Georgia DOT',
+        email: 'ljohnson@gadot.gov',
+        phone: '912-555-7890',
+        role: 'DOT Coastal Region Representative',
+        attendance: 'confirmed'
+      }
+    ],
+    minutes: '',
+    actionItems: [
+      {
+        id: '1',
+        description: 'Obtain port security clearances for team members',
+        assignedTo: 'Sarah Supervisor',
+        dueDate: new Date(2023, 10, 25).toISOString(),
+        status: 'in_progress',
+        priority: 'high'
+      },
+      {
+        id: '2',
+        description: 'Finalize construction phasing plan',
+        assignedTo: 'John Contractor',
+        dueDate: new Date(2023, 11, 10).toISOString(),
+        status: 'pending',
+        priority: 'high'
+      },
+      {
+        id: '3',
+        description: 'Prepare port operations impact assessment',
+        assignedTo: 'Mike Money',
+        dueDate: new Date(2023, 11, 5).toISOString(),
+        status: 'pending',
+        priority: 'medium'
+      },
+      {
+        id: '4',
+        description: 'Develop special safety training for port environment',
+        assignedTo: 'Hannah Health',
+        dueDate: new Date(2023, 11, 15).toISOString(),
+        status: 'pending',
+        priority: 'high'
+      }
+    ],
+    documents: ['Savannah_port_access_plans.pdf', 'Port_authority_requirements.pdf', 'Construction_phasing_draft.xlsx'],
+    createdBy: '8', // Sarah Supervisor
+    createdAt: new Date(2023, 9, 15).toISOString(),
+    updatedAt: new Date(2023, 10, 1).toISOString()
   }
 ];

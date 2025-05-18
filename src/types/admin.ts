@@ -90,3 +90,54 @@ export interface SystemSettings {
   updatedAt: string;
   updatedBy: string;
 }
+
+// New type definitions for Kickoff/Pre-construction Meetings
+export interface KickoffMeeting {
+  id: string;
+  projectId: string;
+  projectName: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  status: 'scheduled' | 'completed' | 'cancelled' | 'postponed';
+  agenda: AgendaItem[];
+  attendees: MeetingAttendee[];
+  minutes?: string;
+  actionItems: ActionItem[];
+  documents?: string[];
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AgendaItem {
+  id: string;
+  topic: string;
+  description?: string;
+  duration?: number; // in minutes
+  presenter?: string;
+  order: number;
+}
+
+export interface ActionItem {
+  id: string;
+  description: string;
+  assignedTo: string;
+  dueDate: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'delayed';
+  comments?: string;
+  completedDate?: string;
+  priority: 'low' | 'medium' | 'high';
+}
+
+// Reusing MeetingAttendee from projects.ts UtilityMeeting
+export interface MeetingAttendee {
+  id: string;
+  name: string;
+  company: string;
+  email: string;
+  phone?: string;
+  role: string;
+  attendance?: 'confirmed' | 'tentative' | 'declined' | 'attended' | 'no-show';
+}
