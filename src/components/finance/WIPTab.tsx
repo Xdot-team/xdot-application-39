@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ProjectWIP } from "@/types/finance";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,9 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { FileText, Download, Filter } from "lucide-react";
+import { FileText, Download, Filter, BarChart3, Calculator, FileBarChart } from "lucide-react";
 import { SearchFilter } from "@/components/finance/SearchFilter";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from "recharts";
+import { Link } from "react-router-dom";
+import { WIPDetails } from "@/components/finance/WIPDetails";
 
 interface WIPTabProps {
   wipReports: ProjectWIP[];
@@ -22,6 +25,8 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
     key: string;
     direction: "asc" | "desc";
   }>({ key: "projectName", direction: "asc" });
+  const [selectedWIP, setSelectedWIP] = useState<ProjectWIP | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   // Filter reports based on search term
   const filteredReports = wipReports.filter(
@@ -59,6 +64,12 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
       direction:
         prevConfig.key === key && prevConfig.direction === "asc" ? "desc" : "asc",
     }));
+  };
+
+  // Handle report details
+  const handleViewDetails = (report: ProjectWIP) => {
+    setSelectedWIP(report);
+    setIsDetailsOpen(true);
   };
 
   // Status badge color mapping
@@ -151,7 +162,7 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
       header: "",
       cell: (report: ProjectWIP) => (
         <div className="flex justify-end">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleViewDetails(report)}>
             <span className="sr-only">View details</span>
             <FileText className="h-4 w-4" />
           </Button>
@@ -204,6 +215,28 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
         </div>
       </div>
 
+      {/* Links to related modules */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <Button variant="outline" size="sm" className="bg-slate-100" asChild>
+          <Link to="/projects">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Project Progress
+          </Link>
+        </Button>
+        <Button variant="outline" size="sm" className="bg-slate-100" asChild>
+          <Link to="/estimating">
+            <Calculator className="h-4 w-4 mr-2" />
+            Estimating
+          </Link>
+        </Button>
+        <Button variant="outline" size="sm" className="bg-slate-100" asChild>
+          <Link to="/reports">
+            <FileBarChart className="h-4 w-4 mr-2" />
+            Reports
+          </Link>
+        </Button>
+      </div>
+
       <TabsContent value="table" className="m-0">
         <SortableTable
           columns={columns}
@@ -217,12 +250,12 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
       <TabsContent value="cards" className="m-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {sortedReports.map((report) => (
-            <Card key={report.id}>
-              <CardHeader>
+            <Card key={report.id} className="bg-white border-slate-200">
+              <CardHeader className="bg-slate-50 pb-2">
                 <CardTitle>{report.projectName}</CardTitle>
                 <CardDescription>ID: {report.projectId}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Completion:</span>
@@ -246,8 +279,8 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
                     <Badge className={getBadgeColor(report.billingStatus)}>
                       {formatBillingStatus(report.billingStatus)}
                     </Badge>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <FileText className="h-4 w-4" />
+                    <Button variant="ghost" size="sm" className="h-8 p-0" onClick={() => handleViewDetails(report)}>
+                      View Details
                     </Button>
                   </div>
                 </div>
@@ -258,9 +291,9 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
       </TabsContent>
 
       <TabsContent value="chart" className="m-0">
-        <Card>
-          <CardHeader>
-            <CardTitle>WIP Financial Analysis</CardTitle>
+        <Card className="border-slate-200">
+          <CardHeader className="bg-slate-50">
+            <CardTitle className="text-slate-800">WIP Financial Analysis</CardTitle>
             <CardDescription>Revenue vs Cost by Project</CardDescription>
           </CardHeader>
           <CardContent>
@@ -294,9 +327,9 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
           </CardContent>
         </Card>
 
-        <Card className="mt-4">
-          <CardHeader>
-            <CardTitle>Completion Percentage</CardTitle>
+        <Card className="mt-4 border-slate-200">
+          <CardHeader className="bg-slate-50">
+            <CardTitle className="text-slate-800">Completion Percentage</CardTitle>
             <CardDescription>Project completion status</CardDescription>
           </CardHeader>
           <CardContent>
@@ -324,6 +357,14 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
           </CardContent>
         </Card>
       </TabsContent>
+
+      {/* WIP Details Dialog */}
+      <WIPDetails
+        wip={selectedWIP}
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        canEdit={canEdit}
+      />
     </div>
   );
 };
