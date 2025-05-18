@@ -404,6 +404,12 @@ export function RiskDashboard() {
                         verticalAlign="middle" 
                         align="right"
                         wrapperStyle={{ fontSize: "12px" }}
+                        formatter={(value) => {
+                          if (typeof value === 'string') {
+                            return value.replace(/-/g, ' ');
+                          }
+                          return String(value);
+                        }}
                       />
                     </PieChart>
                   </ResponsiveContainer>

@@ -137,9 +137,10 @@ export const mockRisks: Risk[] = [
     riskScore: 15,
     status: "identified",
     dateIdentified: "2023-01-10",
-    reportedBy: "John Doe",
+    identifiedBy: "John Doe",
     source: "manual-entry",
     isHighPriority: true,
+    lastUpdated: "2023-01-10"
   },
   {
     id: "2",
@@ -151,9 +152,10 @@ export const mockRisks: Risk[] = [
     riskScore: 10,
     status: "analyzing",
     dateIdentified: "2023-02-01",
-    reportedBy: "Jane Smith",
+    identifiedBy: "Jane Smith",
     source: "ai-prediction",
     isHighPriority: false,
+    lastUpdated: "2023-02-01"
   },
 ];
 
@@ -168,9 +170,10 @@ export const mockDriverRisks: Risk[] = [
     riskScore: 18,
     status: "identified",
     dateIdentified: "2023-01-20",
-    reportedBy: "John Doe",
+    identifiedBy: "John Doe",
     source: "driver-data",
     isHighPriority: true,
+    lastUpdated: "2023-01-20"
   },
 ];
 
