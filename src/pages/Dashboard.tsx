@@ -1,11 +1,31 @@
-
 import { useState } from "react";
 import { requireAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BellRing, CalendarDays, CheckCircle, ClipboardCheck, Clock, DollarSign, FileText, HardHat, Package, Settings, TrendingUp, Users } from "lucide-react";
+import { 
+  BellRing, 
+  CalendarDays, 
+  CheckCircle, 
+  ClipboardCheck, 
+  Clock, 
+  DollarSign, 
+  FileText, 
+  HardHat, 
+  Package, 
+  Settings, 
+  TrendingUp, 
+  Users,
+  FolderOpen,
+  BarChart,
+  MapPin,
+  UserRound,
+  Satellite,
+  LineChart,
+  ShieldAlert
+} from "lucide-react";
 import { SankeyFlowDiagram } from "@/components/dashboard/SankeyFlowDiagram";
+import { useNavigate } from "react-router-dom";
 
 // Mock data for the dashboard
 const projectStats = {
@@ -36,11 +56,17 @@ const upcomingTasks = [
 
 const Dashboard = () => {
   const [showNotification, setShowNotification] = useState(false);
+  const navigate = useNavigate();
 
   // Demo notification trigger
   const triggerNotification = () => {
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 5000);
+  };
+
+  // Module navigation handler
+  const handleModuleNavigation = (path: string) => {
+    navigate(path);
   };
 
   return (
@@ -134,46 +160,102 @@ const Dashboard = () => {
       {/* Module navigation */}
       <div>
         <h2 className="text-lg font-semibold mb-4">Module Navigation</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
+        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/projects')}
+          >
             <ClipboardCheck className="h-8 w-8 mb-2" />
             Projects
           </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
-            <Users className="h-8 w-8 mb-2" />
-            HR & Crew
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/documents')}
+          >
+            <FolderOpen className="h-8 w-8 mb-2" />
+            Documents
           </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/estimating')}
+          >
+            <BarChart className="h-8 w-8 mb-2" />
+            Estimating
+          </Button>
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/field')}
+          >
+            <MapPin className="h-8 w-8 mb-2" />
+            Field
+          </Button>
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/finance')}
+          >
             <DollarSign className="h-8 w-8 mb-2" />
             Finance
           </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/assets')}
+          >
             <Package className="h-8 w-8 mb-2" />
-            Inventory
+            Assets
           </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
-            <HardHat className="h-8 w-8 mb-2" />
-            Equipment
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/workforce')}
+          >
+            <UserRound className="h-8 w-8 mb-2" />
+            Workforce
           </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
-            <FileText className="h-8 w-8 mb-2" />
-            Documents
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/safety')}
+          >
+            <ShieldAlert className="h-8 w-8 mb-2" />
+            Safety
           </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
-            <CheckCircle className="h-8 w-8 mb-2" />
-            Quality
-          </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/schedule')}
+          >
             <CalendarDays className="h-8 w-8 mb-2" />
-            Scheduling
+            Schedule
           </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/survey')}
+          >
+            <Satellite className="h-8 w-8 mb-2" />
+            Survey
+          </Button>
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/organization')}
+          >
+            <LineChart className="h-8 w-8 mb-2" />
+            Organization
+          </Button>
+          <Button 
+            variant="outline" 
+            className="h-24 flex flex-col items-center justify-center"
+            onClick={() => handleModuleNavigation('/reports')}
+          >
             <TrendingUp className="h-8 w-8 mb-2" />
             Reports
-          </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center">
-            <Settings className="h-8 w-8 mb-2" />
-            Settings
           </Button>
         </div>
       </div>
