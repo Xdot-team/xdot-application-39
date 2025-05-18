@@ -26,7 +26,7 @@ import { ResponsiveContainer, BarChart as RechartBarChart, Bar, XAxis, YAxis, Ca
 
 export function MobileDriverView() {
   const [driverTrends] = useState<DriverTrendData[]>(mockDriverTrends);
-  const [risks] = useState<Risk[]>(mockRisks.filter(r => r.category === 'driver')};
+  const [risks] = useState<Risk[]>(mockRisks.filter(r => r.category === 'driver'));
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("trends");
   
