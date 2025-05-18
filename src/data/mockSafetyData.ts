@@ -9,7 +9,9 @@ import {
   TripData,
   DriverTrendData,
   ToolboxMeetingData,
-  ToolboxMeetingTemplate
+  ToolboxMeetingTemplate,
+  JobSafetyAnalysisData,
+  JSATemplate
 } from "@/types/safety";
 
 export const mockSafetyIncidents: SafetyIncident[] = [
@@ -298,4 +300,122 @@ export const mockToolboxMeetingTemplates: ToolboxMeetingTemplate[] = [
     createdDate: "2023-01-01",
     lastUpdated: "2023-01-01",
   },
+];
+
+export const mockJSAData: JobSafetyAnalysisData[] = [
+  {
+    id: "1",
+    title: "Site Excavation Safety Analysis",
+    projectId: "P001",
+    projectName: "Project Alpha",
+    location: "Main Construction Site",
+    taskDescription: "Excavation of foundation area using heavy equipment",
+    createdBy: "John Doe",
+    createdDate: "2023-02-10",
+    lastUpdated: "2023-02-10",
+    status: "approved",
+    supervisorName: "Jane Smith",
+    requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
+    items: [
+      {
+        id: "1",
+        taskStep: "Mark utilities before digging",
+        hazards: ["Striking underground utilities"],
+        controls: ["Call 811 for utility marking", "Review utility maps"],
+        responsiblePerson: "Site Supervisor"
+      },
+      {
+        id: "2",
+        taskStep: "Operate excavator",
+        hazards: ["Equipment rollover", "Striking workers"],
+        controls: ["Maintain 20ft clearance from workers", "Use spotter when needed"],
+        responsiblePerson: "Equipment Operator"
+      }
+    ]
+  },
+  {
+    id: "2",
+    title: "Concrete Pour Safety Analysis",
+    projectId: "P002",
+    projectName: "Project Beta",
+    location: "Foundation Area",
+    taskDescription: "Pouring concrete foundation",
+    createdBy: "Alice Johnson",
+    createdDate: "2023-03-05",
+    lastUpdated: "2023-03-05",
+    status: "in_progress",
+    supervisorName: "Robert Williams",
+    requiredPPE: ["Hard hat", "Safety glasses", "Gloves", "Rubber boots"],
+    items: [
+      {
+        id: "1",
+        taskStep: "Setup concrete pump",
+        hazards: ["Pinch points", "High pressure lines"],
+        controls: ["Inspect equipment before use", "Clear communication"],
+        responsiblePerson: "Concrete Foreman"
+      },
+      {
+        id: "2",
+        taskStep: "Pour concrete",
+        hazards: ["Chemical burns from concrete", "Manual handling"],
+        controls: ["Wear protective clothing", "Use proper lifting techniques"],
+        responsiblePerson: "Crew Lead"
+      }
+    ]
+  }
+];
+
+export const mockJSATemplates: JSATemplate[] = [
+  {
+    id: "1",
+    title: "Excavation Work Template",
+    category: "Earthwork",
+    taskDescription: "Template for excavation activities",
+    requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
+    items: [
+      {
+        id: "1",
+        taskStep: "Utility identification",
+        hazards: ["Striking underground utilities"],
+        controls: ["Call 811 before digging", "Review utility maps"],
+        responsiblePerson: "Site Supervisor"
+      },
+      {
+        id: "2",
+        taskStep: "Soil inspection",
+        hazards: ["Cave-ins", "Unstable ground"],
+        controls: ["Proper shoring", "Daily inspections"],
+        responsiblePerson: "Safety Officer"
+      }
+    ],
+    createdBy: "System Admin",
+    createdDate: "2023-01-05",
+    lastUpdated: "2023-01-05"
+  },
+  {
+    id: "2",
+    title: "Working at Heights Template",
+    category: "Fall Protection",
+    taskDescription: "Template for activities requiring work at elevation",
+    requiredPPE: ["Hard hat", "Safety harness", "Lanyard", "Safety glasses"],
+    items: [
+      {
+        id: "1",
+        taskStep: "Ladder setup",
+        hazards: ["Falls", "Ladder failure"],
+        controls: ["Inspect ladder", "3-point contact", "Secure ladder"],
+        responsiblePerson: "Worker"
+      },
+      {
+        id: "2",
+        taskStep: "Harness inspection",
+        hazards: ["Equipment failure", "Improper fit"],
+        controls: ["Pre-use inspection", "Proper adjustment"],
+        responsiblePerson: "Worker"
+      }
+    ],
+    createdBy: "System Admin",
+    createdDate: "2023-01-10",
+    lastUpdated: "2023-01-10"
+  }
 ];

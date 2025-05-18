@@ -196,7 +196,7 @@ export function RiskDashboard() {
   // Fix source label display by using optional chaining and ensure we don't call replace on numbers
   const getSourceLabel = (name: string | number) => {
     if (typeof name === 'string') {
-      return name.replace(/_/g, ' ');
+      return name.replace(/-/g, ' ');
     }
     return String(name);
   };
@@ -404,7 +404,7 @@ export function RiskDashboard() {
                         verticalAlign="middle" 
                         align="right"
                         wrapperStyle={{ fontSize: "12px" }}
-                        formatter={(value) => {
+                        formatter={(value: string | number) => {
                           if (typeof value === 'string') {
                             return value.replace(/-/g, ' ');
                           }
@@ -446,7 +446,12 @@ export function RiskDashboard() {
                         verticalAlign="middle" 
                         align="right"
                         wrapperStyle={{ fontSize: "12px" }}
-                        formatter={(value) => value.replace(/-/g, ' ')}
+                        formatter={(value: string | number) => {
+                          if (typeof value === 'string') {
+                            return value.replace(/-/g, ' ');
+                          }
+                          return String(value);
+                        }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
