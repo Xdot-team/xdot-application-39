@@ -9,11 +9,9 @@ import {
   LucideIcon,
   Home, 
   BarChart2, 
-  Users, 
   FileText, 
   Calendar, 
   Truck, 
-  HardHat, 
   Settings, 
   Menu, 
   X,
@@ -133,7 +131,7 @@ export function Sidebar() {
   const { authState } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
-  const [navItems, setNavItems] = useState<NavItem[]>([]);
+  const [navItems, setNavItems] = useState<NavItem[]>([...defaultNavItems]);
   const [isEditMode, setIsEditMode] = useState(false);
   
   // Load saved order from local storage on component mount
@@ -145,7 +143,6 @@ export function Sidebar() {
         // Ensure we have the same user
         if (parsedOrder.userId === authState.user.id) {
           // Apply saved order
-          const reorderedItems = [...defaultNavItems];
           const orderedIndexes = parsedOrder.order;
           
           // Only apply if the saved order length matches the default items
@@ -313,7 +310,7 @@ export function Sidebar() {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={cn(
-                              snapshot.isDragging && "opacity-70"
+                              snapshot.isDragging ? "opacity-70" : ""
                             )}
                           >
                             <Link
