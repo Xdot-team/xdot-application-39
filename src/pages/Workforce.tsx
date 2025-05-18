@@ -8,7 +8,8 @@ import { EmployeeDashboard } from "@/components/workforce/EmployeeDashboard";
 import { TimeCardManagement } from "@/components/workforce/TimeCardManagement";
 import { OnboardingWorkflow } from "@/components/workforce/OnboardingWorkflow";
 import { AppreciationHub } from "@/components/workforce/AppreciationHub";
-import { UserRound, Clock, Award, FileCheck } from "lucide-react";
+import { WorkforceDashboard } from "@/components/workforce/WorkforceDashboard";
+import { UserRound, Clock, Award, FileCheck, BarChart } from "lucide-react";
 
 export default function Workforce() {
   const [activeTab, setActiveTab] = useState("employees");
@@ -45,6 +46,10 @@ export default function Workforce() {
               <Award className="h-4 w-4" />
               <span>{isMobile ? "Kudos" : "Appreciation"}</span>
             </TabsTrigger>
+            <TabsTrigger value="dashboard" className="flex items-center gap-1">
+              <BarChart className="h-4 w-4" />
+              <span>{isMobile ? "Metrics" : "Workforce Dashboard"}</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="employees" className="space-y-4">
@@ -75,6 +80,14 @@ export default function Workforce() {
             <Card>
               <CardContent className="p-0">
                 <AppreciationHub />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="dashboard" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <WorkforceDashboard />
               </CardContent>
             </Card>
           </TabsContent>
