@@ -36,9 +36,8 @@ const Projects = () => {
         upcomingProjects={upcomingProjects}
       />
       
-      {/* Project Dashboard Section - Moved to bottom for more space */}
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold tracking-tight mb-6">Project Dashboard</h2>
+      {/* Project Dashboard Section - No heading */}
+      <div className="mt-6">
         <ProjectTabsContainer projectId={sampleProjectId} />
       </div>
     </div>

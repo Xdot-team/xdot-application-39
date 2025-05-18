@@ -34,7 +34,7 @@ const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold tracking-tight">Project Dashboard</h2>
+        <div className="flex-1"></div> {/* Empty div for spacing */}
         <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>
           View All Details
         </Button>

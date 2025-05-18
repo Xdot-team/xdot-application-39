@@ -22,12 +22,13 @@ const ProjectStatusOverview = ({
   completedProjects 
 }: ProjectStatusOverviewProps) => {
   return (
-    <div className="grid gap-4 md:grid-cols-4">
+    <div className="grid gap-2 grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
       <ProjectStatusCard
         title="Active Projects"
         value={activeProjects}
         subtitle="+2 from last month"
         icon={<BarChart2 className="h-4 w-4" />}
+        compact
       />
       
       <ProjectStatusCard
@@ -35,13 +36,15 @@ const ProjectStatusOverview = ({
         value={completedProjects}
         subtitle="Since January 2023"
         icon={<FileText className="h-4 w-4" />}
+        compact
       />
       
       <ProjectStatusCard
         title="Open RFIs"
         value={18}
-        subtitle="5 require urgent attention"
+        subtitle="5 require attention"
         icon={<MessageCircle className="h-4 w-4" />}
+        compact
       />
       
       <ProjectStatusCard
@@ -49,6 +52,7 @@ const ProjectStatusOverview = ({
         value={24}
         subtitle="7 awaiting approval"
         icon={<Clock className="h-4 w-4" />}
+        compact
       />
       
       <ProjectStatusCard
@@ -57,6 +61,7 @@ const ProjectStatusOverview = ({
         subtitle="4 require attention"
         icon={<Bell className="h-4 w-4" />}
         iconColorClass="text-amber-600"
+        compact
       />
       
       <ProjectStatusCard
@@ -64,6 +69,7 @@ const ProjectStatusOverview = ({
         value={5}
         subtitle="2 scheduled this week"
         icon={<CalendarDays className="h-4 w-4" />}
+        compact
       />
       
       <ProjectStatusCard
@@ -72,6 +78,7 @@ const ProjectStatusOverview = ({
         subtitle="Projects under budget"
         icon={<DollarSign className="h-4 w-4" />}
         iconColorClass="text-green-600"
+        compact
       />
       
       <ProjectStatusCard
@@ -79,6 +86,7 @@ const ProjectStatusOverview = ({
         value={formatCurrency(76500000)}
         subtitle="Total project value"
         icon={<TrendingUp className="h-4 w-4" />}
+        compact
       />
     </div>
   );

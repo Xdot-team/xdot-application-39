@@ -8,6 +8,7 @@ interface ProjectStatusCardProps {
   subtitle: string;
   icon: ReactNode;
   iconColorClass?: string;
+  compact?: boolean;
 }
 
 const ProjectStatusCard = ({
@@ -15,17 +16,18 @@ const ProjectStatusCard = ({
   value,
   subtitle,
   icon,
-  iconColorClass = 'text-muted-foreground'
+  iconColorClass = 'text-muted-foreground',
+  compact = false
 }: ProjectStatusCardProps) => {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      <CardHeader className={`flex flex-row items-center justify-between ${compact ? 'py-2 px-3' : 'pb-2'}`}>
+        <CardTitle className={`${compact ? 'text-xs' : 'text-sm'} font-medium`}>{title}</CardTitle>
         <div className={iconColorClass}>{icon}</div>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">
+      <CardContent className={compact ? 'py-2 px-3' : ''}>
+        <div className={`${compact ? 'text-lg' : 'text-2xl'} font-bold`}>{value}</div>
+        <p className={`${compact ? 'text-[10px]' : 'text-xs'} text-muted-foreground`}>
           {subtitle}
         </p>
       </CardContent>
