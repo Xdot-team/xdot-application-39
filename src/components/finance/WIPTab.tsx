@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ProjectWIP } from "@/types/finance";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -162,9 +161,10 @@ export const WIPTab = ({ wipReports, canEdit }: WIPTabProps) => {
     },
   ];
 
-  // Fixed the event handler to use the correct event type
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  // Correctly handle the search filter onChange event
+  // This function needs to provide a callback that accepts just the string value
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
   };
 
   return (
