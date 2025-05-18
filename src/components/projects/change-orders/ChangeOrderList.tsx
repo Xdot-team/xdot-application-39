@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExpandedChangeOrder } from '@/types/projects';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/lib/formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ClipboardCheck, ClipboardEdit, Eye, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -89,7 +89,7 @@ const ChangeOrderList = ({ projectId }: ChangeOrderListProps) => {
                 </Button>
               )}
               {canEdit && co.status === 'pending_approval' && (
-                <Button size="sm" variant="success">
+                <Button size="sm" variant="default" className="bg-green-600 hover:bg-green-700">
                   <ClipboardCheck className="h-4 w-4 mr-1" /> Approve
                 </Button>
               )}
@@ -135,7 +135,7 @@ const ChangeOrderList = ({ projectId }: ChangeOrderListProps) => {
                   </Button>
                 )}
                 {canEdit && co.status === 'pending_approval' && (
-                  <Button size="sm" variant="success">
+                  <Button size="sm" variant="default" className="bg-green-600 hover:bg-green-700">
                     <ClipboardCheck className="h-4 w-4 mr-1" /> Approve
                   </Button>
                 )}

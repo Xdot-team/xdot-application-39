@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +10,7 @@ import AIABillingTab from './aia-billing/AIABillingTab';
 import ChangeOrdersTab from './change-orders/ChangeOrdersTab';
 import { Project } from '@/types/projects';
 import { generateMockProjects } from '@/data/mockProjects';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/lib/formatters';
 
 const ProjectDetails = () => {
   const { projectId } = useParams<{ projectId: string }>();

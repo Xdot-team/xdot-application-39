@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AIABilling } from '@/types/projects';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/lib/formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { FilePenLine, FileCheck, Eye } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
