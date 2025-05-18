@@ -3,9 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Search, FolderOpen, FileText, Upload, Download, Clock, Star } from "lucide-react";
+import { Search, FolderOpen, FileText, Upload, Download, Clock, Star, Book } from "lucide-react";
+import { LibraryView } from "@/components/documents/LibraryView";
+import { useState } from "react";
 
 const Documents = () => {
+  const [activeTab, setActiveTab] = useState("all");
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -35,9 +39,13 @@ const Documents = () => {
       </div>
 
       {/* Main Content */}
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 md:w-[600px]">
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-6 md:w-[720px]">
           <TabsTrigger value="all">All Documents</TabsTrigger>
+          <TabsTrigger value="library" className="flex items-center gap-1">
+            <Book className="h-4 w-4" />
+            <span>Library</span>
+          </TabsTrigger>
           <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="drawings">Drawings</TabsTrigger>
           <TabsTrigger value="contracts">Contracts</TabsTrigger>
@@ -123,6 +131,10 @@ const Documents = () => {
               </div>
             </Card>
           </div>
+        </TabsContent>
+        
+        <TabsContent value="library" className="mt-6">
+          <LibraryView />
         </TabsContent>
         
         <TabsContent value="projects" className="mt-6">
