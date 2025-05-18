@@ -9,7 +9,7 @@ import { TimeCardManagement } from "@/components/workforce/TimeCardManagement";
 import { OnboardingWorkflow } from "@/components/workforce/OnboardingWorkflow";
 import { AppreciationHub } from "@/components/workforce/AppreciationHub";
 import { WorkforceDashboard } from "@/components/workforce/WorkforceDashboard";
-import { EmployeeHealth } from "@/components/workforce/EmployeeHealth";
+import EmployeeHealthManager from "@/components/workforce/EmployeeHealth";
 import { UserRound, Clock, Award, FileCheck, BarChart, Heart } from "lucide-react";
 
 export default function Workforce() {
@@ -92,7 +92,7 @@ export default function Workforce() {
           <TabsContent value="health" className="space-y-4">
             <Card>
               <CardContent className="p-0">
-                <EmployeeHealth />
+                <EmployeeHealthManager />
               </CardContent>
             </Card>
           </TabsContent>

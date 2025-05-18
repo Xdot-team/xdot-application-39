@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
@@ -20,7 +19,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, PlusCircle, Search, FileSymlink, CalendarCheck, AlertTriangle } from 'lucide-react';
 import { mockHealthRecords, mockEmployees } from '@/data/mockWorkforceData';
-import { EmployeeHealth, HealthStatus, HealthRecordType } from '@/types/workforce';
+import { EmployeeHealth as EmployeeHealthType, HealthStatus, HealthRecordType } from '@/types/workforce';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 // Health record form schema
@@ -34,8 +33,8 @@ const healthRecordSchema = z.object({
   confidential: z.boolean().default(true),
 });
 
-export const EmployeeHealth = () => {
-  const [healthRecords, setHealthRecords] = useState<EmployeeHealth[]>(mockHealthRecords);
+const EmployeeHealthManager = () => {
+  const [healthRecords, setHealthRecords] = useState<EmployeeHealthType[]>(mockHealthRecords);
   const [activeTab, setActiveTab] = useState("records");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,7 +78,7 @@ export const EmployeeHealth = () => {
     const employee = mockEmployees.find(emp => emp.id === data.employeeId);
     
     // Create a new health record
-    const newRecord: EmployeeHealth = {
+    const newRecord: EmployeeHealthType = {
       id: `health-${healthRecords.length + 1}`.padStart(9, '0'),
       employeeId: data.employeeId,
       employeeName: employee ? `${employee.firstName} ${employee.lastName}` : "Unknown Employee",
@@ -619,4 +618,4 @@ export const EmployeeHealth = () => {
   );
 };
 
-export default EmployeeHealth;
+export default EmployeeHealthManager;
