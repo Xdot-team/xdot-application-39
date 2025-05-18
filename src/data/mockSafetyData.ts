@@ -1261,7 +1261,7 @@ export default {
   mockSafetyIncidents,
   mockHazards,
   mockSafetyTrainings,
-  mockSafetyCompliance,
+  mockSafetyCompliances,
   mockRisks,
   mockJSATemplates,
   mockJSAData,
