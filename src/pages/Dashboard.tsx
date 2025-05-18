@@ -6,23 +6,18 @@ import { Button } from "@/components/ui/button";
 import { 
   BellRing, 
   CalendarDays, 
-  CheckCircle, 
   ClipboardCheck, 
   Clock, 
   DollarSign, 
-  FileText, 
-  HardHat, 
-  Package, 
-  Settings, 
-  TrendingUp, 
-  Users,
   FolderOpen,
   BarChart,
   MapPin,
   UserRound,
   Satellite,
   LineChart,
-  ShieldAlert
+  ShieldAlert,
+  TrendingUp, 
+  Package
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
