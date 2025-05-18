@@ -1,17 +1,25 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, CreditCard, DollarSign, FileText, Filter } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { FileText, BadgeDollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/lib/formatters";
+
+// Import mock data
 import { ClientInvoice, PurchaseOrder, VendorInvoice, Transaction, BudgetCategory } from "@/types/finance";
+
+// Import finance components
+import { FinancialOverview } from "@/components/finance/FinancialOverview";
+import { ClientInvoicesTab } from "@/components/finance/ClientInvoicesTab";
+import { VendorInvoicesTab } from "@/components/finance/VendorInvoicesTab";
+import { PurchaseOrdersTab } from "@/components/finance/PurchaseOrdersTab";
+import { TransactionsTab } from "@/components/finance/TransactionsTab";
+import { BudgetTab } from "@/components/finance/BudgetTab";
+import { PayrollTab } from "@/components/finance/PayrollTab";
+import { TaxFormsTab } from "@/components/finance/TaxFormsTab";
+import { ReportsTab } from "@/components/finance/ReportsTab";
+import { QuickBooksSync } from "@/components/finance/QuickBooksSync";
 
 // Mock data for client invoices
 const mockClientInvoices: ClientInvoice[] = [
@@ -452,21 +460,10 @@ const mockBudgetCategories: BudgetCategory[] = [
 ];
 
 const Finance = () => {
-  const [searchTerms, setSearchTerms] = useState<Record<string, string>>({
-    clientInvoices: "",
-    vendorInvoices: "",
-    purchaseOrders: "",
-    transactions: "",
-    budget: ""
-  });
-  
-  const [sortConfig, setSortConfig] = useState<{
-    tab: string;
-    key: string;
-    direction: 'asc' | 'desc';
-  } | null>(null);
-  
+  const [activeTab, setActiveTab] = useState("clientInvoices");
   const { authState } = useAuth();
+  
+  // Access control
   const isAccountant = authState.user?.role === 'accountant';
   const isManager = authState.user?.role === 'project_manager' || authState.user?.role === 'admin';
   const canEdit = isAccountant;
@@ -481,141 +478,7 @@ const Finance = () => {
     );
   }
   
-  // Handler for search functionality
-  const handleSearch = (tab: string, value: string) => {
-    setSearchTerms(prev => ({ ...prev, [tab]: value }));
-  };
-  
-  // Handler for sorting
-  const requestSort = (tab: string, key: string) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    
-    if (sortConfig && sortConfig.tab === tab && sortConfig.key === key) {
-      direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    }
-    
-    setSortConfig({ tab, key, direction });
-  };
-  
-  // Function to filter data based on search term
-  const filterData = <T extends Record<string, any>>(data: T[], tab: string, searchableFields: (keyof T)[]) => {
-    const term = searchTerms[tab].toLowerCase();
-    
-    if (!term) return data;
-    
-    return data.filter(item => 
-      searchableFields.some(field => 
-        String(item[field]).toLowerCase().includes(term)
-      )
-    );
-  };
-  
-  // Function to sort data
-  const sortData = <T extends Record<string, any>>(data: T[], tab: string, defaultKey: keyof T) => {
-    if (!sortConfig || sortConfig.tab !== tab) {
-      return [...data].sort((a, b) => String(a[defaultKey]).localeCompare(String(b[defaultKey])));
-    }
-    
-    return [...data].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
-      
-      if (aValue === bValue) return 0;
-      
-      const comparison = aValue > bValue ? 1 : -1;
-      return sortConfig.direction === 'asc' ? comparison : -comparison;
-    });
-  };
-  
-  // Client Invoices tab data processing
-  const filteredClientInvoices = filterData(
-    mockClientInvoices,
-    'clientInvoices',
-    ['clientName', 'projectName', 'invoiceNumber', 'amount', 'status']
-  );
-  
-  const sortedClientInvoices = sortData(filteredClientInvoices, 'clientInvoices', 'dueDate');
-  
-  // Vendor Invoices tab data processing
-  const filteredVendorInvoices = filterData(
-    mockVendorInvoices,
-    'vendorInvoices',
-    ['vendorName', 'invoiceNumber', 'amount', 'status']
-  );
-  
-  const sortedVendorInvoices = sortData(filteredVendorInvoices, 'vendorInvoices', 'dueDate');
-  
-  // Purchase Orders tab data processing
-  const filteredPurchaseOrders = filterData(
-    mockPurchaseOrders,
-    'purchaseOrders',
-    ['vendorName', 'poNumber', 'totalAmount', 'status']
-  );
-  
-  const sortedPurchaseOrders = sortData(filteredPurchaseOrders, 'purchaseOrders', 'issueDate');
-  
-  // Transactions tab data processing
-  const filteredTransactions = filterData(
-    mockTransactions,
-    'transactions',
-    ['description', 'categoryName', 'amount', 'type']
-  );
-  
-  const sortedTransactions = sortData(filteredTransactions, 'transactions', 'date');
-  
-  // Budget tab data processing
-  const filteredBudgetCategories = filterData(
-    mockBudgetCategories,
-    'budget',
-    ['name', 'type']
-  );
-  
-  const sortedBudgetCategories = sortData(filteredBudgetCategories, 'budget', 'name');
-  
-  // Get status color for client invoices
-  const getClientInvoiceStatusColor = (status: ClientInvoice['status']) => {
-    switch (status) {
-      case 'draft': return 'bg-gray-100 text-gray-800';
-      case 'sent': return 'bg-blue-100 text-blue-800';
-      case 'paid': return 'bg-green-100 text-green-800';
-      case 'overdue': return 'bg-red-100 text-red-800';
-      case 'cancelled': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-  
-  // Get status color for vendor invoices
-  const getVendorInvoiceStatusColor = (status: VendorInvoice['status']) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-blue-100 text-blue-800';
-      case 'paid': return 'bg-green-100 text-green-800';
-      case 'disputed': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-  
-  // Get status color for purchase orders
-  const getPurchaseOrderStatusColor = (status: PurchaseOrder['status']) => {
-    switch (status) {
-      case 'draft': return 'bg-gray-100 text-gray-800';
-      case 'issued': return 'bg-blue-100 text-blue-800';
-      case 'received': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  // Sort indicator component
-  const SortIndicator = ({ tab, column }: { tab: string; column: string }) => {
-    if (sortConfig?.tab !== tab || sortConfig?.key !== column) return null;
-    
-    return (
-      <span className="ml-1">
-        {sortConfig.direction === 'asc' ? '↑' : '↓'}
-      </span>
-    );
-  };
+  const lastSync = "2025-05-15T10:30:00";
 
   return (
     <div className="space-y-6">
@@ -631,765 +494,68 @@ const Finance = () => {
               New Invoice
             </Button>
           )}
-          <Button variant="outline">
-            <CreditCard className="mr-2 h-4 w-4" />
-            QuickBooks Sync
-          </Button>
+          <QuickBooksSync lastSync={lastSync} />
         </div>
       </div>
 
       {/* Financial Overview Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Outstanding Invoices</CardDescription>
-            <CardTitle className="text-2xl">
-              {formatCurrency(
-                mockClientInvoices
-                  .filter(inv => inv.status === 'sent' || inv.status === 'overdue')
-                  .reduce((sum, inv) => sum + inv.amount, 0)
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">
-              {mockClientInvoices.filter(inv => inv.status === 'sent' || inv.status === 'overdue').length} invoices pending payment
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Accounts Payable</CardDescription>
-            <CardTitle className="text-2xl">
-              {formatCurrency(
-                mockVendorInvoices
-                  .filter(inv => inv.status === 'pending' || inv.status === 'approved')
-                  .reduce((sum, inv) => sum + inv.amount, 0)
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">
-              {mockVendorInvoices.filter(inv => inv.status === 'pending' || inv.status === 'approved').length} invoices to be paid
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Revenue (MTD)</CardDescription>
-            <CardTitle className="text-2xl">
-              {formatCurrency(
-                mockTransactions
-                  .filter(t => t.type === 'income')
-                  .reduce((sum, t) => sum + t.amount, 0)
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">
-              {mockTransactions.filter(t => t.type === 'income').length} payment transactions
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Expenses (MTD)</CardDescription>
-            <CardTitle className="text-2xl">
-              {formatCurrency(
-                mockTransactions
-                  .filter(t => t.type === 'expense')
-                  .reduce((sum, t) => sum + t.amount, 0)
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">
-              {mockTransactions.filter(t => t.type === 'expense').length} expense transactions
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <FinancialOverview 
+        clientInvoices={mockClientInvoices} 
+        vendorInvoices={mockVendorInvoices} 
+        transactions={mockTransactions} 
+      />
 
       {/* Main Finance Tabs */}
-      <Tabs defaultValue="clientInvoices" className="space-y-4">
-        <TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-8">
           <TabsTrigger value="clientInvoices">Client Invoices</TabsTrigger>
           <TabsTrigger value="vendorInvoices">Vendor Invoices</TabsTrigger>
           <TabsTrigger value="purchaseOrders">Purchase Orders</TabsTrigger>
           <TabsTrigger value="transactions">General Ledger</TabsTrigger>
           <TabsTrigger value="budget">Budget</TabsTrigger>
+          <TabsTrigger value="payroll">Payroll</TabsTrigger>
+          <TabsTrigger value="taxForms">Tax Forms</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
 
         {/* Client Invoices Tab */}
         <TabsContent value="clientInvoices">
-          <Card>
-            <CardHeader>
-              <CardTitle>Client Invoices</CardTitle>
-              <CardDescription>Manage invoices sent to clients</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Input
-                    placeholder="Search invoices..."
-                    className="pl-8"
-                    value={searchTerms.clientInvoices}
-                    onChange={(e) => handleSearch('clientInvoices', e.target.value)}
-                  />
-                  <FileText className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                </div>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-10">
-                      <Filter className="mr-2 h-4 w-4" />
-                      Filter
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="grid gap-4">
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Filter by Status</h4>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge variant="outline">Draft</Badge>
-                          <Badge variant="outline">Sent</Badge>
-                          <Badge variant="outline">Paid</Badge>
-                          <Badge variant="outline">Overdue</Badge>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Date Range</h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="grid gap-1">
-                            <label htmlFor="from" className="text-xs">From</label>
-                            <Input id="from" placeholder="YYYY-MM-DD" />
-                          </div>
-                          <div className="grid gap-1">
-                            <label htmlFor="to" className="text-xs">To</label>
-                            <Input id="to" placeholder="YYYY-MM-DD" />
-                          </div>
-                        </div>
-                      </div>
-                      <Button className="w-full">Apply Filters</Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('clientInvoices', 'invoiceNumber')}
-                      >
-                        Invoice #<SortIndicator tab="clientInvoices" column="invoiceNumber" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('clientInvoices', 'clientName')}
-                      >
-                        Client<SortIndicator tab="clientInvoices" column="clientName" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('clientInvoices', 'projectName')}
-                      >
-                        Project<SortIndicator tab="clientInvoices" column="projectName" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('clientInvoices', 'issueDate')}
-                      >
-                        Issue Date<SortIndicator tab="clientInvoices" column="issueDate" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('clientInvoices', 'dueDate')}
-                      >
-                        Due Date<SortIndicator tab="clientInvoices" column="dueDate" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer text-right"
-                        onClick={() => requestSort('clientInvoices', 'amount')}
-                      >
-                        Amount<SortIndicator tab="clientInvoices" column="amount" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('clientInvoices', 'status')}
-                      >
-                        Status<SortIndicator tab="clientInvoices" column="status" />
-                      </TableHead>
-                      {canEdit && <TableHead className="w-[100px]">Actions</TableHead>}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedClientInvoices.length > 0 ? (
-                      sortedClientInvoices.map((invoice) => (
-                        <TableRow key={invoice.id}>
-                          <TableCell>{invoice.invoiceNumber}</TableCell>
-                          <TableCell>{invoice.clientName}</TableCell>
-                          <TableCell>{invoice.projectName}</TableCell>
-                          <TableCell>{invoice.issueDate}</TableCell>
-                          <TableCell>{invoice.dueDate}</TableCell>
-                          <TableCell className="text-right">{formatCurrency(invoice.amount)}</TableCell>
-                          <TableCell>
-                            <Badge 
-                              className={getClientInvoiceStatusColor(invoice.status)}
-                              variant="outline"
-                            >
-                              {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                            </Badge>
-                          </TableCell>
-                          {canEdit && (
-                            <TableCell>
-                              <Button variant="ghost" size="sm">View</Button>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={canEdit ? 8 : 7} className="text-center py-4">
-                          No invoices found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {sortedClientInvoices.length} of {mockClientInvoices.length} invoices
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </CardFooter>
-          </Card>
+          <ClientInvoicesTab clientInvoices={mockClientInvoices} canEdit={canEdit} />
         </TabsContent>
 
         {/* Vendor Invoices Tab */}
         <TabsContent value="vendorInvoices">
-          <Card>
-            <CardHeader>
-              <CardTitle>Vendor Invoices</CardTitle>
-              <CardDescription>Manage invoices received from vendors</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Input
-                    placeholder="Search vendor invoices..."
-                    className="pl-8"
-                    value={searchTerms.vendorInvoices}
-                    onChange={(e) => handleSearch('vendorInvoices', e.target.value)}
-                  />
-                  <FileText className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                </div>
-              </div>
-
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('vendorInvoices', 'invoiceNumber')}
-                      >
-                        Invoice #<SortIndicator tab="vendorInvoices" column="invoiceNumber" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('vendorInvoices', 'vendorName')}
-                      >
-                        Vendor<SortIndicator tab="vendorInvoices" column="vendorName" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('vendorInvoices', 'purchaseOrderId')}
-                      >
-                        PO #<SortIndicator tab="vendorInvoices" column="purchaseOrderId" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('vendorInvoices', 'issueDate')}
-                      >
-                        Issue Date<SortIndicator tab="vendorInvoices" column="issueDate" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('vendorInvoices', 'dueDate')}
-                      >
-                        Due Date<SortIndicator tab="vendorInvoices" column="dueDate" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer text-right"
-                        onClick={() => requestSort('vendorInvoices', 'amount')}
-                      >
-                        Amount<SortIndicator tab="vendorInvoices" column="amount" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('vendorInvoices', 'status')}
-                      >
-                        Status<SortIndicator tab="vendorInvoices" column="status" />
-                      </TableHead>
-                      {canEdit && <TableHead className="w-[100px]">Actions</TableHead>}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedVendorInvoices.length > 0 ? (
-                      sortedVendorInvoices.map((invoice) => (
-                        <TableRow key={invoice.id}>
-                          <TableCell>{invoice.invoiceNumber}</TableCell>
-                          <TableCell>{invoice.vendorName}</TableCell>
-                          <TableCell>{invoice.purchaseOrderId || "N/A"}</TableCell>
-                          <TableCell>{invoice.issueDate}</TableCell>
-                          <TableCell>{invoice.dueDate}</TableCell>
-                          <TableCell className="text-right">{formatCurrency(invoice.amount)}</TableCell>
-                          <TableCell>
-                            <Badge 
-                              className={getVendorInvoiceStatusColor(invoice.status)}
-                              variant="outline"
-                            >
-                              {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                            </Badge>
-                          </TableCell>
-                          {canEdit && (
-                            <TableCell>
-                              <div className="flex justify-end gap-2">
-                                <Button variant="ghost" size="sm">View</Button>
-                                {(invoice.status === 'pending' || invoice.status === 'approved') && (
-                                  <Button variant="outline" size="sm">Pay</Button>
-                                )}
-                              </div>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={canEdit ? 8 : 7} className="text-center py-4">
-                          No vendor invoices found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {sortedVendorInvoices.length} of {mockVendorInvoices.length} vendor invoices
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </CardFooter>
-          </Card>
+          <VendorInvoicesTab vendorInvoices={mockVendorInvoices} canEdit={canEdit} />
         </TabsContent>
 
         {/* Purchase Orders Tab */}
         <TabsContent value="purchaseOrders">
-          <Card>
-            <CardHeader>
-              <CardTitle>Purchase Orders</CardTitle>
-              <CardDescription>Manage purchase orders to vendors</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Input
-                    placeholder="Search purchase orders..."
-                    className="pl-8"
-                    value={searchTerms.purchaseOrders}
-                    onChange={(e) => handleSearch('purchaseOrders', e.target.value)}
-                  />
-                  <FileText className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                </div>
-                
-                {canEdit && (
-                  <Button>
-                    <FileText className="mr-2 h-4 w-4" />
-                    New PO
-                  </Button>
-                )}
-              </div>
-
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('purchaseOrders', 'poNumber')}
-                      >
-                        PO #<SortIndicator tab="purchaseOrders" column="poNumber" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('purchaseOrders', 'vendorName')}
-                      >
-                        Vendor<SortIndicator tab="purchaseOrders" column="vendorName" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('purchaseOrders', 'projectName')}
-                      >
-                        Project<SortIndicator tab="purchaseOrders" column="projectName" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('purchaseOrders', 'issueDate')}
-                      >
-                        Issue Date<SortIndicator tab="purchaseOrders" column="issueDate" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer text-right"
-                        onClick={() => requestSort('purchaseOrders', 'totalAmount')}
-                      >
-                        Amount<SortIndicator tab="purchaseOrders" column="totalAmount" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('purchaseOrders', 'status')}
-                      >
-                        Status<SortIndicator tab="purchaseOrders" column="status" />
-                      </TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedPurchaseOrders.length > 0 ? (
-                      sortedPurchaseOrders.map((po) => (
-                        <TableRow key={po.id}>
-                          <TableCell>{po.poNumber}</TableCell>
-                          <TableCell>{po.vendorName}</TableCell>
-                          <TableCell>{po.projectName || "N/A"}</TableCell>
-                          <TableCell>{po.issueDate}</TableCell>
-                          <TableCell className="text-right">{formatCurrency(po.totalAmount)}</TableCell>
-                          <TableCell>
-                            <Badge 
-                              className={getPurchaseOrderStatusColor(po.status)}
-                              variant="outline"
-                            >
-                              {po.status.charAt(0).toUpperCase() + po.status.slice(1)}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex justify-center gap-2">
-                              <Button variant="ghost" size="sm">View</Button>
-                              {canEdit && po.status === 'draft' && (
-                                <Button variant="outline" size="sm">Issue</Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No purchase orders found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {sortedPurchaseOrders.length} of {mockPurchaseOrders.length} purchase orders
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </CardFooter>
-          </Card>
+          <PurchaseOrdersTab purchaseOrders={mockPurchaseOrders} canEdit={canEdit} />
         </TabsContent>
 
         {/* Transactions Tab */}
         <TabsContent value="transactions">
-          <Card>
-            <CardHeader>
-              <CardTitle>General Ledger</CardTitle>
-              <CardDescription>View all financial transactions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Input
-                    placeholder="Search transactions..."
-                    className="pl-8"
-                    value={searchTerms.transactions}
-                    onChange={(e) => handleSearch('transactions', e.target.value)}
-                  />
-                  <FileText className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                </div>
-                
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-10">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Date Range
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="grid gap-4">
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Select Date Range</h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="grid gap-1">
-                            <label htmlFor="from-date" className="text-xs">From</label>
-                            <Input id="from-date" placeholder="YYYY-MM-DD" />
-                          </div>
-                          <div className="grid gap-1">
-                            <label htmlFor="to-date" className="text-xs">To</label>
-                            <Input id="to-date" placeholder="YYYY-MM-DD" />
-                          </div>
-                        </div>
-                      </div>
-                      <Button className="w-full">Apply Range</Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('transactions', 'date')}
-                      >
-                        Date<SortIndicator tab="transactions" column="date" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('transactions', 'description')}
-                      >
-                        Description<SortIndicator tab="transactions" column="description" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('transactions', 'categoryName')}
-                      >
-                        Category<SortIndicator tab="transactions" column="categoryName" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('transactions', 'accountName')}
-                      >
-                        Account<SortIndicator tab="transactions" column="accountName" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('transactions', 'type')}
-                      >
-                        Type<SortIndicator tab="transactions" column="type" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer text-right"
-                        onClick={() => requestSort('transactions', 'amount')}
-                      >
-                        Amount<SortIndicator tab="transactions" column="amount" />
-                      </TableHead>
-                      <TableHead>Reference</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedTransactions.length > 0 ? (
-                      sortedTransactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell>{transaction.date}</TableCell>
-                          <TableCell>{transaction.description}</TableCell>
-                          <TableCell>{transaction.categoryName}</TableCell>
-                          <TableCell>{transaction.accountName}</TableCell>
-                          <TableCell>
-                            <Badge
-                              className={transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
-                              variant="outline"
-                            >
-                              {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <span className={transaction.type === 'income' ? 'text-green-700' : 'text-red-700'}>
-                              {formatCurrency(transaction.amount)}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            {transaction.relatedToType && (
-                              <Button variant="ghost" size="sm">
-                                {transaction.relatedToType === 'client_invoice' ? 'Invoice' : 
-                                 transaction.relatedToType === 'vendor_invoice' ? 'Bill' : 'PO'}
-                              </Button>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No transactions found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {sortedTransactions.length} of {mockTransactions.length} transactions
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </CardFooter>
-          </Card>
+          <TransactionsTab transactions={mockTransactions} canEdit={canEdit} />
         </TabsContent>
 
         {/* Budget Tab */}
         <TabsContent value="budget">
-          <Card>
-            <CardHeader>
-              <CardTitle>Budget Overview</CardTitle>
-              <CardDescription>Track budget usage across categories</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Input
-                    placeholder="Search budget categories..."
-                    className="pl-8"
-                    value={searchTerms.budget}
-                    onChange={(e) => handleSearch('budget', e.target.value)}
-                  />
-                  <FileText className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                </div>
-                
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-10">
-                      <Filter className="mr-2 h-4 w-4" />
-                      Filter
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="grid gap-4">
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Category Type</h4>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge variant="outline">All</Badge>
-                          <Badge variant="outline">Income</Badge>
-                          <Badge variant="outline">Expense</Badge>
-                        </div>
-                      </div>
-                      <Button className="w-full">Apply Filters</Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
+          <BudgetTab budgetCategories={mockBudgetCategories} canEdit={canEdit} />
+        </TabsContent>
 
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('budget', 'name')}
-                      >
-                        Category<SortIndicator tab="budget" column="name" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer"
-                        onClick={() => requestSort('budget', 'type')}
-                      >
-                        Type<SortIndicator tab="budget" column="type" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer text-right"
-                        onClick={() => requestSort('budget', 'budgeted')}
-                      >
-                        Budgeted<SortIndicator tab="budget" column="budgeted" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer text-right"
-                        onClick={() => requestSort('budget', 'spent')}
-                      >
-                        Actual<SortIndicator tab="budget" column="spent" />
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer text-right"
-                        onClick={() => requestSort('budget', 'remaining')}
-                      >
-                        Remaining<SortIndicator tab="budget" column="remaining" />
-                      </TableHead>
-                      <TableHead>Progress</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedBudgetCategories.length > 0 ? (
-                      sortedBudgetCategories.map((category) => {
-                        const percentUsed = category.budgeted > 0 ? (category.spent / category.budgeted) * 100 : 0;
-                        return (
-                          <TableRow key={category.id}>
-                            <TableCell>{category.name}</TableCell>
-                            <TableCell>
-                              <Badge
-                                className={category.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}
-                                variant="outline"
-                              >
-                                {category.type.charAt(0).toUpperCase() + category.type.slice(1)}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">{formatCurrency(category.budgeted)}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(category.spent)}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(category.remaining)}</TableCell>
-                            <TableCell>
-                              <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                <div 
-                                  className={cn(
-                                    "h-2.5 rounded-full",
-                                    category.type === 'income' ? 'bg-green-600' : 'bg-blue-600'
-                                  )}
-                                  style={{ width: `${Math.min(percentUsed, 100)}%` }}
-                                ></div>
-                              </div>
-                              <p className="text-xs text-center mt-1">{percentUsed.toFixed(1)}%</p>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center py-4">
-                          No budget categories found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {sortedBudgetCategories.length} of {mockBudgetCategories.length} budget categories
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </CardFooter>
-          </Card>
+        {/* Payroll Tab */}
+        <TabsContent value="payroll">
+          <PayrollTab canEdit={canEdit} />
+        </TabsContent>
+
+        {/* Tax Forms Tab */}
+        <TabsContent value="taxForms">
+          <TaxFormsTab canEdit={canEdit} />
+        </TabsContent>
+
+        {/* Reports Tab */}
+        <TabsContent value="reports">
+          <ReportsTab canEdit={canEdit} />
         </TabsContent>
       </Tabs>
     </div>
