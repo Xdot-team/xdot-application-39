@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
   ChevronDown, 
   ChevronRight, 
   ChevronUp, 
-  BarChart,
+  BarChart as BarChartIcon,
   TrendingUp,
   TrendingDown,
   ShieldAlert,
@@ -22,7 +21,7 @@ import {
   Truck
 } from "lucide-react";
 import { mockDriverTrends, mockRisks } from "@/data/mockSafetyData";
-import { ResponsiveContainer, BarChart as RechartBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 export function MobileDriverView() {
   const [driverTrends] = useState<DriverTrendData[]>(mockDriverTrends);
@@ -86,7 +85,7 @@ export function MobileDriverView() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="trends">
-              <BarChart className="h-4 w-4 mr-1.5" />
+              <BarChartIcon className="h-4 w-4 mr-1.5" />
               Driver Trends
             </TabsTrigger>
             <TabsTrigger value="risks">
@@ -208,7 +207,7 @@ export function MobileDriverView() {
           <CardContent>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <RechartBarChart
+                <BarChart
                   data={driverPerformanceData}
                   margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
                 >
@@ -219,7 +218,7 @@ export function MobileDriverView() {
                   <Tooltip />
                   <Bar yAxisId="left" dataKey="score" name="Safety Score" fill="#3b82f6" />
                   <Bar yAxisId="right" dataKey="incidents" name="Incidents" fill="#ef4444" />
-                </RechartBarChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>

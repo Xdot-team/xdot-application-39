@@ -9,8 +9,9 @@ import { SafetyCompliance } from "@/types/safety";
 import { CheckCircle2, AlertTriangle, Info } from "lucide-react";
 
 export function ComplianceChecklist() {
+  // Explicitly cast the mock data to the correct type
   const [complianceData, setComplianceData] = useState<SafetyCompliance[]>(
-    mockSafetyCompliances || []
+    mockSafetyCompliances as SafetyCompliance[]
   );
 
   const toggleChecklistItem = (complianceId: string, itemId: string) => {

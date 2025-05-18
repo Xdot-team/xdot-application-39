@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,7 @@ import {
   Calendar,
   Users,
   Truck,
-  BarChart,
+  BarChart as BarChartIcon,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -45,10 +44,10 @@ import {
 } from "recharts";
 
 export function DriverTrends() {
-  const [drivers] = useState<DriverData[]>(mockDriverData);
-  const [driverTrends] = useState<DriverTrendData[]>(mockDriverTrends);
-  const [vehicles] = useState<VehicleData[]>(mockVehicleData);
-  const [trips] = useState<TripData[]>(mockTripData);
+  const [drivers] = useState<DriverData[]>(mockDriverData as DriverData[]);
+  const [driverTrends] = useState<DriverTrendData[]>(mockDriverTrends as DriverTrendData[]);
+  const [vehicles] = useState<VehicleData[]>(mockVehicleData as VehicleData[]);
+  const [trips] = useState<TripData[]>(mockTripData as TripData[]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("drivers");
   const [selectedDriver, setSelectedDriver] = useState<string>("all");
