@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -130,6 +130,7 @@ export function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const { authState } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [navItems, setNavItems] = useState<NavItem[]>([...defaultNavItems]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -225,6 +226,11 @@ export function Sidebar() {
     setIsEditMode(false);
   };
 
+  // Handle navigation
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <div className="relative">
       {/* Mobile toggle button */}
@@ -313,10 +319,11 @@ export function Sidebar() {
                               snapshot.isDragging ? "opacity-70" : ""
                             )}
                           >
-                            <Link
-                              to={item.href}
+                            <Button
+                              variant="ghost"
+                              onClick={() => handleNavigation(item.href)}
                               className={cn(
-                                "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                                "flex w-full items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
                                 location.pathname === item.href
                                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                                   : "text-sidebar-foreground hover:bg-sidebar-accent/50",
@@ -325,7 +332,7 @@ export function Sidebar() {
                             >
                               <item.icon className="mr-2 h-5 w-5" />
                               {item.title}
-                            </Link>
+                            </Button>
                           </li>
                         )}
                       </Draggable>
