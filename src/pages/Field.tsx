@@ -10,54 +10,11 @@ import { toast } from "sonner";
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap } from 'lucide-react';
-import { SiteVisit, PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
+import { SiteWalkthrough, PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
 import { FieldMap } from '@/components/field/FieldMap';
 import { DispatchManager } from '@/components/field/DispatchManager';
 
 // Mock data 
-const mockSiteVisits: SiteVisit[] = [
-  {
-    id: "SV-1001",
-    date: "2025-05-15",
-    project: "GA-400 Repaving",
-    inspector: "John Smith",
-    notes: "Initial site survey completed. Area marked for utility locates.",
-    status: 'completed'
-  },
-  {
-    id: "SV-1002",
-    date: "2025-05-14",
-    project: "I-85 Bridge Repair",
-    inspector: "Maria Rodriguez",
-    notes: "Structural assessment completed. Identified 3 critical repair areas.",
-    status: 'needs-review'
-  },
-  {
-    id: "SV-1003",
-    date: "2025-05-13",
-    project: "Peachtree Street Improvements",
-    inspector: "David Williams",
-    notes: "Sidewalk condition assessment. Multiple ADA compliance issues identified.",
-    status: 'completed'
-  },
-  {
-    id: "SV-1004",
-    date: "2025-05-16",
-    project: "Gwinnett County Sidewalk Project",
-    inspector: "Sarah Johnson",
-    notes: "Pre-construction meeting with utilities. Need to relocate water main.",
-    status: 'pending'
-  },
-  {
-    id: "SV-1005",
-    date: "2025-05-12",
-    project: "Augusta Highway Extension",
-    inspector: "Robert Chen",
-    notes: "Environmental review completed. Wetland mitigation plan required.",
-    status: 'completed'
-  }
-];
-
 const mockPunchlistItems: PunchlistItem[] = [
   {
     id: "PL-2001",
@@ -268,7 +225,6 @@ const mockUtilityAdjustments: UtilityAdjustment[] = [
 ];
 
 const Field = () => {
-  const [siteVisits, setSiteVisits] = useState<SiteVisit[]>(mockSiteVisits);
   const [punchlistItems, setPunchlistItems] = useState<PunchlistItem[]>(mockPunchlistItems);
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>(mockWorkOrders);
   const [utilityAdjustments, setUtilityAdjustments] = useState<UtilityAdjustment[]>(mockUtilityAdjustments);
@@ -276,12 +232,6 @@ const Field = () => {
   const { authState } = useAuth();
   
   // Filter data based on search term
-  const filteredSiteVisits = siteVisits.filter(visit => 
-    visit.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    visit.inspector.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    visit.notes.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
   const filteredPunchlistItems = punchlistItems.filter(item => 
     item.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -304,14 +254,9 @@ const Field = () => {
   // Get counts for statistics
   const openPunchlistItems = punchlistItems.filter(item => item.status === 'open').length;
   const pendingWorkOrders = workOrders.filter(order => order.status === 'pending').length;
-  const completedSiteVisits = siteVisits.filter(visit => visit.status === 'completed').length;
   const scheduledUtilityAdjustments = utilityAdjustments.filter(adj => adj.status === 'scheduled').length;
   
   // Action handlers
-  const handleNewSiteVisit = () => {
-    toast.info("Site visit functionality will be available once Supabase integration is set up.");
-  };
-  
   const handleAddPunchlistItem = () => {
     toast.info("Punchlist management will be available once Supabase integration is set up.");
   };
@@ -426,12 +371,12 @@ const Field = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Field</h1>
-          <p className="text-muted-foreground">Manage site visits, punchlists, utility adjustments, and field operations</p>
+          <p className="text-muted-foreground">Manage site walkthroughs, punchlists, utility adjustments, and field operations</p>
         </div>
       </div>
       
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
@@ -461,19 +406,6 @@ const Field = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
-              <CardDescription>Recent Site Visits</CardDescription>
-              <CardTitle className="text-2xl">{completedSiteVisits}</CardTitle>
-            </div>
-            <MapPin className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Completed in the last 7 days</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
               <CardDescription>Scheduled Utilities</CardDescription>
               <CardTitle className="text-2xl">{scheduledUtilityAdjustments}</CardTitle>
             </div>
@@ -499,78 +431,18 @@ const Field = () => {
       </Card>
       
       {/* Tabs for different tools */}
-      <Tabs defaultValue="site-visits" className="w-full">
+      <Tabs defaultValue="site-walkthrough" className="w-full">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="site-visits">Site Visits</TabsTrigger>
+          <TabsTrigger value="site-walkthrough">Site Walkthrough</TabsTrigger>
           <TabsTrigger value="punchlist">Punchlist</TabsTrigger>
           <TabsTrigger value="work-orders">Work Orders</TabsTrigger>
           <TabsTrigger value="utility-adjustments">Utility Adjustments</TabsTrigger>
           <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
         </TabsList>
         
-        {/* Site Visits Tab */}
-        <TabsContent value="site-visits">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Site Visits</CardTitle>
-                <CardDescription>Track and manage site inspections</CardDescription>
-              </div>
-              <Button onClick={handleNewSiteVisit}>
-                <MapPin className="mr-2 h-4 w-4" />
-                New Site Visit
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search site visits..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              {/* Site Visits Table */}
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Inspector</TableHead>
-                      <TableHead>Notes</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSiteVisits.length > 0 ? (
-                      filteredSiteVisits.map((visit) => (
-                        <TableRow key={visit.id}>
-                          <TableCell>{visit.id}</TableCell>
-                          <TableCell>{visit.date}</TableCell>
-                          <TableCell>{visit.project}</TableCell>
-                          <TableCell>{visit.inspector}</TableCell>
-                          <TableCell className="max-w-xs truncate">{visit.notes}</TableCell>
-                          <TableCell>{renderStatusBadge(visit.status)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center py-4">
-                          No site visits found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Site Walkthrough Tab */}
+        <TabsContent value="site-walkthrough">
+          <SiteWalkthrough />
         </TabsContent>
         
         {/* Punchlist Tab */}

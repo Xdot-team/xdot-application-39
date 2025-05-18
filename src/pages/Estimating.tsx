@@ -15,6 +15,7 @@ import DetailedEstimate from '@/components/estimating/DetailedEstimate';
 import VendorEngagement from '@/components/estimating/VendorEngagement';
 import CostAnalysis from '@/components/estimating/CostAnalysis';
 import TakeoffAI from '@/components/estimating/TakeoffAI';
+import SiteVisits from '@/components/estimating/SiteVisits';
 import { Estimate, EstimateStatus } from '@/types/estimates';
 
 // Mock data for the estimates
@@ -174,6 +175,7 @@ const Estimating = () => {
           <TabsTrigger value="estimates">Estimates List</TabsTrigger>
           <TabsTrigger value="quickEstimate">Quick Estimate</TabsTrigger>
           <TabsTrigger value="detailedEstimate">Detailed Estimate</TabsTrigger>
+          <TabsTrigger value="siteVisits">Site Visits</TabsTrigger>
           <TabsTrigger value="vendorEngagement">Vendor Engagement</TabsTrigger>
           <TabsTrigger value="costAnalysis">Cost Analysis</TabsTrigger>
           <TabsTrigger value="takeoff">Takeoff AI</TabsTrigger>
@@ -268,6 +270,11 @@ const Estimating = () => {
         {/* Detailed Estimate Tab */}
         <TabsContent value="detailedEstimate">
           <DetailedEstimate />
+        </TabsContent>
+        
+        {/* Site Visits Tab */}
+        <TabsContent value="siteVisits">
+          <SiteVisits />
         </TabsContent>
         
         {/* Vendor Engagement Tab */}
