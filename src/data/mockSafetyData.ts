@@ -1,3 +1,4 @@
+
 import { 
   SafetyIncident, 
   Hazard, 
@@ -128,306 +129,6 @@ export const mockSafetyCompliances: SafetyCompliance[] = [
   },
 ];
 
-export const mockRisks: Risk[] = [
-  {
-    id: "1",
-    title: "Forklift Operation Risk",
-    description: "Risk of accidents during forklift operation.",
-    category: "safety",
-    probability: "high",
-    impact: "significant",
-    riskScore: 15,
-    status: "identified",
-    dateIdentified: "2023-01-10",
-    identifiedBy: "John Doe",
-    source: "manual-entry",
-    isHighPriority: true,
-    lastUpdated: "2023-01-10"
-  },
-  {
-    id: "2",
-    title: "Chemical Exposure Risk",
-    description: "Risk of exposure to hazardous chemicals.",
-    category: "safety",
-    probability: "medium",
-    impact: "moderate",
-    riskScore: 10,
-    status: "analyzing",
-    dateIdentified: "2023-02-01",
-    identifiedBy: "Jane Smith",
-    source: "ai-prediction",
-    isHighPriority: false,
-    lastUpdated: "2023-02-01"
-  },
-];
-
-export const mockDriverRisks: Risk[] = [
-  {
-    id: "1",
-    title: "Speeding Risk",
-    description: "Risk of drivers exceeding speed limits.",
-    category: "driver",
-    probability: "high",
-    impact: "significant",
-    riskScore: 18,
-    status: "identified",
-    dateIdentified: "2023-01-20",
-    identifiedBy: "John Doe",
-    source: "driver-data",
-    isHighPriority: true,
-    lastUpdated: "2023-01-20"
-  },
-];
-
-export const mockDriverData: DriverData[] = [
-  {
-    id: "1",
-    driverId: "D001",
-    driverName: "Alice Johnson",
-    employeeId: "E001",
-    licenseNumber: "L123456",
-    licenseClass: "Class A",
-    licenseExpiry: "2024-05-01",
-    endorsements: ["Hazmat"],
-    restrictions: [],
-    trainingCompleted: [
-      {
-        id: "T001",
-        name: "Forklift Safety Training",
-        completionDate: "2023-01-15",
-        expiryDate: "2024-01-15",
-      },
-    ],
-    complianceStatus: "compliant",
-    lastReviewDate: "2023-01-10",
-  },
-];
-
-export const mockVehicleData: VehicleData[] = [
-  {
-    id: "1",
-    vehicleId: "V001",
-    make: "Ford",
-    model: "F-150",
-    year: 2020,
-    type: "truck",
-    licensePlate: "ABC123",
-    vin: "1FTRX18W3YNA12345",
-    department: "Logistics",
-    assignedTo: "D001",
-    status: "active",
-    lastMaintenanceDate: "2023-01-01",
-    nextMaintenanceDate: "2023-07-01",
-    mileage: 15000,
-    fuelType: "Gasoline",
-  },
-];
-
-export const mockTripData: TripData[] = [
-  {
-    id: "1",
-    driverId: "D001",
-    driverName: "Alice Johnson",
-    vehicleId: "V001",
-    date: "2023-01-20",
-    startTime: "08:00",
-    endTime: "10:00",
-    startLocation: "Warehouse",
-    endLocation: "Client Site",
-    mileage: 50,
-    purpose: "Delivery",
-  },
-];
-
-export const mockDriverTrends: DriverTrendData[] = [
-  {
-    id: "1",
-    driverId: "D001",
-    driverName: "Alice Johnson",
-    period: "month",
-    startDate: "2023-01-01",
-    endDate: "2023-01-31",
-    mileageDriven: 1500,
-    fuelUsed: 100,
-    fuelEfficiency: 15,
-    incidentCount: 1,
-    incidentRate: 0.67,
-    harshBrakingEvents: 5,
-    harshAccelerationEvents: 3,
-    speedingEvents: 2,
-    idlingTime: 30,
-    distractionEvents: 1,
-    fatigueWarnings: 0,
-    safetyScore: 85,
-    trendDirection: "improving",
-    riskLevel: "medium",
-    lastUpdated: "2023-01-31",
-  },
-];
-
-export const mockToolboxMeetingData: ToolboxMeetingData[] = [
-  {
-    id: "1",
-    title: "Weekly Safety Meeting",
-    projectId: "P001",
-    projectName: "Project Alpha",
-    location: "Conference Room A",
-    date: "2023-02-15",
-    startTime: "10:00",
-    endTime: "11:00",
-    conductor: "John Doe",
-    topics: ["Safety Procedures", "Emergency Protocols"],
-    safetyFocus: "General Safety",
-    status: "scheduled",
-    attendees: [],
-    createdBy: "Jane Smith",
-    createdDate: "2023-01-01",
-    lastUpdated: "2023-01-01",
-  },
-];
-
-export const mockToolboxMeetingTemplates: ToolboxMeetingTemplate[] = [
-  {
-    id: "1",
-    title: "Monthly Safety Review",
-    category: "Safety",
-    description: "Template for monthly safety review meetings.",
-    topics: ["Incident Reports", "Safety Training Updates"],
-    safetyFocus: "Safety Compliance",
-    suggestedDuration: 60,
-    materials: ["Safety Manual", "Incident Report Forms"],
-    createdBy: "Jane Smith",
-    createdDate: "2023-01-01",
-    lastUpdated: "2023-01-01",
-  },
-];
-
-export const mockJSAData: JobSafetyAnalysisData[] = [
-  {
-    id: "1",
-    title: "Site Excavation Safety Analysis",
-    projectId: "P001",
-    projectName: "Project Alpha",
-    location: "Main Construction Site",
-    taskDescription: "Excavation of foundation area using heavy equipment",
-    createdBy: "John Doe",
-    createdDate: "2023-02-10",
-    lastUpdated: "2023-02-10",
-    status: "approved",
-    requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
-    items: [
-      {
-        id: "1",
-        jsaId: "1",
-        taskStep: "Mark utilities before digging",
-        potentialHazards: ["Striking underground utilities"],
-        controlMeasures: ["Call 811 for utility marking", "Review utility maps"],
-        responsible: "Site Supervisor",
-        status: "not_started"
-      },
-      {
-        id: "2",
-        jsaId: "1",
-        taskStep: "Operate excavator",
-        potentialHazards: ["Equipment rollover", "Striking workers"],
-        controlMeasures: ["Maintain 20ft clearance from workers", "Use spotter when needed"],
-        responsible: "Equipment Operator",
-        status: "not_started"
-      }
-    ],
-    requiredEquipment: [],
-    isTemplate: false
-  },
-  {
-    id: "2",
-    title: "Concrete Pour Safety Analysis",
-    projectId: "P002",
-    projectName: "Project Beta",
-    location: "Foundation Area",
-    taskDescription: "Pouring concrete foundation",
-    createdBy: "Alice Johnson",
-    createdDate: "2023-03-05",
-    lastUpdated: "2023-03-05",
-    status: "in_progress",
-    requiredPPE: ["Hard hat", "Safety glasses", "Gloves", "Rubber boots"],
-    items: [
-      {
-        id: "1",
-        jsaId: "2",
-        taskStep: "Setup concrete pump",
-        potentialHazards: ["Pinch points", "High pressure lines"],
-        controlMeasures: ["Inspect equipment before use", "Clear communication"],
-        responsible: "Concrete Foreman",
-        status: "in_progress"
-      },
-      {
-        id: "2",
-        jsaId: "2",
-        taskStep: "Pour concrete",
-        potentialHazards: ["Chemical burns from concrete", "Manual handling"],
-        controlMeasures: ["Wear protective clothing", "Use proper lifting techniques"],
-        responsible: "Crew Lead",
-        status: "not_started"
-      }
-    ],
-    requiredEquipment: [],
-    isTemplate: false
-  }
-];
-
-export const mockJSATemplates: JSATemplate[] = [
-  {
-    id: "1",
-    title: "Excavation Work Template",
-    category: "Earthwork",
-    taskDescription: "Template for excavation activities",
-    requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
-    items: [
-      {
-        taskStep: "Utility identification",
-        potentialHazards: ["Striking underground utilities"],
-        controlMeasures: ["Call 811 before digging", "Review utility maps"],
-        responsibleRole: "Site Supervisor"
-      },
-      {
-        taskStep: "Soil inspection",
-        potentialHazards: ["Cave-ins", "Unstable ground"],
-        controlMeasures: ["Proper shoring", "Daily inspections"],
-        responsibleRole: "Safety Officer"
-      }
-    ],
-    createdBy: "System Admin",
-    createdDate: "2023-01-05",
-    lastUpdated: "2023-01-05",
-    requiredEquipment: []
-  },
-  {
-    id: "2",
-    title: "Working at Heights Template",
-    category: "Fall Protection",
-    taskDescription: "Template for activities requiring work at elevation",
-    requiredPPE: ["Hard hat", "Safety harness", "Lanyard", "Safety glasses"],
-    items: [
-      {
-        taskStep: "Ladder setup",
-        potentialHazards: ["Falls", "Ladder failure"],
-        controlMeasures: ["Inspect ladder", "3-point contact", "Secure ladder"],
-        responsibleRole: "Worker"
-      },
-      {
-        taskStep: "Harness inspection",
-        potentialHazards: ["Equipment failure", "Improper fit"],
-        controlMeasures: ["Pre-use inspection", "Proper adjustment"],
-        responsibleRole: "Worker"
-      }
-    ],
-    createdBy: "System Admin",
-    createdDate: "2023-01-10",
-    lastUpdated: "2023-01-10",
-    requiredEquipment: []
-  }
-];
-
 // Add Georgia projects to the mock data
 export const mockGeorgiaProjects = [
   { id: "GA-001", name: "Georgia DOT I-85 Expansion", location: "Atlanta, GA" },
@@ -436,7 +137,7 @@ export const mockGeorgiaProjects = [
 ];
 
 // Update Mock Risk Data to include Georgia projects and driver-related risks
-export const mockRisks = [
+export const mockRisks: Risk[] = [
   {
     id: "risk-001",
     title: "Potential trench collapse during excavation",
@@ -634,7 +335,7 @@ export const mockRisks = [
 ];
 
 // Mock Driver Data
-export const mockDriverData = [
+export const mockDriverData: DriverData[] = [
   {
     id: "driver-data-001",
     driverId: "driver-001",
@@ -724,7 +425,7 @@ export const mockDriverData = [
 ];
 
 // Mock Driver Trend Data
-export const mockDriverTrends = [
+export const mockDriverTrends: DriverTrendData[] = [
   {
     id: "trend-001",
     driverId: "driver-001",
@@ -807,7 +508,7 @@ export const mockDriverTrends = [
 ];
 
 // Mock Vehicle Data
-export const mockVehicleData = [
+export const mockVehicleData: VehicleData[] = [
   {
     id: "vehicle-001",
     vehicleId: "VEH-001",
@@ -862,7 +563,7 @@ export const mockVehicleData = [
 ];
 
 // Mock Trip Data
-export const mockTripData = [
+export const mockTripData: TripData[] = [
   {
     id: "trip-001",
     driverId: "driver-001",
@@ -949,5 +650,168 @@ export const mockTripData = [
       }
     ],
     notes: "Driver reported feeling tired during return trip"
+  }
+];
+
+export const mockToolboxMeetingData: ToolboxMeetingData[] = [
+  {
+    id: "1",
+    title: "Weekly Safety Meeting",
+    projectId: "P001",
+    projectName: "Project Alpha",
+    location: "Conference Room A",
+    date: "2023-02-15",
+    startTime: "10:00",
+    endTime: "11:00",
+    conductor: "John Doe",
+    topics: ["Safety Procedures", "Emergency Protocols"],
+    safetyFocus: "General Safety",
+    status: "scheduled",
+    attendees: [],
+    createdBy: "Jane Smith",
+    createdDate: "2023-01-01",
+    lastUpdated: "2023-01-01",
+  },
+];
+
+export const mockToolboxMeetingTemplates: ToolboxMeetingTemplate[] = [
+  {
+    id: "1",
+    title: "Monthly Safety Review",
+    category: "Safety",
+    description: "Template for monthly safety review meetings.",
+    topics: ["Incident Reports", "Safety Training Updates"],
+    safetyFocus: "Safety Compliance",
+    suggestedDuration: 60,
+    materials: ["Safety Manual", "Incident Report Forms"],
+    createdBy: "Jane Smith",
+    createdDate: "2023-01-01",
+    lastUpdated: "2023-01-01",
+  },
+];
+
+export const mockJSAData: JobSafetyAnalysisData[] = [
+  {
+    id: "1",
+    title: "Site Excavation Safety Analysis",
+    projectId: "P001",
+    projectName: "Project Alpha",
+    location: "Main Construction Site",
+    taskDescription: "Excavation of foundation area using heavy equipment",
+    createdBy: "John Doe",
+    createdDate: "2023-02-10",
+    lastUpdated: "2023-02-10",
+    status: "approved",
+    requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
+    items: [
+      {
+        id: "1",
+        jsaId: "1",
+        taskStep: "Mark utilities before digging",
+        potentialHazards: ["Striking underground utilities"],
+        controlMeasures: ["Call 811 for utility marking", "Review utility maps"],
+        responsible: "Site Supervisor",
+        status: "not_started"
+      },
+      {
+        id: "2",
+        jsaId: "1",
+        taskStep: "Operate excavator",
+        potentialHazards: ["Equipment rollover", "Striking workers"],
+        controlMeasures: ["Maintain 20ft clearance from workers", "Use spotter when needed"],
+        responsible: "Equipment Operator",
+        status: "not_started"
+      }
+    ],
+    requiredEquipment: [],
+    isTemplate: false
+  },
+  {
+    id: "2",
+    title: "Concrete Pour Safety Analysis",
+    projectId: "P002",
+    projectName: "Project Beta",
+    location: "Foundation Area",
+    taskDescription: "Pouring concrete foundation",
+    createdBy: "Alice Johnson",
+    createdDate: "2023-03-05",
+    lastUpdated: "2023-03-05",
+    status: "in_progress",
+    requiredPPE: ["Hard hat", "Safety glasses", "Gloves", "Rubber boots"],
+    items: [
+      {
+        id: "1",
+        jsaId: "2",
+        taskStep: "Setup concrete pump",
+        potentialHazards: ["Pinch points", "High pressure lines"],
+        controlMeasures: ["Inspect equipment before use", "Clear communication"],
+        responsible: "Concrete Foreman",
+        status: "in_progress"
+      },
+      {
+        id: "2",
+        jsaId: "2",
+        taskStep: "Pour concrete",
+        potentialHazards: ["Chemical burns from concrete", "Manual handling"],
+        controlMeasures: ["Wear protective clothing", "Use proper lifting techniques"],
+        responsible: "Crew Lead",
+        status: "not_started"
+      }
+    ],
+    requiredEquipment: [],
+    isTemplate: false
+  }
+];
+
+export const mockJSATemplates: JSATemplate[] = [
+  {
+    id: "1",
+    title: "Excavation Work Template",
+    category: "Earthwork",
+    taskDescription: "Template for excavation activities",
+    requiredPPE: ["Hard hat", "Safety glasses", "High visibility vest", "Steel-toed boots"],
+    items: [
+      {
+        taskStep: "Utility identification",
+        potentialHazards: ["Striking underground utilities"],
+        controlMeasures: ["Call 811 before digging", "Review utility maps"],
+        responsibleRole: "Site Supervisor"
+      },
+      {
+        taskStep: "Soil inspection",
+        potentialHazards: ["Cave-ins", "Unstable ground"],
+        controlMeasures: ["Proper shoring", "Daily inspections"],
+        responsibleRole: "Safety Officer"
+      }
+    ],
+    createdBy: "System Admin",
+    createdDate: "2023-01-05",
+    lastUpdated: "2023-01-05",
+    requiredEquipment: []
+  },
+  {
+    id: "2",
+    title: "Working at Heights Template",
+    category: "Fall Protection",
+    taskDescription: "Template for activities requiring work at elevation",
+    requiredPPE: ["Hard hat", "Safety harness", "Lanyard", "Safety glasses"],
+    items: [
+      {
+        taskStep: "Ladder setup",
+        potentialHazards: ["Falls", "Ladder failure"],
+        controlMeasures: ["Inspect ladder", "3-point contact", "Secure ladder"],
+        responsibleRole: "Worker"
+      },
+      {
+        taskStep: "Harness inspection",
+        potentialHazards: ["Equipment failure", "Improper fit"],
+        controlMeasures: ["Pre-use inspection", "Proper adjustment"],
+        responsibleRole: "Worker"
+      }
+    ],
+    createdBy: "System Admin",
+    createdDate: "2023-01-10",
+    lastUpdated: "2023-01-10",
+    requiredEquipment: []
   }
 ];
