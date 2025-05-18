@@ -141,6 +141,20 @@ export interface Vehicle {
   mileage?: number;
   purchaseDate?: string;
   purchaseCost?: number;
+  // New fields for Fleet Dashboard
+  utilizationRate?: number;
+  fuelEfficiency?: number;
+  maintenanceCost?: number;
+  downtime?: number;
+  lastInspection?: string;
+  nextInspection?: string;
+  insuranceRenewal?: string;
+  registrationRenewal?: string;
+  telematics?: {
+    deviceId?: string;
+    lastPing?: string;
+    batteryLevel?: number;
+  };
 }
 
 export interface Tool {

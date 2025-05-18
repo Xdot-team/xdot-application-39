@@ -7,26 +7,26 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Search, 
-  FileText, 
   Plus, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Clock, 
-  Wrench,
+  ArrowUpDown, 
+  Filter,
+  Map,
   MapPin,
   Package,
   Truck,
   PackageOpen,
   CalendarClock,
-  ArrowUpDown,
-  Filter,
-  SendToBack
+  SendToBack,
+  Smartphone
 } from 'lucide-react';
 import { Vehicle, Tool, Material } from '@/types/field';
 import { AssetsMap } from '@/components/assets/AssetsMap';
 import { AssetDetails } from '@/components/assets/AssetDetails';
 import { MaintenanceSchedule } from '@/components/assets/MaintenanceSchedule';
 import { DispatchManager } from '@/components/assets/DispatchManager';
+import FleetDashboard from '@/components/assets/FleetDashboard';
+import MobileFleetView from '@/components/assets/MobileFleetView';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const mockVehicles: Vehicle[] = [
   {
@@ -505,6 +505,7 @@ const Assets = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const isMobile = useIsMobile();
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -593,9 +594,13 @@ const Assets = () => {
       {showDetails && selectedAsset ? (
         <AssetDetails asset={selectedAsset} onBack={resetSelection} />
       ) : (
-        <Tabs defaultValue="vehicles" className="w-full">
+        <Tabs defaultValue="fleet" className="w-full">
           <div className="flex justify-between items-center mb-4">
             <TabsList>
+              <TabsTrigger value="fleet" className="flex items-center gap-1">
+                <Truck className="h-4 w-4" />
+                <span>Fleet Dashboard</span>
+              </TabsTrigger>
               <TabsTrigger value="vehicles" className="flex items-center gap-1">
                 <Truck className="h-4 w-4" />
                 <span>Vehicles</span>
@@ -607,6 +612,10 @@ const Assets = () => {
               <TabsTrigger value="materials" className="flex items-center gap-1">
                 <PackageOpen className="h-4 w-4" />
                 <span>Materials</span>
+              </TabsTrigger>
+              <TabsTrigger value="mobile" className="flex items-center gap-1">
+                <Smartphone className="h-4 w-4" />
+                <span>Mobile</span>
               </TabsTrigger>
               <TabsTrigger value="dispatch" className="flex items-center gap-1">
                 <SendToBack className="h-4 w-4" />
@@ -639,6 +648,26 @@ const Assets = () => {
               </Button>
             </div>
           </div>
+
+          <TabsContent value="fleet" className="space-y-4">
+            <FleetDashboard vehicles={mockVehicles} />
+          </TabsContent>
+
+          <TabsContent value="mobile" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Mobile Field Interface</CardTitle>
+                <CardDescription>
+                  Request tools, track assets, and receive updates in the field
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mx-auto max-w-md border rounded-lg p-4 bg-gray-50 dark:bg-gray-900 shadow-sm">
+                  <MobileFleetView vehicles={mockVehicles} />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="vehicles" className="space-y-4">
             <Card>
