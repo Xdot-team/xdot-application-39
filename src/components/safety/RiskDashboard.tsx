@@ -193,7 +193,7 @@ export function RiskDashboard() {
     "jsa-analysis": "#eab308" 
   };
 
-  // Fix source label display by using optional chaining and ensure we don't call replace on numbers
+  // Fix source label display by ensuring we're only calling replace() on strings
   const getSourceLabel = (name: string | number) => {
     if (typeof name === 'string') {
       return name.replace(/-/g, ' ');
