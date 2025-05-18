@@ -23,7 +23,8 @@ import {
   DollarSign,
   UserRound,
   LineChart,
-  Satellite
+  Satellite,
+  ShieldAlert
 } from 'lucide-react';
 
 interface NavItem {
@@ -83,9 +84,9 @@ const navItems: NavItem[] = [
     allowedRoles: ['admin', 'hr', 'project_manager'],
   },
   {
-    title: 'Safety',
+    title: 'Safety & Risk',
     href: '/safety',
-    icon: HardHat,
+    icon: ShieldAlert,
     allowedRoles: ['admin', 'project_manager', 'field_worker', 'hr'],
   },
   {
@@ -159,7 +160,7 @@ export function Sidebar() {
           {/* Logo */}
           <div className="p-6 border-b border-sidebar-border">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <HardHat size={24} className="text-construction-primary" />
+              <ShieldAlert size={24} className="text-construction-primary" />
               <span className="text-xl font-bold text-white">xDOTContractor</span>
             </Link>
           </div>

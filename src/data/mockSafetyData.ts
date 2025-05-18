@@ -1,327 +1,520 @@
 
-import { SafetyIncident, Hazard, SafetyTraining, SafetyCompliance } from "@/types/safety";
+import { SafetyIncident, Hazard, SafetyTraining, SafetyCompliance, Risk } from "@/types/safety";
 
+// Mock Incidents
 export const mockSafetyIncidents: SafetyIncident[] = [
   {
-    id: "inc-001",
-    title: "Scaffold Collapse",
-    description: "Partial collapse of scaffold on the east side of building A. No injuries reported, but equipment was damaged.",
-    date: "2024-04-15T10:30:00Z",
-    location: "Building A, East Wing, 3rd Floor",
-    projectId: "proj-001",
-    projectName: "Georgia Highway Expansion - Atlanta",
-    reportedBy: "Michael Johnson",
+    id: "incident-001",
+    title: "Worker fall from ladder",
+    description: "A worker fell from a ladder while working on the second floor. Minor injuries sustained. Worker was wearing safety harness incorrectly.",
+    date: "2025-05-10",
+    location: "Building A, 2nd Floor",
+    projectId: "p-001",
+    projectName: "I-85 North Resurfacing",
+    reportedBy: "John Doe",
     severity: "medium",
     status: "investigating",
-    assignedTo: "Sarah Wilson",
-    photos: ["/scaffold1.jpg", "/scaffold2.jpg"],
-    witnesses: ["John Smith", "Lisa Rodriguez"],
+    assignedTo: "Sarah Johnson",
+    witnesses: ["Michael Smith", "Amy Lee"],
     actions: [
       {
         id: "action-001",
-        description: "Inspect all scaffolding on site",
-        assignedTo: "Thomas Brown",
-        dueDate: "2024-04-17",
-        status: "completed",
-        completedDate: "2024-04-16"
+        description: "Review proper harness use with all workers",
+        assignedTo: "Sarah Johnson",
+        dueDate: "2025-05-20",
+        status: "pending"
       },
       {
         id: "action-002",
-        description: "Replace damaged equipment",
-        assignedTo: "Carlos Diaz",
-        dueDate: "2024-04-20",
-        status: "in-progress"
+        description: "Replace damaged ladder",
+        assignedTo: "Equipment Manager",
+        dueDate: "2025-05-15",
+        status: "completed",
+        completedDate: "2025-05-12"
       }
     ],
-    followUpDate: "2024-04-22",
     oshaReportable: false
   },
   {
-    id: "inc-002",
-    title: "Chemical Spill",
-    description: "Small spill of concrete sealer in storage area. Contained with spill kit, approximately 1 gallon.",
-    date: "2024-04-10T14:15:00Z",
-    location: "Material Storage Area B",
-    projectId: "proj-002",
-    projectName: "Georgia Bridge Rehabilitation - Savannah",
-    reportedBy: "Emma Clarke",
-    severity: "low",
+    id: "incident-002",
+    title: "Equipment collision",
+    description: "Backhoe collided with concrete barrier while operating in low visibility conditions due to rain.",
+    date: "2025-05-08",
+    location: "South perimeter",
+    projectId: "p-002",
+    projectName: "Highway 101 Bridge Expansion",
+    reportedBy: "Robert Chen",
+    severity: "high",
     status: "resolved",
-    photos: ["/spill1.jpg"],
+    assignedTo: "Mike Wilson",
+    photos: ["photo1.jpg", "photo2.jpg"],
+    witnesses: ["Teresa Brown"],
     actions: [
       {
         id: "action-003",
-        description: "Clean up spill area",
-        assignedTo: "David Wilson",
-        dueDate: "2024-04-10",
+        description: "Implement updated protocol for operations in low visibility",
+        assignedTo: "Mike Wilson",
+        dueDate: "2025-05-15",
         status: "completed",
-        completedDate: "2024-04-10"
+        completedDate: "2025-05-14"
       }
     ],
-    resolutionNotes: "Area cleaned according to safety protocol. Containers secured properly to prevent future spills.",
-    oshaReportable: false
-  },
-  {
-    id: "inc-003",
-    title: "Worker Fall",
-    description: "Worker fell from height of 8 feet while working on roof installation. Suffered broken ankle and minor cuts.",
-    date: "2024-03-28T09:45:00Z",
-    location: "Building C, Roof",
-    projectId: "proj-003",
-    projectName: "Georgia School Construction - Athens",
-    reportedBy: "Robert Taylor",
-    severity: "high",
-    status: "closed",
-    assignedTo: "Margaret Chen",
-    photos: [],
-    witnesses: ["Kevin Barnes", "Patricia Lopez"],
-    actions: [
-      {
-        id: "action-004",
-        description: "Transport worker to hospital",
-        status: "completed",
-        completedDate: "2024-03-28"
-      },
-      {
-        id: "action-005",
-        description: "Investigate cause of fall",
-        assignedTo: "Safety Officer",
-        dueDate: "2024-03-30",
-        status: "completed",
-        completedDate: "2024-03-29"
-      },
-      {
-        id: "action-006",
-        description: "Review and update fall protection protocols",
-        assignedTo: "Safety Manager",
-        dueDate: "2024-04-05",
-        status: "completed",
-        completedDate: "2024-04-04"
-      }
-    ],
-    resolutionNotes: "Worker received medical treatment. Investigation found improper harness use. All workers received refresher training on fall protection.",
+    resolutionNotes: "Equipment repaired and new visibility protocols implemented",
     oshaReportable: true
   },
   {
-    id: "inc-004",
-    title: "Electrical Shock",
-    description: "Worker received minor electrical shock while using power tool. No serious injury, but worker sent for medical evaluation.",
-    date: "2024-04-05T13:20:00Z",
-    location: "Electrical Room, Building B",
-    projectId: "proj-004",
-    projectName: "Georgia Office Complex - Columbus",
-    reportedBy: "Steven Wright",
-    severity: "medium",
+    id: "incident-003",
+    title: "Chemical spill",
+    description: "Small chemical spill occurred when transferring solvents between containers. Area was contained and cleaned according to procedures.",
+    date: "2025-05-12",
+    location: "Storage area",
+    projectId: "p-003",
+    projectName: "Peachtree St Extension",
+    reportedBy: "Lisa Wong",
+    severity: "low",
     status: "closed",
-    photos: ["/electrical1.jpg"],
-    witnesses: ["Linda Martinez"],
-    actions: [
-      {
-        id: "action-007",
-        description: "Medical evaluation of affected worker",
-        status: "completed",
-        completedDate: "2024-04-05"
-      },
-      {
-        id: "action-008",
-        description: "Inspect all power tools on site",
-        assignedTo: "Electrical Supervisor",
-        dueDate: "2024-04-07",
-        status: "completed",
-        completedDate: "2024-04-06"
-      }
-    ],
-    resolutionNotes: "Worker cleared by medical. Faulty tool was removed from service and replaced.",
+    followUpDate: "2025-05-14",
+    resolutionNotes: "Clean-up completed and verified. No environmental impact.",
     oshaReportable: false
   },
   {
-    id: "inc-005",
-    title: "Heat Exhaustion",
-    description: "Two workers showing signs of heat exhaustion during afternoon work shift. Both given fluids and rest in shaded area.",
-    date: "2024-04-20T15:45:00Z",
-    location: "Outdoor Site, South Section",
-    projectId: "proj-005",
-    projectName: "Georgia Highway Maintenance - Macon",
-    reportedBy: "James Wilson",
+    id: "incident-004",
+    title: "Heat exhaustion",
+    description: "Worker experienced heat exhaustion during afternoon shift. Medical attention provided on-site.",
+    date: "2025-05-14",
+    location: "Southeast section",
+    projectId: "p-001",
+    projectName: "I-85 North Resurfacing",
+    reportedBy: "Marcus Johnson",
     severity: "medium",
-    status: "closed",
+    status: "reported",
+    oshaReportable: false
+  },
+  {
+    id: "incident-005",
+    title: "Near miss with crane load",
+    description: "Unsecured load on crane nearly fell while being transported. No injuries or damage occurred.",
+    date: "2025-05-15",
+    location: "North tower",
+    projectId: "p-002",
+    projectName: "Highway 101 Bridge Expansion",
+    reportedBy: "Emily Parker",
+    severity: "high",
+    status: "investigating",
+    assignedTo: "Mike Wilson",
     actions: [
       {
-        id: "action-009",
-        description: "Provide immediate first aid to affected workers",
-        status: "completed",
-        completedDate: "2024-04-20"
-      },
-      {
-        id: "action-010",
-        description: "Review heat safety protocols",
-        assignedTo: "Site Supervisor",
-        dueDate: "2024-04-22",
-        status: "completed",
-        completedDate: "2024-04-21"
+        id: "action-004",
+        description: "Review load securing procedures with all crane operators",
+        assignedTo: "Safety Officer",
+        dueDate: "2025-05-18",
+        status: "in-progress"
       }
     ],
-    resolutionNotes: "Workers recovered after rest. Additional water stations added to site. Work schedule adjusted to avoid peak heat hours.",
-    oshaReportable: false
+    oshaReportable: true
   }
 ];
 
+// Mock Hazards
 export const mockHazards: Hazard[] = [
   {
-    id: "haz-001",
-    type: "structural",
-    description: "Cracked support beam in the northeast corner of Building A, first floor.",
-    location: "Building A, Northeast Corner, 1st Floor",
-    projectId: "proj-001",
-    projectName: "Georgia Highway Expansion - Atlanta",
-    reportedBy: "Thomas Brown",
-    reportedDate: "2024-04-18T08:15:00Z",
+    id: "hazard-001",
+    type: "fall",
+    description: "Unguarded edge on the third floor of Building B",
+    location: "Building B, 3rd Floor",
+    projectId: "p-001",
+    projectName: "I-85 North Resurfacing",
+    reportedBy: "John Smith",
+    reportedDate: "2025-05-08",
     severity: "high",
     status: "active",
-    photos: ["/beam1.jpg", "/beam2.jpg"],
+    photos: ["edge1.jpg", "edge2.jpg"]
   },
   {
-    id: "haz-002",
+    id: "hazard-002",
     type: "electrical",
-    description: "Exposed wiring near water source in basement utility room.",
-    location: "Building B, Basement, Utility Room",
-    projectId: "proj-002",
-    projectName: "Georgia Bridge Rehabilitation - Savannah",
-    reportedBy: "Lisa Rodriguez",
-    reportedDate: "2024-04-16T13:45:00Z",
+    description: "Exposed wiring near water source",
+    location: "Equipment room, Building A",
+    projectId: "p-002",
+    projectName: "Highway 101 Bridge Expansion",
+    reportedBy: "Maria Garcia",
+    reportedDate: "2025-05-10",
     severity: "high",
     status: "mitigated",
-    photos: ["/wiring1.jpg"],
-    mitigationSteps: "Temporary shielding installed and water source redirected. Permanent fix scheduled.",
-    mitigatedBy: "Carlos Diaz",
-    mitigatedDate: "2024-04-17T09:30:00Z",
+    mitigationSteps: "Wiring was covered and water source relocated",
+    mitigatedBy: "Electrical Team",
+    mitigatedDate: "2025-05-11"
   },
   {
-    id: "haz-003",
-    type: "fall",
-    description: "Missing guardrail on 2nd floor balcony.",
-    location: "Building C, 2nd Floor, West Balcony",
-    projectId: "proj-003",
-    projectName: "Georgia School Construction - Athens",
-    reportedBy: "Emma Clarke",
-    reportedDate: "2024-04-14T11:20:00Z",
+    id: "hazard-003",
+    type: "equipment",
+    description: "Damaged hydraulic hose on excavator",
+    location: "East excavation site",
+    projectId: "p-003",
+    projectName: "Peachtree St Extension",
+    reportedBy: "David Johnson",
+    reportedDate: "2025-05-12",
     severity: "medium",
     status: "resolved",
-    photos: ["/rail1.jpg"],
-    mitigationSteps: "Temporary barrier installed immediately. Permanent guardrail installed following day.",
+    mitigationSteps: "Hose was replaced and equipment inspected",
     mitigatedBy: "Maintenance Team",
-    mitigatedDate: "2024-04-15T16:00:00Z",
+    mitigatedDate: "2025-05-12"
+  }
+];
+
+// Mock Risk data
+export const mockRisks: Risk[] = [
+  {
+    id: "risk-001",
+    title: "Equipment shortage for Peachtree project",
+    description: "Analysis indicates potential equipment shortage for the Peachtree Street Extension project due to concurrent demands from the Highway 101 project.",
+    category: "equipment",
+    probability: "high",
+    impact: "significant",
+    riskScore: 16,
+    status: "identified",
+    dateIdentified: "2025-05-10",
+    projectId: "p-003",
+    projectName: "Peachtree St Extension",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Schedule overlap with Highway 101 project",
+      "Limited excavator availability in fleet",
+      "Maintenance schedule conflicts"
+    ],
+    affectedAreas: ["Excavation", "Foundation work"],
+    lastUpdated: "2025-05-11",
+    isHighPriority: true
+  },
+  {
+    id: "risk-002",
+    title: "Labor shortage - skilled concrete workers",
+    description: "Potential shortage of skilled concrete workers during weeks 8-10 of the Highway 101 Bridge project due to regional demand and competing projects.",
+    category: "resource",
+    probability: "medium",
+    impact: "severe",
+    riskScore: 12,
+    status: "analyzing",
+    dateIdentified: "2025-05-08",
+    projectId: "p-002",
+    projectName: "Highway 101 Bridge Expansion",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Three major concrete pours scheduled in region during same period",
+      "Historical pattern of resource constraints in Q2",
+      "Training program completion delays"
+    ],
+    affectedAreas: ["Concrete foundation", "Support columns"],
+    lastUpdated: "2025-05-12",
+    isHighPriority: true
+  },
+  {
+    id: "risk-003",
+    title: "Cost overrun on asphalt materials",
+    description: "Predicted 15% increase in asphalt costs due to oil price fluctuations and supply chain disruptions affecting the I-85 Resurfacing project.",
+    category: "budget",
+    probability: "very-high",
+    impact: "moderate",
+    riskScore: 12,
+    status: "mitigating",
+    dateIdentified: "2025-05-01",
+    projectId: "p-001",
+    projectName: "I-85 North Resurfacing",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Oil price increases in last 30 days",
+      "Primary supplier reporting logistics issues",
+      "Regional shortage patterns"
+    ],
+    affectedAreas: ["Material procurement", "Project budget"],
+    lastUpdated: "2025-05-14",
+    mitigation: {
+      id: "mit-001",
+      riskId: "risk-003",
+      strategy: "mitigate",
+      description: "Secure forward contracts for asphalt at current prices and explore alternative suppliers.",
+      actions: [
+        {
+          id: "mit-action-001",
+          description: "Negotiate forward contracts with current supplier",
+          assignedTo: "Procurement Manager",
+          dueDate: "2025-05-20",
+          status: "in-progress"
+        },
+        {
+          id: "mit-action-002",
+          description: "Source alternative suppliers within 100mi radius",
+          assignedTo: "Procurement Team",
+          dueDate: "2025-05-25",
+          status: "pending"
+        }
+      ],
+      responsible: "Procurement Manager",
+      estimatedCost: 5000,
+      status: "active"
+    },
+    isHighPriority: false
+  },
+  {
+    id: "risk-004",
+    title: "Weather delays for concrete work",
+    description: "High probability of weather delays affecting concrete pouring schedule on Highway 101 Bridge project based on weather forecasts.",
+    category: "schedule",
+    probability: "high",
+    impact: "moderate",
+    riskScore: 9,
+    status: "mitigating",
+    dateIdentified: "2025-05-09",
+    projectId: "p-002",
+    projectName: "Highway 101 Bridge Expansion",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Weather forecast showing 70% chance of rain during critical days",
+      "Historical weather patterns for region",
+      "Seasonal precipitation data"
+    ],
+    affectedAreas: ["Concrete pouring", "Critical path schedule"],
+    lastUpdated: "2025-05-13",
+    isHighPriority: false
+  },
+  {
+    id: "risk-005",
+    title: "Compactor maintenance failure risk",
+    description: "Predictive maintenance analysis indicates high probability of compactor failure during critical resurfacing phase of I-85 project.",
+    category: "equipment",
+    probability: "high",
+    impact: "significant",
+    riskScore: 16,
+    status: "mitigating",
+    dateIdentified: "2025-05-07",
+    projectId: "p-001",
+    projectName: "I-85 North Resurfacing",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Maintenance logs show warning indicators",
+      "Equipment has exceeded 85% of expected service interval",
+      "Sensor data indicates potential hydraulic system issues"
+    ],
+    affectedAreas: ["Resurfacing operations", "Schedule critical path"],
+    lastUpdated: "2025-05-12",
+    isHighPriority: true
+  },
+  {
+    id: "risk-006",
+    title: "Permit approval delays",
+    description: "Historical analysis of similar permit applications suggests potential delays in environmental permit approval for Peachtree extension.",
+    category: "regulatory",
+    probability: "medium",
+    impact: "severe",
+    riskScore: 12,
+    status: "monitoring",
+    dateIdentified: "2025-05-03",
+    projectId: "p-003",
+    projectName: "Peachtree St Extension",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Similar permits in region averaging 45+ days for approval",
+      "Environmental agency staffing shortages reported",
+      "Complexity of watershed impact assessment"
+    ],
+    affectedAreas: ["Project initiation", "Schedule dependency"],
+    lastUpdated: "2025-05-12",
+    isHighPriority: false
+  },
+  {
+    id: "risk-007",
+    title: "Subcontractor financial instability",
+    description: "Financial analysis indicates potential financial instability with key electrical subcontractor on Highway 101 Bridge project.",
+    category: "resource",
+    probability: "medium",
+    impact: "significant",
+    riskScore: 9,
+    status: "analyzing",
+    dateIdentified: "2025-05-10",
+    projectId: "p-002",
+    projectName: "Highway 101 Bridge Expansion",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Payment delay patterns in last 3 projects",
+      "Industry financial stress indicators",
+      "Staff turnover at subcontractor"
+    ],
+    affectedAreas: ["Electrical systems", "Project handover"],
+    lastUpdated: "2025-05-14",
+    isHighPriority: false
+  },
+  {
+    id: "risk-008",
+    title: "Safety incident risk - excavation",
+    description: "Pattern analysis of similar projects indicates elevated risk of safety incidents during deep excavation phase of Peachtree project.",
+    category: "safety",
+    probability: "medium",
+    impact: "severe",
+    riskScore: 12,
+    status: "identified",
+    dateIdentified: "2025-05-11",
+    projectId: "p-003",
+    projectName: "Peachtree St Extension",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Soil condition similarity to previous incident sites",
+      "Increased complexity of excavation depth",
+      "New crew members with limited deep excavation experience"
+    ],
+    affectedAreas: ["Worker safety", "Project timeline"],
+    lastUpdated: "2025-05-13",
+    isHighPriority: true
+  },
+  {
+    id: "risk-009",
+    title: "Quality issues with concrete supplier",
+    description: "Quality control data suggests potential quality issues with concrete batches from supplier for Highway 101 project.",
+    category: "other",
+    probability: "low",
+    impact: "severe",
+    riskScore: 6,
+    status: "monitoring",
+    dateIdentified: "2025-05-08",
+    projectId: "p-002",
+    projectName: "Highway 101 Bridge Expansion",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Recent quality control samples showing 5% below strength requirement",
+      "Supplier changed aggregate source recently",
+      "Similar issues reported on other regional projects"
+    ],
+    affectedAreas: ["Structural integrity", "Quality assurance"],
+    lastUpdated: "2025-05-12",
+    isHighPriority: false
+  },
+  {
+    id: "risk-010",
+    title: "Traffic management plan inadequacy",
+    description: "Traffic analysis suggests the current traffic management plan may be inadequate for peak periods during I-85 resurfacing.",
+    category: "safety",
+    probability: "high",
+    impact: "moderate",
+    riskScore: 9,
+    status: "analyzing",
+    dateIdentified: "2025-05-10",
+    projectId: "p-001",
+    projectName: "I-85 North Resurfacing",
+    identifiedBy: "AI Risk System",
+    source: "ai-prediction",
+    predictedTriggers: [
+      "Recent traffic count data exceeds plan estimates by 17%",
+      "Concurrent events in area during construction period",
+      "Historical accident data at similar lane reduction setups"
+    ],
+    affectedAreas: ["Public safety", "Worker safety", "Project reputation"],
+    lastUpdated: "2025-05-13",
+    isHighPriority: false
   }
 ];
 
 export const mockSafetyTrainings: SafetyTraining[] = [
   {
-    id: "train-001",
+    id: "training-001",
     title: "Fall Protection Training",
     description: "Comprehensive training on proper use of fall protection equipment and hazard recognition.",
-    requiredFor: ["Roofers", "Scaffold Workers", "Steel Workers", "Supervisors"],
+    requiredFor: ["field_worker", "project_manager"],
     frequency: "annually",
     duration: 240,
-    materials: ["Fall protection handbook", "Safety harness manual"],
+    materials: ["fall_protection_manual.pdf", "harness_inspection_checklist.pdf"],
     certificationProduced: true
   },
   {
-    id: "train-002",
-    title: "First Aid & CPR",
-    description: "Basic first aid and CPR training for emergency response on construction sites.",
-    requiredFor: ["Site Supervisors", "Safety Officers", "Crew Leaders"],
+    id: "training-002",
+    title: "Hazard Communication",
+    description: "Training on chemical hazards, labels, safety data sheets, and protective measures.",
+    requiredFor: ["field_worker", "project_manager", "hr"],
     frequency: "biannually",
-    duration: 480,
-    certificationProduced: true
-  },
-  {
-    id: "train-003",
-    title: "Hazard Communication (HAZCOM)",
-    description: "Training on chemical hazards, labeling, and safety data sheets.",
-    requiredFor: ["All Workers"],
-    frequency: "annually",
     duration: 120,
-    materials: ["HAZCOM manual", "SDS examples"],
-    certificationProduced: false
+    materials: ["hazcom_slides.pdf", "sds_guide.pdf"],
+    certificationProduced: true
   },
   {
-    id: "train-004",
-    title: "Confined Space Entry",
-    description: "Procedures for safe entry and work in confined spaces.",
-    requiredFor: ["Maintenance Workers", "Utility Workers", "Supervisors"],
+    id: "training-003",
+    title: "Emergency Response",
+    description: "Procedures for emergency situations including evacuation, first aid, and reporting.",
+    requiredFor: ["field_worker", "project_manager", "hr", "accountant", "admin"],
     frequency: "annually",
-    duration: 360,
-    certificationProduced: true
+    duration: 90,
+    materials: ["emergency_procedures.pdf"],
+    certificationProduced: false
   }
 ];
 
-export const mockSafetyCompliance: SafetyCompliance[] = [
+export const mockSafetyCompliances: SafetyCompliance[] = [
   {
-    id: "comp-001",
-    standard: "OSHA 1926 Subpart M - Fall Protection",
-    description: "Requirements for fall protection in construction workplaces.",
-    applicableTo: ["All Height Work"],
+    id: "compliance-001",
+    standard: "OSHA 1926.501",
+    description: "Fall protection requirements for construction",
+    applicableTo: ["field_worker", "project_manager"],
     checklistItems: [
       {
-        id: "comp-001-item-1",
-        description: "Fall protection provided at heights of 6 feet or more",
+        id: "item-001",
+        description: "Workers using fall protection when working at heights of 6 feet or more",
         required: true,
         status: "compliant",
-        lastChecked: "2024-04-15"
+        lastChecked: "2025-05-01",
+        notes: "All workers observed using proper harnesses"
       },
       {
-        id: "comp-001-item-2",
-        description: "Guardrail systems meet height and strength requirements",
-        required: true,
-        status: "compliant",
-        lastChecked: "2024-04-15"
-      },
-      {
-        id: "comp-001-item-3",
-        description: "Personal fall arrest systems inspected before each use",
+        id: "item-002",
+        description: "Guardrails installed on all open sides and edges",
         required: true,
         status: "non-compliant",
-        lastChecked: "2024-04-15",
-        notes: "Some workers not performing inspections consistently"
-      },
-      {
-        id: "comp-001-item-4",
-        description: "Warning line systems used on low-slope roofs",
-        required: false,
-        status: "not-applicable",
-        notes: "No current work on low-slope roofs"
+        lastChecked: "2025-05-01",
+        notes: "Missing guardrail on north side of Building A, 3rd floor"
       }
     ],
-    nextReviewDate: "2024-10-15"
+    nextReviewDate: "2025-06-01",
+    lastReviewDate: "2025-05-01",
+    reviewedBy: "Sarah Johnson",
+    documentationRequired: ["inspection_report.pdf"]
   },
   {
-    id: "comp-002",
-    standard: "OSHA 1926 Subpart C - General Safety and Health",
-    description: "General requirements for safety and health provisions.",
-    applicableTo: ["All Construction Sites"],
+    id: "compliance-002",
+    standard: "OSHA 1926.1153",
+    description: "Respirable crystalline silica standard for construction",
+    applicableTo: ["field_worker"],
     checklistItems: [
       {
-        id: "comp-002-item-1",
-        description: "Accident prevention responsibilities assigned",
+        id: "item-003",
+        description: "Engineering controls used to reduce dust exposure",
         required: true,
         status: "compliant",
-        lastChecked: "2024-04-10"
+        lastChecked: "2025-04-15",
+        notes: "Wet methods and vacuum systems in place"
       },
       {
-        id: "comp-002-item-2",
-        description: "Safety training provided to employees",
+        id: "item-004",
+        description: "Respiratory protection provided when engineering controls not sufficient",
         required: true,
         status: "compliant",
-        lastChecked: "2024-04-10"
+        lastChecked: "2025-04-15"
       },
       {
-        id: "comp-002-item-3",
-        description: "First aid supplies readily available",
+        id: "item-005",
+        description: "Air monitoring conducted according to schedule",
         required: true,
-        status: "compliant",
-        lastChecked: "2024-04-10"
+        status: "non-compliant",
+        lastChecked: "2025-04-15",
+        notes: "Last monitoring performed more than 30 days ago"
       }
     ],
-    nextReviewDate: "2024-10-10"
+    nextReviewDate: "2025-05-15",
+    lastReviewDate: "2025-04-15",
+    reviewedBy: "Mike Wilson"
   }
 ];
