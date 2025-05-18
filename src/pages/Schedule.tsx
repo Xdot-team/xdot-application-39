@@ -7,10 +7,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { CalendarView } from "@/components/schedule/CalendarView";
 import { ResourceSchedule } from "@/components/schedule/ResourceSchedule";
 import { MeetingList } from "@/components/schedule/MeetingList";
-import { Calendar, Users, Clock, AlertCircle } from "lucide-react";
+import { Calendar, Users, Clock, AlertCircle, ChartGantt } from "lucide-react";
+import { GanttView } from "@/components/schedule/GanttView";
 
 export default function Schedule() {
-  const [activeTab, setActiveTab] = useState("calendar");
+  const [activeTab, setActiveTab] = useState("gantt");
   const isMobile = useIsMobile();
 
   return (
@@ -22,12 +23,16 @@ export default function Schedule() {
       
       <div className="relative">
         <Tabs
-          defaultValue="calendar"
+          defaultValue="gantt"
           value={activeTab}
           onValueChange={setActiveTab}
           className="w-full"
         >
           <TabsList className="w-full mb-8">
+            <TabsTrigger value="gantt" className="flex items-center gap-1">
+              <ChartGantt className="h-4 w-4" />
+              <span>{isMobile ? "Gantt" : "Gantt Chart"}</span>
+            </TabsTrigger>
             <TabsTrigger value="calendar" className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
               <span>{isMobile ? "Calendar" : "Calendar View"}</span>
@@ -45,6 +50,14 @@ export default function Schedule() {
               <span>{isMobile ? "Conflicts" : "Scheduling Conflicts"}</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="gantt" className="space-y-4">
+            <Card>
+              <CardContent className="p-4">
+                <GanttView />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="calendar" className="space-y-4">
             <Card>
