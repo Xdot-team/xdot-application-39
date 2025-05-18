@@ -1,6 +1,7 @@
-
 export type EstimateStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
 export type EstimateItemCategory = 'material' | 'labor' | 'equipment' | 'subcontractor' | 'overhead';
+export type EstimateVersion = 'current' | 'previous' | 'baseline';
+export type FormulaType = 'simple' | 'complex' | 'reference' | 'conditional';
 
 export interface Estimate {
   id: string;
@@ -19,6 +20,23 @@ export interface Estimate {
   quickEstimateParams?: QuickEstimateParams;
   bidDocuments?: BidDocument[];
   buyoutPackages?: BuyoutPackage[];
+  versions?: EstimateVersionInfo[];
+  currentVersion?: string;
+  templateId?: string;
+  isTemplate?: boolean;
+  collaborators?: string[];
+  lastSyncedAt?: string;
+}
+
+export interface EstimateVersionInfo {
+  id: string;
+  estimateId: string;
+  versionNumber: string;
+  createdBy: string;
+  createdAt: string;
+  notes?: string;
+  totalCost: number;
+  isBaseline?: boolean;
 }
 
 export interface EstimateItem {
@@ -32,6 +50,20 @@ export interface EstimateItem {
   category: EstimateItemCategory;
   notes?: string;
   takeoffReference?: string;
+  formula?: string;
+  hasError?: boolean;
+  errorMessage?: string;
+  parentId?: string;
+  children?: EstimateItem[];
+  vendorId?: string;
+  vendorName?: string;
+  costCode?: string;
+  markupPercentage?: number;
+  productionRate?: number;
+  createdBy?: string;
+  modifiedBy?: string;
+  modifiedDate?: string;
+  isLocked?: boolean;
 }
 
 export interface VendorBid {
@@ -153,3 +185,103 @@ export interface BuyoutPackage {
   notes?: string;
 }
 
+export interface EstimateTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  category: string;
+  items: EstimateTemplateItem[];
+  createdBy: string;
+  createdAt: string;
+  modifiedAt?: string;
+  isPublic: boolean;
+}
+
+export interface EstimateTemplateItem {
+  id: string;
+  description: string;
+  category: EstimateItemCategory;
+  unit?: string;
+  formula?: string;
+  notes?: string;
+  children?: EstimateTemplateItem[];
+}
+
+export interface MaterialCostDatabase {
+  id: string;
+  name: string;
+  description?: string;
+  materials: MaterialCost[];
+  lastUpdated: string;
+  region: string;
+  source?: string;
+}
+
+export interface MaterialCost {
+  id: string;
+  name: string;
+  description?: string;
+  unit: string;
+  cost: number;
+  region?: string;
+  supplier?: string;
+  effectiveDate: string;
+  expirationDate?: string;
+  category?: string;
+  notes?: string;
+}
+
+export interface EstimateCollaborator {
+  userId: string;
+  username: string;
+  role: 'viewer' | 'editor' | 'approver' | 'owner';
+  lastActive?: string;
+  activeSection?: string;
+}
+
+export interface EstimateCell {
+  rowId: string;
+  columnId: string;
+  value: string | number;
+  formula?: string;
+  isEditing?: boolean;
+  isError?: boolean;
+  errorMessage?: string;
+  dataType?: 'text' | 'number' | 'formula' | 'currency' | 'percentage';
+  validation?: CellValidation;
+  comments?: CellComment[];
+  style?: CellStyle;
+}
+
+export interface CellValidation {
+  type: 'range' | 'list' | 'custom';
+  params: any;
+  message?: string;
+}
+
+export interface CellComment {
+  id: string;
+  userId: string;
+  username: string;
+  text: string;
+  timestamp: string;
+  resolved?: boolean;
+}
+
+export interface CellStyle {
+  fontWeight?: string;
+  color?: string;
+  backgroundColor?: string;
+  border?: string;
+  alignment?: string;
+}
+
+export interface EstimateImportSource {
+  id: string;
+  name: string;
+  type: 'dot' | 'excel' | 'csv' | 'historical' | 'template';
+  url?: string;
+  apiKey?: string;
+  lastSyncDate?: string;
+  mappings?: {[key: string]: string};
+}

@@ -283,7 +283,7 @@ const Estimating = () => {
         
         {/* Detailed Estimate Tab */}
         <TabsContent value="detailedEstimate">
-          <DetailedEstimate />
+          <DetailedEstimate estimateId={selectedEstimate?.id} />
         </TabsContent>
         
         {/* Site Visits Tab */}
@@ -306,12 +306,12 @@ const Estimating = () => {
           <TakeoffAI />
         </TabsContent>
 
-        {/* Bid Documents Tab - NEW */}
+        {/* Bid Documents Tab */}
         <TabsContent value="bidDocuments">
           <BidDocuments />
         </TabsContent>
 
-        {/* Buyout Tab - NEW */}
+        {/* Buyout Tab */}
         <TabsContent value="buyout">
           <Buyout />
         </TabsContent>
