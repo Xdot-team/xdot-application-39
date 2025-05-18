@@ -24,7 +24,7 @@ import {
 import { Vehicle } from "@/types/field";
 import FleetMap from "./FleetMap";
 import FleetMetrics from "./FleetMetrics";
-import MaintenanceSchedule from "./MaintenanceSchedule";
+import { MaintenanceSchedule } from "./MaintenanceSchedule";
 import FleetAlerts from "./FleetAlerts";
 
 interface FleetDashboardProps {

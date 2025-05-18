@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from '@/components/ui/page-header';
@@ -17,7 +18,11 @@ import {
   PackageOpen,
   CalendarClock,
   SendToBack,
-  Smartphone
+  Smartphone,
+  AlertTriangle,
+  Wrench,
+  Clock,
+  CheckCircle2
 } from 'lucide-react';
 import { Vehicle, Tool, Material } from '@/types/field';
 import { AssetsMap } from '@/components/assets/AssetsMap';
