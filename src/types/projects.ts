@@ -1,4 +1,3 @@
-
 export type ProjectStatus = 'active' | 'completed' | 'upcoming';
 
 export interface Project {
@@ -60,7 +59,35 @@ export interface ChangeOrder {
   impactDays: number;
 }
 
-// New type definitions for AIA Billing
+// New type definitions for Project Notes
+export interface ProjectNote {
+  id: string;
+  projectId: string;
+  title: string;
+  content: string;
+  author: string;
+  timestamp: string;
+  tags: string[];
+  attachments?: string[];
+}
+
+// New type definitions for Scope of Work in Progress
+export interface ScopeWIP {
+  id: string;
+  projectId: string;
+  taskId: string;
+  scopeDescription: string;
+  progressPercentage: number;
+  status: 'not_started' | 'in_progress' | 'completed' | 'on_hold';
+  startDate: string;
+  estimatedEndDate: string;
+  actualEndDate?: string;
+  assignedTo: string[];
+  notes?: string;
+  lastUpdated: string;
+}
+
+// Existing type definitions for AIA Billing
 export interface AIABilling {
   id: string;
   projectId: string;
