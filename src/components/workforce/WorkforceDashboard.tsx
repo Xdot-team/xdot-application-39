@@ -112,13 +112,15 @@ export const WorkforceDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
-          <Input 
-            placeholder="Search employees..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="max-w-[200px]"
-            icon={Search}
-          />
+          <div className="relative max-w-[200px]">
+            <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input 
+              placeholder="Search employees..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="pl-8 max-w-[200px]"
+            />
+          </div>
           <Select value={filterRole} onValueChange={setFilterRole}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by role" />
