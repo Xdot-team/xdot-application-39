@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MapPin, TruckIcon, User, RefreshCcw } from 'lucide-react';
+import { MapPin, TruckIcon, User, RefreshCcw, Plus, Clipboard } from 'lucide-react';
 import { FieldWorker, Equipment } from '@/types/field';
 import { toast } from "sonner";
+import { ChatbotButton } from '../chatbot/ChatbotButton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DialogTrigger } from '@/components/ui/dialog';
 
 // Enhanced mock data for field workers
 const mockWorkers: FieldWorker[] = [
@@ -114,6 +117,8 @@ export const FieldMap = () => {
   const [selectedWorker, setSelectedWorker] = useState<FieldWorker | null>(null);
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
   const [lastRefresh, setLastRefresh] = useState<string>(new Date().toLocaleTimeString());
+  const [activeTab, setActiveTab] = useState<'map' | 'workers' | 'equipment'>('map');
+  const [chatDialogOpen, setChatDialogOpen] = useState(false);
 
   useEffect(() => {
     // In a real implementation, this would initialize a map with the Mapbox library
@@ -150,6 +155,27 @@ export const FieldMap = () => {
     setLastRefresh(new Date().toLocaleTimeString());
     toast.success("Location data refreshed");
   };
+
+  const handleChatOpen = () => {
+    setChatDialogOpen(true);
+  };
+
+  // Mobile-friendly quick action buttons for field data collection
+  const QuickActionButton = ({ icon, label, onClick }: { 
+    icon: React.ReactNode, 
+    label: string, 
+    onClick: () => void 
+  }) => (
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center justify-center bg-white rounded-lg shadow-sm p-3 w-full"
+    >
+      <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center mb-2">
+        {icon}
+      </div>
+      <span className="text-xs font-medium text-gray-700">{label}</span>
+    </button>
+  );
 
   if (mapApiStatus === 'loading') {
     return (
@@ -208,14 +234,26 @@ export const FieldMap = () => {
     );
   }
 
+  // Mobile-friendly view with tabs
   return (
     <div className="relative h-full">
+      {/* Mobile top nav with tabs */}
+      <div className="sm:hidden sticky top-0 bg-white z-10 p-2 border-b">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="map" className="flex-1">Map</TabsTrigger>
+            <TabsTrigger value="workers" className="flex-1">Workers</TabsTrigger>
+            <TabsTrigger value="equipment" className="flex-1">Equipment</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+      
       {/* This is a placeholder for the actual map */}
-      <div className="absolute inset-0 bg-blue-50 flex items-center justify-center">
-        <div className="max-w-3xl w-full text-center">
+      <div className="absolute inset-0 bg-blue-50 flex items-center justify-center sm:pt-0 pt-12">
+        <div className="max-w-3xl w-full text-center p-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-medium text-lg">Field Location Tracking</h3>
-            <div className="flex items-center space-x-2">
+            <div className="hidden sm:flex items-center space-x-2">
               <span className="text-xs text-gray-500">Last updated: {lastRefresh}</span>
               <Button size="sm" variant="outline" onClick={handleRefresh}>
                 <RefreshCcw className="h-4 w-4 mr-1" />
@@ -228,21 +266,135 @@ export const FieldMap = () => {
             </div>
           </div>
           
-          <div className="bg-white bg-opacity-70 p-4 rounded-lg mb-6">
-            <p className="text-gray-600 mb-4">
-              This map shows the current position of field workers and equipment. 
-              Select any item below to see more details.
-            </p>
-            
-            <div className="w-full h-48 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <div className="text-blue-700 text-center">
-                <MapPin className="h-8 w-8 mx-auto mb-2" />
-                <p>Interactive map would appear here with Mapbox integration</p>
-              </div>
-            </div>
+          {/* Mobile Quick Actions */}
+          <div className="sm:hidden grid grid-cols-4 gap-2 mb-4">
+            <QuickActionButton 
+              icon={<RefreshCcw className="h-5 w-5 text-blue-500" />} 
+              label="Refresh" 
+              onClick={handleRefresh}
+            />
+            <QuickActionButton 
+              icon={<MapPin className="h-5 w-5 text-green-500" />} 
+              label="Map" 
+              onClick={handleMapConnect}
+            />
+            <QuickActionButton 
+              icon={<Plus className="h-5 w-5 text-purple-500" />} 
+              label="Add" 
+              onClick={() => toast.info("Add new worker/equipment feature coming soon")}
+            />
+            <QuickActionButton 
+              icon={<Clipboard className="h-5 w-5 text-amber-500" />} 
+              label="Report" 
+              onClick={() => toast.info("Field report feature coming soon")}
+            />
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TabsContent value="map" className="mt-0">
+            <div className="bg-white bg-opacity-70 p-4 rounded-lg mb-6">
+              <p className="text-gray-600 mb-4">
+                This map shows the current position of field workers and equipment. 
+                Select any item below to see more details.
+              </p>
+              
+              <div className="w-full h-48 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <div className="text-blue-700 text-center">
+                  <MapPin className="h-8 w-8 mx-auto mb-2" />
+                  <p>Interactive map would appear here with Mapbox integration</p>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="workers" className="mt-0">
+            <div>
+              <h4 className="font-medium mb-3 text-left">Field Workers</h4>
+              <div className="space-y-3">
+                {mockWorkers.map(worker => (
+                  <Card 
+                    key={worker.id} 
+                    className={`p-3 text-left cursor-pointer transition-all hover:shadow-md ${
+                      selectedWorker?.id === worker.id ? 'ring-2 ring-primary' : ''
+                    }`}
+                    onClick={() => setSelectedWorker(worker === selectedWorker ? null : worker)}
+                  >
+                    <div className="flex justify-between">
+                      <div>
+                        <p className="font-medium">{worker.name}</p>
+                        <p className="text-xs text-gray-500">{worker.role}</p>
+                      </div>
+                      <div className={`h-3 w-3 rounded-full mt-1 ${
+                        worker.status === 'active' ? 'bg-green-500' : 
+                        worker.status === 'on-break' ? 'bg-amber-500' : 'bg-gray-400'
+                      }`} />
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Project: {worker.currentProject}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Lat: {worker.currentLocation?.lat.toFixed(4)}, Lng: {worker.currentLocation?.lng.toFixed(4)}
+                    </p>
+                    
+                    {selectedWorker?.id === worker.id && (
+                      <div className="mt-2 pt-2 border-t text-xs space-y-1">
+                        <p><span className="font-medium">Last Update:</span> {formatTimestamp(worker.currentLocation?.timestamp || '')}</p>
+                        {worker.specialty && <p><span className="font-medium">Specialty:</span> {worker.specialty}</p>}
+                        {worker.certifications && <p><span className="font-medium">Certifications:</span> {worker.certifications.join(', ')}</p>}
+                        {worker.contactInfo && <p><span className="font-medium">Contact:</span> {worker.contactInfo}</p>}
+                      </div>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="equipment" className="mt-0">
+            <div>
+              <h4 className="font-medium mb-3 text-left">Equipment</h4>
+              <div className="space-y-3">
+                {mockEquipment.map(equip => (
+                  <Card 
+                    key={equip.id} 
+                    className={`p-3 text-left cursor-pointer transition-all hover:shadow-md ${
+                      selectedEquipment?.id === equip.id ? 'ring-2 ring-primary' : ''
+                    }`}
+                    onClick={() => setSelectedEquipment(equip === selectedEquipment ? null : equip)}
+                  >
+                    <div className="flex justify-between">
+                      <div>
+                        <p className="font-medium">{equip.name}</p>
+                        <p className="text-xs text-gray-500">{equip.type}</p>
+                      </div>
+                      <div className={`h-3 w-3 rounded-full mt-1 ${
+                        equip.status === 'in-use' ? 'bg-blue-500' : 
+                        equip.status === 'maintenance' ? 'bg-amber-500' : 
+                        equip.status === 'available' ? 'bg-green-500' : 'bg-red-500'
+                      }`} />
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Project: {equip.currentProject}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Lat: {equip.currentLocation?.lat.toFixed(4)}, Lng: {equip.currentLocation?.lng.toFixed(4)}
+                    </p>
+                    
+                    {selectedEquipment?.id === equip.id && (
+                      <div className="mt-2 pt-2 border-t text-xs space-y-1">
+                        <p><span className="font-medium">Last Update:</span> {formatTimestamp(equip.currentLocation?.timestamp || '')}</p>
+                        {equip.model && <p><span className="font-medium">Model:</span> {equip.model}</p>}
+                        {equip.serialNumber && <p><span className="font-medium">Serial:</span> {equip.serialNumber}</p>}
+                        {equip.lastMaintenance && <p><span className="font-medium">Last Maintenance:</span> {equip.lastMaintenance}</p>}
+                        {equip.nextMaintenance && <p><span className="font-medium">Next Maintenance:</span> {equip.nextMaintenance}</p>}
+                      </div>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 hidden sm:grid">
             <div>
               <h4 className="font-medium mb-3 text-left">Field Workers</h4>
               <div className="space-y-3">
@@ -328,10 +480,15 @@ export const FieldMap = () => {
           </div>
         </div>
       </div>
-      
-      <div className="absolute bottom-2 right-2 text-xs text-gray-400">
-        <p className="italic">Construct for Centuries</p>
-      </div>
+
+      {/* Fixed chatbot button at bottom right for mobile and desktop */}
+      <ChatbotButton 
+        onClick={handleChatOpen} 
+        shape="circle" 
+        theme="default" 
+        position="fixed" 
+        size="md"
+      />
     </div>
   );
 };
