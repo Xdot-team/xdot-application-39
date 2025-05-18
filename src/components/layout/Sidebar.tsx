@@ -184,7 +184,7 @@ export function Sidebar() {
                     variant="ghost"
                     onClick={() => handleNavigation(item.href)}
                     className={cn(
-                      "flex w-full items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      "flex w-full items-center justify-start px-3 py-2 rounded-md text-sm font-medium transition-colors",
                       location.pathname === item.href
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "text-sidebar-foreground hover:bg-sidebar-accent/50"
