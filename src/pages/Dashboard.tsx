@@ -5,6 +5,7 @@ import { User } from "@/types/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BellRing, CalendarDays, CheckCircle, ClipboardCheck, Clock, DollarSign, FileText, HardHat, Package, Settings, TrendingUp, Users } from "lucide-react";
+import { SankeyFlowDiagram } from "@/components/dashboard/SankeyFlowDiagram";
 
 // Mock data for the dashboard
 const projectStats = {
@@ -225,6 +226,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Sankey Diagram for Resource & Financial Flow */}
+      <SankeyFlowDiagram />
     </div>
   );
 };
