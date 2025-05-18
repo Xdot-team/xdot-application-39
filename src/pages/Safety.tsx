@@ -12,7 +12,7 @@ import { CertificationManagement } from "@/components/safety/CertificationManage
 import { RiskDashboard } from "@/components/safety/RiskDashboard";
 import { RiskMitigation } from "@/components/safety/RiskMitigation";
 import { MobileRiskViewer } from "@/components/safety/MobileRiskViewer";
-import { AlertTriangle, Clipboard, FileCheck, ShieldCheck, Award, ShieldAlert, FileSparkles, Bell } from "lucide-react";
+import { AlertTriangle, Clipboard, FileCheck, ShieldCheck, Award, ShieldAlert, Sparkles, Bell } from "lucide-react";
 
 export default function Safety() {
   const [activeTab, setActiveTab] = useState("incidents");
@@ -42,7 +42,7 @@ export default function Safety() {
               <span>{isMobile ? "Risks" : "Risk Management"}</span>
             </TabsTrigger>
             <TabsTrigger value="mitigation" className="flex items-center gap-1">
-              <FileSparkles className="h-4 w-4" />
+              <Sparkles className="h-4 w-4" />
               <span>{isMobile ? "Mitigate" : "Risk Mitigation"}</span>
             </TabsTrigger>
             <TabsTrigger value="hazards" className="flex items-center gap-1">

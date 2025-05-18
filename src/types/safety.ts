@@ -91,7 +91,7 @@ export interface SafetyCompliance {
 // New Risk Management Types
 export type RiskProbability = 'low' | 'medium' | 'high' | 'very-high';
 export type RiskImpact = 'minimal' | 'moderate' | 'significant' | 'severe';
-export type RiskStatus = 'identified' | 'analyzing' | 'mitigating' | 'monitored' | 'closed';
+export type RiskStatus = 'identified' | 'analyzing' | 'mitigating' | 'monitored' | 'monitoring' | 'closed';
 export type RiskCategory = 
   | 'safety' 
   | 'schedule' 

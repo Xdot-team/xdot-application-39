@@ -4,13 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { mockSafetyCompliance } from "@/data/mockSafetyData";
+import { mockSafetyCompliances } from "@/data/mockSafetyData";
 import { SafetyCompliance } from "@/types/safety";
 import { CheckCircle2, AlertTriangle, Info } from "lucide-react";
 
 export function ComplianceChecklist() {
   const [complianceData, setComplianceData] = useState<SafetyCompliance[]>(
-    mockSafetyCompliance || []
+    mockSafetyCompliances || []
   );
 
   const toggleChecklistItem = (complianceId: string, itemId: string) => {
