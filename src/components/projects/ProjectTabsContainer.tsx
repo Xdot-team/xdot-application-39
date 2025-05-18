@@ -1,8 +1,5 @@
-
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import full-featured tab components instead of simplified versions
@@ -27,19 +24,11 @@ interface ProjectTabsContainerProps {
 
 const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
   const [activeProjectTab, setActiveProjectTab] = useState("overview");
-  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const notificationCount = 4; // Mock value for unread notifications
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex-1"></div> {/* Empty div for spacing */}
-        <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>
-          View All Details
-        </Button>
-      </div>
-
       <Tabs 
         defaultValue="overview" 
         value={activeProjectTab} 
