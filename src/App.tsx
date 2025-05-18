@@ -20,6 +20,7 @@ import Schedule from "./pages/Schedule";
 import Organization from "./pages/Organization";
 import Admin from "./pages/Admin";
 import Reports from "./pages/Reports";
+import Survey from "./pages/Survey";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/workforce" element={<Workforce />} />
               <Route path="/safety" element={<Safety />} />
               <Route path="/schedule" element={<Schedule />} />
+              <Route path="/survey" element={<Survey />} />
               <Route path="/organization" element={<Organization />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/admin" element={<Admin />} />

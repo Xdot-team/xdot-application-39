@@ -22,7 +22,8 @@ import {
   MapPin,
   DollarSign,
   UserRound,
-  LineChart
+  LineChart,
+  Satellite
 } from 'lucide-react';
 
 interface NavItem {
@@ -91,6 +92,12 @@ const navItems: NavItem[] = [
     title: 'Schedule',
     href: '/schedule',
     icon: Calendar,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
+  },
+  {
+    title: 'Survey',
+    href: '/survey',
+    icon: Satellite,
     allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {
