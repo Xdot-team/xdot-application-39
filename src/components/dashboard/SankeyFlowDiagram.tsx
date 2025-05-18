@@ -65,7 +65,7 @@ const data = {
 };
 
 const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
+  if (active && payload && payload.length && payload[0].payload.source) {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-2 border border-gray-200 rounded shadow-md text-xs">
