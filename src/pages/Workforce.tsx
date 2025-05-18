@@ -9,10 +9,11 @@ import { TimeCardManagement } from "@/components/workforce/TimeCardManagement";
 import { OnboardingWorkflow } from "@/components/workforce/OnboardingWorkflow";
 import { AppreciationHub } from "@/components/workforce/AppreciationHub";
 import { WorkforceDashboard } from "@/components/workforce/WorkforceDashboard";
-import { UserRound, Clock, Award, FileCheck, BarChart } from "lucide-react";
+import { EmployeeHealth } from "@/components/workforce/EmployeeHealth";
+import { UserRound, Clock, Award, FileCheck, BarChart, Heart } from "lucide-react";
 
 export default function Workforce() {
-  const [activeTab, setActiveTab] = useState("employees");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const isMobile = useIsMobile();
 
   return (
@@ -24,12 +25,16 @@ export default function Workforce() {
       
       <div className="relative">
         <Tabs
-          defaultValue="employees"
+          defaultValue="dashboard"
           value={activeTab}
           onValueChange={setActiveTab}
           className="w-full"
         >
           <TabsList className="w-full mb-8">
+            <TabsTrigger value="dashboard" className="flex items-center gap-1">
+              <BarChart className="h-4 w-4" />
+              <span>{isMobile ? "Metrics" : "Workforce Dashboard"}</span>
+            </TabsTrigger>
             <TabsTrigger value="employees" className="flex items-center gap-1">
               <UserRound className="h-4 w-4" />
               <span>{isMobile ? "Profiles" : "Employee Profiles"}</span>
@@ -42,15 +47,23 @@ export default function Workforce() {
               <FileCheck className="h-4 w-4" />
               <span>{isMobile ? "Onboard" : "Onboarding"}</span>
             </TabsTrigger>
+            <TabsTrigger value="health" className="flex items-center gap-1">
+              <Heart className="h-4 w-4" />
+              <span>{isMobile ? "Health" : "Employee Health"}</span>
+            </TabsTrigger>
             <TabsTrigger value="appreciation" className="flex items-center gap-1">
               <Award className="h-4 w-4" />
               <span>{isMobile ? "Kudos" : "Appreciation"}</span>
             </TabsTrigger>
-            <TabsTrigger value="dashboard" className="flex items-center gap-1">
-              <BarChart className="h-4 w-4" />
-              <span>{isMobile ? "Metrics" : "Workforce Dashboard"}</span>
-            </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="dashboard" className="space-y-4">
+            <Card>
+              <CardContent className="p-0">
+                <WorkforceDashboard />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="employees" className="space-y-4">
             <Card>
@@ -76,18 +89,18 @@ export default function Workforce() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="appreciation" className="space-y-4">
+          <TabsContent value="health" className="space-y-4">
             <Card>
               <CardContent className="p-0">
-                <AppreciationHub />
+                <EmployeeHealth />
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="dashboard" className="space-y-4">
+          <TabsContent value="appreciation" className="space-y-4">
             <Card>
               <CardContent className="p-0">
-                <WorkforceDashboard />
+                <AppreciationHub />
               </CardContent>
             </Card>
           </TabsContent>

@@ -187,3 +187,36 @@ export interface Subcontractor {
     notes?: string;
   };
 }
+
+// New type for Employee Health records
+export type HealthStatus = 'fit_for_duty' | 'restricted_duty' | 'not_fit_for_duty' | 'pending_evaluation';
+export type HealthRecordType = 'routine_check' | 'injury_assessment' | 'return_to_work' | 'wellness_program';
+
+export interface EmployeeHealth {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  recordDate: string;
+  recordType: HealthRecordType;
+  healthStatus: HealthStatus;
+  medicalNotes: string;
+  restrictions?: string;
+  followUpDate?: string;
+  clearanceDate?: string;
+  recordedBy: string;
+  confidential: boolean;
+  attachments?: {
+    id: string;
+    name: string;
+    url: string;
+    uploadDate: string;
+  }[];
+  wellnessPrograms?: {
+    programId: string;
+    programName: string;
+    startDate: string;
+    endDate?: string;
+    status: 'active' | 'completed' | 'withdrawn';
+    notes?: string;
+  }[];
+}

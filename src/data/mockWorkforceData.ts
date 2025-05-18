@@ -1,10 +1,10 @@
-
 import { 
   EmployeeProfile, 
   Onboarding, 
   TimeCard,
   EmployeeAppreciation,
-  Subcontractor
+  Subcontractor,
+  EmployeeHealth
 } from "@/types/workforce";
 
 // Mock Employee Profiles
@@ -797,5 +797,103 @@ export const mockSubcontractors: Subcontractor[] = [
       completedProjects: 3,
       notes: "Excellent quality and always on schedule."
     }
+  }
+];
+
+// Mock Employee Health Records
+export const mockHealthRecords: EmployeeHealth[] = [
+  {
+    id: "health-001",
+    employeeId: "emp-001",
+    employeeName: "John Daniels",
+    recordDate: "2023-04-15",
+    recordType: "routine_check",
+    healthStatus: "fit_for_duty",
+    medicalNotes: "Annual health assessment completed. All vitals within normal range.",
+    recordedBy: "emp-004", // Lisa Washington (HR)
+    confidential: true,
+    wellnessPrograms: [
+      {
+        programId: "wp-001",
+        programName: "Stress Management Workshop",
+        startDate: "2023-05-01",
+        endDate: "2023-05-30",
+        status: "completed",
+        notes: "Completed all sessions with positive feedback"
+      }
+    ]
+  },
+  {
+    id: "health-002",
+    employeeId: "emp-003",
+    employeeName: "Michael Johnson",
+    recordDate: "2023-03-22",
+    recordType: "injury_assessment",
+    healthStatus: "restricted_duty",
+    medicalNotes: "Minor back strain from lifting materials. No serious injuries detected on examination.",
+    restrictions: "No heavy lifting (>20lbs) for 2 weeks. Limited bending and twisting.",
+    followUpDate: "2023-04-05",
+    clearanceDate: "2023-04-05",
+    recordedBy: "emp-004", // Lisa Washington (HR)
+    confidential: true,
+    attachments: [
+      {
+        id: "att-001",
+        name: "Doctor's Note - Michael Johnson",
+        url: "https://example.com/docs/medical-mj-032223.pdf",
+        uploadDate: "2023-03-22"
+      }
+    ]
+  },
+  {
+    id: "health-003",
+    employeeId: "emp-006",
+    employeeName: "James Smith",
+    recordDate: "2023-05-10",
+    recordType: "return_to_work",
+    healthStatus: "fit_for_duty",
+    medicalNotes: "Returning after recovery from flu. All symptoms resolved. Cleared for full duty.",
+    recordedBy: "emp-004", // Lisa Washington (HR)
+    confidential: true
+  },
+  {
+    id: "health-004",
+    employeeId: "emp-002",
+    employeeName: "Sarah Martinez",
+    recordDate: "2023-02-18",
+    recordType: "wellness_program",
+    healthStatus: "fit_for_duty",
+    medicalNotes: "Enrolled in company wellness initiative. Initial health metrics recorded for baseline.",
+    recordedBy: "emp-004", // Lisa Washington (HR)
+    confidential: false,
+    wellnessPrograms: [
+      {
+        programId: "wp-002",
+        programName: "Fatigue Management Program",
+        startDate: "2023-02-20",
+        status: "active",
+        notes: "Participating in weekly monitoring and education sessions"
+      },
+      {
+        programId: "wp-003",
+        programName: "Ergonomic Assessment",
+        startDate: "2023-03-01",
+        endDate: "2023-03-01",
+        status: "completed",
+        notes: "Workstation adjustments recommended and implemented"
+      }
+    ]
+  },
+  {
+    id: "health-005",
+    employeeId: "emp-005",
+    employeeName: "Robert Chen",
+    recordDate: "2023-04-30",
+    recordType: "routine_check",
+    healthStatus: "pending_evaluation",
+    medicalNotes: "Annual health check performed. Awaiting lab results for final clearance.",
+    followUpDate: "2023-05-07",
+    recordedBy: "emp-004", // Lisa Washington (HR)
+    confidential: true
   }
 ];
