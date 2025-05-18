@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -9,8 +8,9 @@ import { ProjectList } from '@/components/projects/ProjectList';
 import ProjectHeader from '@/components/projects/ProjectHeader';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, BarChart2, FileText, Users, MessageCircle, Clock } from "lucide-react";
+import { CalendarDays, BarChart2, FileText, Users, MessageCircle, Clock, DollarSign, TrendingUp } from "lucide-react";
 import { generateMockProjects } from '@/data/mockProjects';
+import { formatCurrency } from '@/lib/formatters';
 
 const Projects = () => {
   const [activeTab, setActiveTab] = useState("active");
@@ -75,6 +75,34 @@ const Projects = () => {
             <div className="text-2xl font-bold">24</div>
             <p className="text-xs text-muted-foreground">
               7 awaiting approval
+            </p>
+          </CardContent>
+        </Card>
+        
+        {/* New card for Cost Performance */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Cost Performance</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">+2.3%</div>
+            <p className="text-xs text-muted-foreground">
+              Projects under budget
+            </p>
+          </CardContent>
+        </Card>
+        
+        {/* New card for Cost Forecasts */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Forecasted Value</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(76500000)}</div>
+            <p className="text-xs text-muted-foreground">
+              Total project value
             </p>
           </CardContent>
         </Card>
@@ -237,7 +265,7 @@ const Projects = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Recent Updates Section */}
+      {/* Recent Updates Section - let's add cost-related updates */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Updates</CardTitle>
@@ -245,6 +273,18 @@ const Projects = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            {/* New cost-related update */}
+            <div className="flex items-start gap-4">
+              <div className="mt-1 rounded-full bg-green-100 p-2">
+                <DollarSign className="h-4 w-4 text-green-600" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium leading-none">Cost forecast updated for I-85 North Expansion</p>
+                <p className="text-sm text-muted-foreground">Project is currently 3.2% under budget</p>
+                <p className="text-xs text-muted-foreground">Yesterday by Sarah Johnson</p>
+              </div>
+            </div>
+            
             <div className="flex items-start gap-4">
               <div className="mt-1 rounded-full bg-blue-100 p-2">
                 <FileText className="h-4 w-4 text-blue-600" />
@@ -257,8 +297,8 @@ const Projects = () => {
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="mt-1 rounded-full bg-green-100 p-2">
-                <MessageCircle className="h-4 w-4 text-green-600" />
+              <div className="mt-1 rounded-full bg-amber-100 p-2">
+                <MessageCircle className="h-4 w-4 text-amber-600" />
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">Change Order #2 submitted for I-85 North Expansion</p>
@@ -268,8 +308,8 @@ const Projects = () => {
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="mt-1 rounded-full bg-amber-100 p-2">
-                <Clock className="h-4 w-4 text-amber-600" />
+              <div className="mt-1 rounded-full bg-green-100 p-2">
+                <Clock className="h-4 w-4 text-green-600" />
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">AIA Pay Application #3 approved for I-85 North Expansion</p>

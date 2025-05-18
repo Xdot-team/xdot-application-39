@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +10,8 @@ import AIABillingTab from './aia-billing/AIABillingTab';
 import ChangeOrdersTab from './change-orders/ChangeOrdersTab';
 import ProjectNotesTab from './notes/ProjectNotesTab';
 import ScopeWipTab from './scope-wip/ScopeWipTab';
+import ProgressScheduleTab from './progress-schedule/ProgressScheduleTab';
+import CostCompletionTab from './cost-completion/CostCompletionTab';
 import { Project } from '@/types/projects';
 import { generateMockProjects } from '@/data/mockProjects';
 import { formatCurrency } from '@/lib/formatters';
@@ -146,6 +147,8 @@ const ProjectDetails = () => {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="scopeWip">Scope WIP</TabsTrigger>
+          <TabsTrigger value="progressSchedule">Progress Schedule</TabsTrigger>
+          <TabsTrigger value="costCompletion">Cost to Completion</TabsTrigger>
           <TabsTrigger value="aiaBilling">AIA Billing</TabsTrigger>
           <TabsTrigger value="changeOrders">Change Orders</TabsTrigger>
           <TabsTrigger value="submittals">Submittals</TabsTrigger>
@@ -224,6 +227,14 @@ const ProjectDetails = () => {
           
           <TabsContent value="scopeWip">
             <ScopeWipTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="progressSchedule">
+            <ProgressScheduleTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="costCompletion">
+            <CostCompletionTab projectId={project.id} />
           </TabsContent>
           
           <TabsContent value="aiaBilling">

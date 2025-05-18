@@ -170,3 +170,43 @@ export interface ChangeOrderAudit {
   actionDate: string;
   details?: string;
 }
+
+// New type definitions for Progress Schedule
+export interface ProgressScheduleData {
+  id: string;
+  projectId: string;
+  date: string;
+  plannedProgress: number; // percentage
+  actualProgress: number; // percentage
+  plannedCost: number;
+  actualCost: number;
+  laborCost: number;
+  materialCost: number;
+  equipmentCost: number;
+  otherCost: number;
+}
+
+// New type definitions for Cost to Completion
+export interface CostToCompletion {
+  id: string;
+  projectId: string;
+  estimatedDate: string;
+  remainingTasks: number;
+  completedValue: number;
+  remainingValue: number;
+  originalBudget: number;
+  revisedBudget: number;
+  actualCostToDate: number;
+  estimatedCostToComplete: number;
+  forecastTotalCost: number;
+  costVariance: number;
+  laborRemaining: number;
+  materialsRemaining: number;
+  equipmentRemaining: number;
+  subcontractorRemaining: number;
+  otherRemaining: number;
+  riskFactors?: string[];
+  notes?: string;
+  lastUpdated: string;
+  updatedBy: string;
+}
