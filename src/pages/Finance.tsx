@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { FileText, BadgeDollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/lib/formatters";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import mock data
-import { ClientInvoice, PurchaseOrder, VendorInvoice, Transaction, BudgetCategory } from "@/types/finance";
+import { ClientInvoice, PurchaseOrder, VendorInvoice, Transaction, BudgetCategory, ProjectWIP } from "@/types/finance";
 
 // Import finance components
 import { FinancialOverview } from "@/components/finance/FinancialOverview";
@@ -20,6 +21,8 @@ import { PayrollTab } from "@/components/finance/PayrollTab";
 import { TaxFormsTab } from "@/components/finance/TaxFormsTab";
 import { ReportsTab } from "@/components/finance/ReportsTab";
 import { QuickBooksSync } from "@/components/finance/QuickBooksSync";
+import { WIPTab } from "@/components/finance/WIPTab";
+import MobileWIPView from "@/components/finance/MobileWIPView";
 
 // Mock data for client invoices
 const mockClientInvoices: ClientInvoice[] = [
@@ -459,9 +462,62 @@ const mockBudgetCategories: BudgetCategory[] = [
   }
 ];
 
+// New mock data for WIP reports
+const mockWIPReports: ProjectWIP[] = [
+  {
+    id: "WIP1001",
+    projectId: "P1001",
+    projectName: "GA-400 Repaving",
+    periodEndDate: "2025-05-15",
+    revenueEarned: 85000,
+    costsIncurred: 72500,
+    completionPercentage: 68,
+    billingStatus: "partially_billed",
+    contractValue: 125000,
+    billedToDate: 75000,
+    remainingToBill: 50000,
+    overUnderBilledAmount: -10000,
+    lastUpdated: "2025-05-16",
+    updatedBy: "Jane Accountant"
+  },
+  {
+    id: "WIP1002",
+    projectId: "P1003",
+    projectName: "Peachtree Street Improvements",
+    periodEndDate: "2025-05-15",
+    revenueEarned: 28000,
+    costsIncurred: 26500,
+    completionPercentage: 62,
+    billingStatus: "over_billed",
+    contractValue: 45000,
+    billedToDate: 32000,
+    remainingToBill: 13000,
+    overUnderBilledAmount: 4000,
+    lastUpdated: "2025-05-16",
+    updatedBy: "Jane Accountant"
+  },
+  {
+    id: "WIP1003",
+    projectId: "P1010",
+    projectName: "Rome Public Library",
+    periodEndDate: "2025-05-15",
+    revenueEarned: 60000,
+    costsIncurred: 55000,
+    completionPercentage: 50,
+    billingStatus: "not_billed",
+    contractValue: 120000,
+    billedToDate: 0,
+    remainingToBill: 120000,
+    overUnderBilledAmount: -60000,
+    lastUpdated: "2025-05-16",
+    updatedBy: "Jane Accountant"
+  }
+];
+
 const Finance = () => {
   const [activeTab, setActiveTab] = useState("clientInvoices");
   const { authState } = useAuth();
+  const isMobile = useIsMobile();
   
   // Access control
   const isAccountant = authState.user?.role === 'accountant';
@@ -507,11 +563,12 @@ const Finance = () => {
 
       {/* Main Finance Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-8">
+        <TabsList className={`${isMobile ? "flex w-full overflow-x-auto" : "grid grid-cols-4 md:grid-cols-9 lg:grid-cols-9"}`}>
           <TabsTrigger value="clientInvoices">Client Invoices</TabsTrigger>
           <TabsTrigger value="vendorInvoices">Vendor Invoices</TabsTrigger>
           <TabsTrigger value="purchaseOrders">Purchase Orders</TabsTrigger>
           <TabsTrigger value="transactions">General Ledger</TabsTrigger>
+          <TabsTrigger value="wip">WIP</TabsTrigger>
           <TabsTrigger value="budget">Budget</TabsTrigger>
           <TabsTrigger value="payroll">Payroll</TabsTrigger>
           <TabsTrigger value="taxForms">Tax Forms</TabsTrigger>
@@ -536,6 +593,15 @@ const Finance = () => {
         {/* Transactions Tab */}
         <TabsContent value="transactions">
           <TransactionsTab transactions={mockTransactions} canEdit={canEdit} />
+        </TabsContent>
+
+        {/* WIP Tab */}
+        <TabsContent value="wip">
+          {isMobile ? (
+            <MobileWIPView wipReports={mockWIPReports} />
+          ) : (
+            <WIPTab wipReports={mockWIPReports} canEdit={canEdit} />
+          )}
         </TabsContent>
 
         {/* Budget Tab */}

@@ -1,4 +1,3 @@
-
 export interface ClientInvoice {
   id: string;
   projectId: string;
@@ -349,4 +348,22 @@ export interface RecurringTransaction {
   dayOfWeek?: number;
   relatedEntityId?: string;
   relatedEntityType?: 'vendor' | 'client' | 'employee';
+}
+
+export interface ProjectWIP {
+  id: string;
+  projectId: string;
+  projectName: string;
+  periodEndDate: string;
+  revenueEarned: number;
+  costsIncurred: number;
+  completionPercentage: number;
+  billingStatus: 'not_billed' | 'partially_billed' | 'fully_billed' | 'over_billed';
+  contractValue: number;
+  billedToDate: number;
+  remainingToBill: number;
+  overUnderBilledAmount: number;
+  notes?: string;
+  lastUpdated: string;
+  updatedBy: string;
 }
