@@ -38,8 +38,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-10",
     status: "sent",
     lineItems: [
-      { id: "LI1001", description: "Asphalt material", quantity: 500, unitPrice: 150, total: 75000 },
-      { id: "LI1002", description: "Labor", quantity: 200, unitPrice: 250, total: 50000 }
+      { id: "LI1001", description: "Asphalt material", quantity: 500, unitPrice: 150, total: 75000, taxable: false },
+      { id: "LI1002", description: "Labor", quantity: 200, unitPrice: 250, total: 50000, taxable: false }
     ]
   },
   {
@@ -54,8 +54,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-15",
     status: "paid",
     lineItems: [
-      { id: "LI2001", description: "Concrete reinforcement", quantity: 350, unitPrice: 150, total: 52500 },
-      { id: "LI2002", description: "Engineering services", quantity: 140, unitPrice: 250, total: 35000 }
+      { id: "LI2001", description: "Concrete reinforcement", quantity: 350, unitPrice: 150, total: 52500, taxable: false },
+      { id: "LI2002", description: "Engineering services", quantity: 140, unitPrice: 250, total: 35000, taxable: false }
     ]
   },
   {
@@ -70,8 +70,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-18",
     status: "overdue",
     lineItems: [
-      { id: "LI3001", description: "Sidewalk construction", quantity: 200, unitPrice: 150, total: 30000 },
-      { id: "LI3002", description: "Landscaping", quantity: 60, unitPrice: 250, total: 15000 }
+      { id: "LI3001", description: "Sidewalk construction", quantity: 200, unitPrice: 150, total: 30000, taxable: false },
+      { id: "LI3002", description: "Landscaping", quantity: 60, unitPrice: 250, total: 15000, taxable: false }
     ]
   },
   {
@@ -86,8 +86,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-22",
     status: "draft",
     lineItems: [
-      { id: "LI4001", description: "Concrete work", quantity: 130, unitPrice: 150, total: 19500 },
-      { id: "LI4002", description: "Site preparation", quantity: 52, unitPrice: 250, total: 13000 }
+      { id: "LI4001", description: "Concrete work", quantity: 130, unitPrice: 150, total: 19500, taxable: false },
+      { id: "LI4002", description: "Site preparation", quantity: 52, unitPrice: 250, total: 13000, taxable: false }
     ]
   },
   {
@@ -102,8 +102,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-25",
     status: "sent",
     lineItems: [
-      { id: "LI5001", description: "Road construction", quantity: 800, unitPrice: 150, total: 120000 },
-      { id: "LI5002", description: "Engineering", quantity: 360, unitPrice: 250, total: 90000 }
+      { id: "LI5001", description: "Road construction", quantity: 800, unitPrice: 150, total: 120000, taxable: false },
+      { id: "LI5002", description: "Engineering", quantity: 360, unitPrice: 250, total: 90000, taxable: false }
     ]
   },
   {
@@ -118,8 +118,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-01",
     status: "sent",
     lineItems: [
-      { id: "LI6001", description: "Pothole repair", quantity: 180, unitPrice: 120, total: 21600 },
-      { id: "LI6002", description: "Road resurfacing", quantity: 270, unitPrice: 120, total: 32400 }
+      { id: "LI6001", description: "Pothole repair", quantity: 180, unitPrice: 120, total: 21600, taxable: false },
+      { id: "LI6002", description: "Road resurfacing", quantity: 270, unitPrice: 120, total: 32400, taxable: false }
     ]
   },
   {
@@ -134,8 +134,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-05",
     status: "paid",
     lineItems: [
-      { id: "LI7001", description: "Dredging operations", quantity: 1, unitPrice: 250000, total: 250000 },
-      { id: "LI7002", description: "Engineering services", quantity: 500, unitPrice: 250, total: 125000 }
+      { id: "LI7001", description: "Dredging operations", quantity: 1, unitPrice: 250000, total: 250000, taxable: false },
+      { id: "LI7002", description: "Engineering services", quantity: 500, unitPrice: 250, total: 125000, taxable: false }
     ]
   },
   {
@@ -150,8 +150,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-10",
     status: "draft",
     lineItems: [
-      { id: "LI8001", description: "Foundation work", quantity: 1, unitPrice: 45000, total: 45000 },
-      { id: "LI8002", description: "Initial framing", quantity: 1, unitPrice: 50000, total: 50000 }
+      { id: "LI8001", description: "Foundation work", quantity: 1, unitPrice: 45000, total: 45000, taxable: false },
+      { id: "LI8002", description: "Initial framing", quantity: 1, unitPrice: 50000, total: 50000, taxable: false }
     ]
   },
   {
@@ -166,8 +166,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-15",
     status: "sent",
     lineItems: [
-      { id: "LI9001", description: "Walkway construction", quantity: 1200, unitPrice: 25, total: 30000 },
-      { id: "LI9002", description: "Lighting installation", quantity: 74, unitPrice: 250, total: 18500 }
+      { id: "LI9001", description: "Walkway construction", quantity: 1200, unitPrice: 25, total: 30000, taxable: false },
+      { id: "LI9002", description: "Lighting installation", quantity: 74, unitPrice: 250, total: 18500, taxable: false }
     ]
   },
   {
@@ -182,8 +182,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-20",
     status: "cancelled",
     lineItems: [
-      { id: "LI10001", description: "Main structure", quantity: 1, unitPrice: 80000, total: 80000 },
-      { id: "LI10002", description: "Interior work", quantity: 1, unitPrice: 40000, total: 40000 }
+      { id: "LI10001", description: "Main structure", quantity: 1, unitPrice: 80000, total: 80000, taxable: false },
+      { id: "LI10002", description: "Interior work", quantity: 1, unitPrice: 40000, total: 40000, taxable: false }
     ]
   }
 ];

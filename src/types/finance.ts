@@ -1,4 +1,5 @@
 
+
 export interface ProjectWIP {
   id: string;
   projectId: string;
@@ -78,7 +79,10 @@ export interface VendorInvoice {
   paymentDate?: string;
   notes?: string;
   poNumber?: string;
+  purchaseOrderId?: string;
 }
+
+export type VendorInvoiceStatus = 'pending' | 'approved' | 'paid' | 'rejected';
 
 export interface PurchaseOrder {
   id: string;
@@ -93,6 +97,8 @@ export interface PurchaseOrder {
   status: 'draft' | 'issued' | 'received' | 'cancelled';
   notes?: string;
   items: PurchaseOrderItem[];
+  approvedBy?: string;
+  approvedDate?: string;
 }
 
 export interface PurchaseOrderItem {
@@ -216,6 +222,11 @@ export interface TaxForm {
   assignedTo?: string;
   notes?: string;
   attachmentUrl?: string;
+  // Additional properties needed for TaxFormsTab
+  formType?: string;
+  filingStatus?: string;
+  filingDate?: string;
+  relatedEntityName?: string;
 }
 
 export interface FinancialReport {
@@ -228,11 +239,14 @@ export interface FinancialReport {
   dateRange?: {
     startDate: string;
     endDate: string;
+    // For backwards compatibility
+    start?: string;
+    end?: string;
   };
   data: any; // This would be structured based on report type
   notes?: string;
   createdBy?: string;
-  format?: 'pdf' | 'xlsx' | 'csv';
+  format?: 'pdf' | 'xlsx' | 'csv' | 'excel'; // Added 'excel' for compatibility
 }
 
 export interface Transaction {
@@ -240,6 +254,7 @@ export interface Transaction {
   date: string;
   type: 'income' | 'expense' | 'transfer';
   category: string;
+  categoryName?: string; // For backwards compatibility
   amount: number;
   description: string;
   accountId: string;
@@ -250,4 +265,7 @@ export interface Transaction {
   status: 'pending' | 'cleared' | 'reconciled' | 'void';
   createdBy: string;
   createdAt: string;
+  relatedToId?: string;
+  relatedToType?: 'client_invoice' | 'vendor_invoice' | 'purchase_order';
 }
+
