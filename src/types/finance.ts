@@ -1,4 +1,3 @@
-
 export interface ProjectWIP {
   id: string;
   projectId: string;
@@ -81,7 +80,7 @@ export interface VendorInvoice {
   purchaseOrderId?: string;
 }
 
-export type VendorInvoiceStatus = 'pending' | 'approved' | 'paid' | 'rejected';
+export type VendorInvoiceStatus = 'pending' | 'approved' | 'paid' | 'rejected' | 'disputed';
 
 export interface PurchaseOrder {
   id: string;
