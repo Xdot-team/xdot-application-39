@@ -202,7 +202,15 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "received",
     totalAmount: 75000,
     items: [
-      { id: "POI1001", description: "Asphalt materials", quantity: 500, unitPrice: 150, total: 75000 }
+      { 
+        id: "POI1001", 
+        description: "Asphalt materials", 
+        quantity: 500, 
+        unitPrice: 150, 
+        total: 75000,
+        deliveryStatus: "complete",
+        receivedQuantity: 500
+      }
     ],
     approvedBy: "John Manager",
     approvedDate: "2025-03-24"
@@ -219,7 +227,15 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "issued",
     totalAmount: 12500,
     items: [
-      { id: "POI2001", description: "Equipment rental", quantity: 5, unitPrice: 2500, total: 12500 }
+      { 
+        id: "POI2001", 
+        description: "Equipment rental", 
+        quantity: 5, 
+        unitPrice: 2500, 
+        total: 12500,
+        deliveryStatus: "pending",
+        receivedQuantity: 0
+      }
     ],
     approvedBy: "Sarah Director",
     approvedDate: "2025-03-27"
@@ -236,7 +252,15 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "received",
     totalAmount: 35000,
     items: [
-      { id: "POI3001", description: "Engineering services", quantity: 140, unitPrice: 250, total: 35000 }
+      { 
+        id: "POI3001", 
+        description: "Engineering services", 
+        quantity: 140, 
+        unitPrice: 250, 
+        total: 35000,
+        deliveryStatus: "complete",
+        receivedQuantity: 140
+      }
     ],
     approvedBy: "John Manager",
     approvedDate: "2025-04-01"
@@ -253,7 +277,15 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "received",
     totalAmount: 52500,
     items: [
-      { id: "POI4001", description: "Concrete materials", quantity: 350, unitPrice: 150, total: 52500 }
+      { 
+        id: "POI4001", 
+        description: "Concrete materials", 
+        quantity: 350, 
+        unitPrice: 150, 
+        total: 52500,
+        deliveryStatus: "complete",
+        receivedQuantity: 350
+      }
     ],
     approvedBy: "Sarah Director",
     approvedDate: "2025-04-04"
@@ -268,7 +300,15 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "draft",
     totalAmount: 7500,
     items: [
-      { id: "POI5001", description: "Safety barriers", quantity: 50, unitPrice: 150, total: 7500 }
+      { 
+        id: "POI5001", 
+        description: "Safety barriers", 
+        quantity: 50, 
+        unitPrice: 150, 
+        total: 7500,
+        deliveryStatus: "pending",
+        receivedQuantity: 0 
+      }
     ]
   }
 ];
@@ -347,66 +387,81 @@ const mockTransactions: Transaction[] = [
     id: "T1001",
     date: "2025-04-11",
     description: "Payment received from Georgia DOT",
-    categoryId: "CAT1001",
+    category: "Client Payments",
     categoryName: "Client Payments",
     amount: 87500,
     type: "income",
     relatedToId: "CI1002",
     relatedToType: "client_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking"
+    accountName: "Business Checking",
+    createdBy: "Jane Accountant",
+    createdAt: "2025-04-11T10:30:00",
+    status: "cleared"
   },
   {
     id: "T1002",
     date: "2025-04-16",
     description: "Payment to Southern Concrete Solutions",
-    categoryId: "CAT2001",
+    category: "Material Costs",
     categoryName: "Material Costs",
     amount: 52500,
     type: "expense",
     relatedToId: "VI1004",
     relatedToType: "vendor_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking"
+    accountName: "Business Checking",
+    createdBy: "Jane Accountant",
+    createdAt: "2025-04-16T14:15:00",
+    status: "cleared"
   },
   {
     id: "T1003",
     date: "2025-04-11",
     description: "Payment to Georgia Materials Supply",
-    categoryId: "CAT2001",
+    category: "Material Costs",
     categoryName: "Material Costs",
     amount: 75000,
     type: "expense",
     relatedToId: "VI1001",
     relatedToType: "vendor_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking"
+    accountName: "Business Checking",
+    createdBy: "Jane Accountant",
+    createdAt: "2025-04-11T11:45:00",
+    status: "cleared"
   },
   {
     id: "T1004",
     date: "2025-04-15",
     description: "Payment to Atlanta Office Supplies",
-    categoryId: "CAT2002",
+    category: "Office Expenses",
     categoryName: "Office Expenses",
     amount: 1250,
     type: "expense",
     relatedToId: "VI1005",
     relatedToType: "vendor_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking"
+    accountName: "Business Checking",
+    createdBy: "Jane Accountant",
+    createdAt: "2025-04-15T09:20:00",
+    status: "cleared"
   },
   {
     id: "T1005",
     date: "2025-05-05",
     description: "Payment received from Savannah Port Authority",
-    categoryId: "CAT1001",
+    category: "Client Payments",
     categoryName: "Client Payments",
     amount: 375000,
     type: "income",
     relatedToId: "CI1007",
     relatedToType: "client_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking"
+    accountName: "Business Checking",
+    createdBy: "Jane Accountant",
+    createdAt: "2025-05-05T13:10:00",
+    status: "cleared"
   }
 ];
 
@@ -475,6 +530,7 @@ const mockWIPReports: ProjectWIP[] = [
     billingStatus: "partially_billed",
     contractValue: 125000,
     billedToDate: 75000,
+    billingToDate: 75000,
     remainingToBill: 50000,
     overUnderBilledAmount: -10000,
     lastUpdated: "2025-05-16",
@@ -491,6 +547,7 @@ const mockWIPReports: ProjectWIP[] = [
     billingStatus: "over_billed",
     contractValue: 45000,
     billedToDate: 32000,
+    billingToDate: 32000,
     remainingToBill: 13000,
     overUnderBilledAmount: 4000,
     lastUpdated: "2025-05-16",
@@ -507,6 +564,7 @@ const mockWIPReports: ProjectWIP[] = [
     billingStatus: "not_billed",
     contractValue: 120000,
     billedToDate: 0,
+    billingToDate: 0,
     remainingToBill: 120000,
     overUnderBilledAmount: -60000,
     lastUpdated: "2025-05-16",

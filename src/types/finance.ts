@@ -1,5 +1,4 @@
 
-
 export interface ProjectWIP {
   id: string;
   projectId: string;
@@ -268,4 +267,3 @@ export interface Transaction {
   relatedToId?: string;
   relatedToType?: 'client_invoice' | 'vendor_invoice' | 'purchase_order';
 }
-
