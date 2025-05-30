@@ -12,26 +12,6 @@ export interface User {
   position?: string;
   createdAt: string;
   lastLogin: string;
-  // New fields for enhanced profiles
-  companyId?: string; // For future company association
-  verificationProviders?: {
-    google?: string;
-    microsoft?: string;
-    linkedin?: string;
-  };
-  isVerified: boolean;
-  twoFactorEnabled: boolean;
-}
-
-export interface Company {
-  id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  address: string;
-  adminUserId: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface AuthState {
@@ -48,15 +28,4 @@ export interface LoginCredentials {
 export interface RegisterCredentials extends LoginCredentials {
   name: string;
   role: UserRole;
-  phoneNumber?: string;
-  companyName?: string;
-  companyAddress?: string;
-  accountType?: 'individual' | 'corporate';
-}
-
-export interface SocialAuthProvider {
-  id: string;
-  name: string;
-  email: string;
-  profileId: string;
 }

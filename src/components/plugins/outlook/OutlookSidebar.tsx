@@ -34,7 +34,7 @@ export function OutlookSidebar() {
       <CardHeader className="px-4 py-3 bg-[#0b1d35] text-white border-b border-gray-200">
         <CardTitle className="text-lg font-semibold flex items-center">
           <span className="mr-2">xDOTContractor</span>
-          <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">Outlook</span>
+          <span className="text-xs bg-construction-primary px-2 py-1 rounded-full">Outlook</span>
         </CardTitle>
       </CardHeader>
 

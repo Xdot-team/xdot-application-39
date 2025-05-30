@@ -4,8 +4,6 @@ import { FolderOpen, ChevronRight, File } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useOutlookPlugin } from './OutlookPluginProvider';
-import { ProjectFolderItem } from './ProjectFolderItem';
-import { OutlookDocument, ProjectFolder } from '@/types/outlook';
 
 interface ProjectFolderViewProps {
   searchQuery: string;
@@ -21,8 +19,7 @@ export function ProjectFolderView({ searchQuery }: ProjectFolderViewProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
-  const [documents, setDocuments] = useState<OutlookDocument[]>([]);
-  const [folders, setFolders] = useState<ProjectFolder[]>([]);
+  const [documents, setDocuments] = useState<{ id: string; name: string; type: string; projectId: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -31,7 +28,7 @@ export function ProjectFolderView({ searchQuery }: ProjectFolderViewProps) {
       try {
         // Get initial projects
         const initialProjects = await searchProjects('');
-        setProjects(initialProjects.slice(0, 5));
+        setProjects(initialProjects.slice(0, 3)); // Just show a few projects initially
         
         // Preload some documents
         if (initialProjects.length > 0) {
@@ -47,47 +44,6 @@ export function ProjectFolderView({ searchQuery }: ProjectFolderViewProps) {
 
     fetchInitialData();
   }, [searchProjects, searchDocuments]);
-
-  useEffect(() => {
-    // Generate sample folders when project is selected
-    if (selectedProject) {
-      const projectFolders: ProjectFolder[] = [
-        { 
-          id: `${selectedProject.id}_rfi`, 
-          name: 'RFIs', 
-          path: `/projects/${selectedProject.id}/rfis`,
-          projectId: selectedProject.id,
-          type: 'rfi',
-          itemCount: 4
-        },
-        { 
-          id: `${selectedProject.id}_submittal`, 
-          name: 'Submittals', 
-          path: `/projects/${selectedProject.id}/submittals`,
-          projectId: selectedProject.id,
-          type: 'submittal',
-          itemCount: 3
-        },
-        { 
-          id: `${selectedProject.id}_change_order`, 
-          name: 'Change Orders', 
-          path: `/projects/${selectedProject.id}/change-orders`,
-          projectId: selectedProject.id,
-          type: 'change_order',
-          itemCount: 2
-        },
-        { 
-          id: `${selectedProject.id}_document`, 
-          name: 'Documents', 
-          path: `/projects/${selectedProject.id}/documents`,
-          projectId: selectedProject.id,
-          type: 'document',
-          itemCount: 5
-        }
-      ];
-      setFolders(projectFolders);
-    }
-  }, [selectedProject]);
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -121,8 +77,11 @@ export function ProjectFolderView({ searchQuery }: ProjectFolderViewProps) {
 
   const selectProject = (project: Project) => {
     setSelectedProject(project);
-    // Reset expanded folders when changing projects
-    setExpandedFolders({});
+    // Auto-expand project when selected
+    setExpandedFolders(prev => ({
+      ...prev,
+      [project.id]: true
+    }));
   };
 
   return (
@@ -144,7 +103,7 @@ export function ProjectFolderView({ searchQuery }: ProjectFolderViewProps) {
                     className="w-full justify-start text-sm"
                     onClick={() => selectProject(project)}
                   >
-                    <FolderOpen className="h-4 w-4 mr-2 text-blue-600" />
+                    <FolderOpen className="h-4 w-4 mr-2" />
                     {project.name}
                   </Button>
                 ))}
@@ -183,21 +142,25 @@ export function ProjectFolderView({ searchQuery }: ProjectFolderViewProps) {
               </div>
               
               <div className="space-y-1">
-                {folders.map((folder) => (
-                  <div key={folder.id}>
-                    <ProjectFolderItem 
-                      folder={folder}
-                      expanded={!!expandedFolders[folder.id]} 
-                      onToggle={() => toggleFolder(folder.id)}
-                    />
+                {getProjectFolders(selectedProject.id).map((folder, index) => (
+                  <div key={index}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-sm"
+                      onClick={() => toggleFolder(`${selectedProject.id}_${folder.name}`)}
+                    >
+                      <ChevronRight 
+                        className={`h-4 w-4 mr-1 transition-transform ${expandedFolders[`${selectedProject.id}_${folder.name}`] ? 'transform rotate-90' : ''}`} 
+                      />
+                      <FolderOpen className="h-4 w-4 mr-2" />
+                      {folder.name}
+                    </Button>
                     
-                    {expandedFolders[folder.id] && (
+                    {expandedFolders[`${selectedProject.id}_${folder.name}`] && (
                       <div className="pl-8 space-y-1 mt-1">
                         {documents
-                          .filter(doc => 
-                            doc.projectId === selectedProject.id && 
-                            doc.category === folder.type
-                          )
+                          .filter(doc => doc.projectId === selectedProject.id)
+                          .slice(0, 3)
                           .map(doc => (
                             <div 
                               key={doc.id} 

@@ -27,8 +27,3 @@ export function formatDate(date: string | Date): string {
 export function formatPercent(value: number): string {
   return `${Math.round(value)}%`;
 }
-
-/**
- * Alias for formatPercent for backward compatibility
- */
-export const formatPercentage = formatPercent;

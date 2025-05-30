@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import { FileText, BadgeDollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/lib/formatters";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import mock data
-import { ClientInvoice, PurchaseOrder, VendorInvoice, Transaction, BudgetCategory, ProjectWIP } from "@/types/finance";
+import { ClientInvoice, PurchaseOrder, VendorInvoice, Transaction, BudgetCategory } from "@/types/finance";
 
 // Import finance components
 import { FinancialOverview } from "@/components/finance/FinancialOverview";
@@ -21,8 +20,6 @@ import { PayrollTab } from "@/components/finance/PayrollTab";
 import { TaxFormsTab } from "@/components/finance/TaxFormsTab";
 import { ReportsTab } from "@/components/finance/ReportsTab";
 import { QuickBooksSync } from "@/components/finance/QuickBooksSync";
-import { WIPTab } from "@/components/finance/WIPTab";
-import MobileWIPView from "@/components/finance/MobileWIPView";
 
 // Mock data for client invoices
 const mockClientInvoices: ClientInvoice[] = [
@@ -38,8 +35,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-10",
     status: "sent",
     lineItems: [
-      { id: "LI1001", description: "Asphalt material", quantity: 500, unitPrice: 150, total: 75000, taxable: false },
-      { id: "LI1002", description: "Labor", quantity: 200, unitPrice: 250, total: 50000, taxable: false }
+      { id: "LI1001", description: "Asphalt material", quantity: 500, unitPrice: 150, total: 75000 },
+      { id: "LI1002", description: "Labor", quantity: 200, unitPrice: 250, total: 50000 }
     ]
   },
   {
@@ -54,8 +51,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-15",
     status: "paid",
     lineItems: [
-      { id: "LI2001", description: "Concrete reinforcement", quantity: 350, unitPrice: 150, total: 52500, taxable: false },
-      { id: "LI2002", description: "Engineering services", quantity: 140, unitPrice: 250, total: 35000, taxable: false }
+      { id: "LI2001", description: "Concrete reinforcement", quantity: 350, unitPrice: 150, total: 52500 },
+      { id: "LI2002", description: "Engineering services", quantity: 140, unitPrice: 250, total: 35000 }
     ]
   },
   {
@@ -70,8 +67,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-18",
     status: "overdue",
     lineItems: [
-      { id: "LI3001", description: "Sidewalk construction", quantity: 200, unitPrice: 150, total: 30000, taxable: false },
-      { id: "LI3002", description: "Landscaping", quantity: 60, unitPrice: 250, total: 15000, taxable: false }
+      { id: "LI3001", description: "Sidewalk construction", quantity: 200, unitPrice: 150, total: 30000 },
+      { id: "LI3002", description: "Landscaping", quantity: 60, unitPrice: 250, total: 15000 }
     ]
   },
   {
@@ -86,8 +83,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-22",
     status: "draft",
     lineItems: [
-      { id: "LI4001", description: "Concrete work", quantity: 130, unitPrice: 150, total: 19500, taxable: false },
-      { id: "LI4002", description: "Site preparation", quantity: 52, unitPrice: 250, total: 13000, taxable: false }
+      { id: "LI4001", description: "Concrete work", quantity: 130, unitPrice: 150, total: 19500 },
+      { id: "LI4002", description: "Site preparation", quantity: 52, unitPrice: 250, total: 13000 }
     ]
   },
   {
@@ -102,8 +99,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-05-25",
     status: "sent",
     lineItems: [
-      { id: "LI5001", description: "Road construction", quantity: 800, unitPrice: 150, total: 120000, taxable: false },
-      { id: "LI5002", description: "Engineering", quantity: 360, unitPrice: 250, total: 90000, taxable: false }
+      { id: "LI5001", description: "Road construction", quantity: 800, unitPrice: 150, total: 120000 },
+      { id: "LI5002", description: "Engineering", quantity: 360, unitPrice: 250, total: 90000 }
     ]
   },
   {
@@ -118,8 +115,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-01",
     status: "sent",
     lineItems: [
-      { id: "LI6001", description: "Pothole repair", quantity: 180, unitPrice: 120, total: 21600, taxable: false },
-      { id: "LI6002", description: "Road resurfacing", quantity: 270, unitPrice: 120, total: 32400, taxable: false }
+      { id: "LI6001", description: "Pothole repair", quantity: 180, unitPrice: 120, total: 21600 },
+      { id: "LI6002", description: "Road resurfacing", quantity: 270, unitPrice: 120, total: 32400 }
     ]
   },
   {
@@ -134,8 +131,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-05",
     status: "paid",
     lineItems: [
-      { id: "LI7001", description: "Dredging operations", quantity: 1, unitPrice: 250000, total: 250000, taxable: false },
-      { id: "LI7002", description: "Engineering services", quantity: 500, unitPrice: 250, total: 125000, taxable: false }
+      { id: "LI7001", description: "Dredging operations", quantity: 1, unitPrice: 250000, total: 250000 },
+      { id: "LI7002", description: "Engineering services", quantity: 500, unitPrice: 250, total: 125000 }
     ]
   },
   {
@@ -150,8 +147,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-10",
     status: "draft",
     lineItems: [
-      { id: "LI8001", description: "Foundation work", quantity: 1, unitPrice: 45000, total: 45000, taxable: false },
-      { id: "LI8002", description: "Initial framing", quantity: 1, unitPrice: 50000, total: 50000, taxable: false }
+      { id: "LI8001", description: "Foundation work", quantity: 1, unitPrice: 45000, total: 45000 },
+      { id: "LI8002", description: "Initial framing", quantity: 1, unitPrice: 50000, total: 50000 }
     ]
   },
   {
@@ -166,8 +163,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-15",
     status: "sent",
     lineItems: [
-      { id: "LI9001", description: "Walkway construction", quantity: 1200, unitPrice: 25, total: 30000, taxable: false },
-      { id: "LI9002", description: "Lighting installation", quantity: 74, unitPrice: 250, total: 18500, taxable: false }
+      { id: "LI9001", description: "Walkway construction", quantity: 1200, unitPrice: 25, total: 30000 },
+      { id: "LI9002", description: "Lighting installation", quantity: 74, unitPrice: 250, total: 18500 }
     ]
   },
   {
@@ -182,8 +179,8 @@ const mockClientInvoices: ClientInvoice[] = [
     dueDate: "2025-06-20",
     status: "cancelled",
     lineItems: [
-      { id: "LI10001", description: "Main structure", quantity: 1, unitPrice: 80000, total: 80000, taxable: false },
-      { id: "LI10002", description: "Interior work", quantity: 1, unitPrice: 40000, total: 40000, taxable: false }
+      { id: "LI10001", description: "Main structure", quantity: 1, unitPrice: 80000, total: 80000 },
+      { id: "LI10002", description: "Interior work", quantity: 1, unitPrice: 40000, total: 40000 }
     ]
   }
 ];
@@ -202,15 +199,7 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "received",
     totalAmount: 75000,
     items: [
-      { 
-        id: "POI1001", 
-        description: "Asphalt materials", 
-        quantity: 500, 
-        unitPrice: 150, 
-        total: 75000,
-        deliveryStatus: "complete",
-        receivedQuantity: 500
-      }
+      { id: "POI1001", description: "Asphalt materials", quantity: 500, unitPrice: 150, total: 75000 }
     ],
     approvedBy: "John Manager",
     approvedDate: "2025-03-24"
@@ -227,15 +216,7 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "issued",
     totalAmount: 12500,
     items: [
-      { 
-        id: "POI2001", 
-        description: "Equipment rental", 
-        quantity: 5, 
-        unitPrice: 2500, 
-        total: 12500,
-        deliveryStatus: "pending",
-        receivedQuantity: 0
-      }
+      { id: "POI2001", description: "Equipment rental", quantity: 5, unitPrice: 2500, total: 12500 }
     ],
     approvedBy: "Sarah Director",
     approvedDate: "2025-03-27"
@@ -252,15 +233,7 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "received",
     totalAmount: 35000,
     items: [
-      { 
-        id: "POI3001", 
-        description: "Engineering services", 
-        quantity: 140, 
-        unitPrice: 250, 
-        total: 35000,
-        deliveryStatus: "complete",
-        receivedQuantity: 140
-      }
+      { id: "POI3001", description: "Engineering services", quantity: 140, unitPrice: 250, total: 35000 }
     ],
     approvedBy: "John Manager",
     approvedDate: "2025-04-01"
@@ -277,15 +250,7 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "received",
     totalAmount: 52500,
     items: [
-      { 
-        id: "POI4001", 
-        description: "Concrete materials", 
-        quantity: 350, 
-        unitPrice: 150, 
-        total: 52500,
-        deliveryStatus: "complete",
-        receivedQuantity: 350
-      }
+      { id: "POI4001", description: "Concrete materials", quantity: 350, unitPrice: 150, total: 52500 }
     ],
     approvedBy: "Sarah Director",
     approvedDate: "2025-04-04"
@@ -300,15 +265,7 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     status: "draft",
     totalAmount: 7500,
     items: [
-      { 
-        id: "POI5001", 
-        description: "Safety barriers", 
-        quantity: 50, 
-        unitPrice: 150, 
-        total: 7500,
-        deliveryStatus: "pending",
-        receivedQuantity: 0 
-      }
+      { id: "POI5001", description: "Safety barriers", quantity: 50, unitPrice: 150, total: 7500 }
     ]
   }
 ];
@@ -387,81 +344,66 @@ const mockTransactions: Transaction[] = [
     id: "T1001",
     date: "2025-04-11",
     description: "Payment received from Georgia DOT",
-    category: "Client Payments",
+    categoryId: "CAT1001",
     categoryName: "Client Payments",
     amount: 87500,
     type: "income",
     relatedToId: "CI1002",
     relatedToType: "client_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking",
-    createdBy: "Jane Accountant",
-    createdAt: "2025-04-11T10:30:00",
-    status: "cleared"
+    accountName: "Business Checking"
   },
   {
     id: "T1002",
     date: "2025-04-16",
     description: "Payment to Southern Concrete Solutions",
-    category: "Material Costs",
+    categoryId: "CAT2001",
     categoryName: "Material Costs",
     amount: 52500,
     type: "expense",
     relatedToId: "VI1004",
     relatedToType: "vendor_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking",
-    createdBy: "Jane Accountant",
-    createdAt: "2025-04-16T14:15:00",
-    status: "cleared"
+    accountName: "Business Checking"
   },
   {
     id: "T1003",
     date: "2025-04-11",
     description: "Payment to Georgia Materials Supply",
-    category: "Material Costs",
+    categoryId: "CAT2001",
     categoryName: "Material Costs",
     amount: 75000,
     type: "expense",
     relatedToId: "VI1001",
     relatedToType: "vendor_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking",
-    createdBy: "Jane Accountant",
-    createdAt: "2025-04-11T11:45:00",
-    status: "cleared"
+    accountName: "Business Checking"
   },
   {
     id: "T1004",
     date: "2025-04-15",
     description: "Payment to Atlanta Office Supplies",
-    category: "Office Expenses",
+    categoryId: "CAT2002",
     categoryName: "Office Expenses",
     amount: 1250,
     type: "expense",
     relatedToId: "VI1005",
     relatedToType: "vendor_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking",
-    createdBy: "Jane Accountant",
-    createdAt: "2025-04-15T09:20:00",
-    status: "cleared"
+    accountName: "Business Checking"
   },
   {
     id: "T1005",
     date: "2025-05-05",
     description: "Payment received from Savannah Port Authority",
-    category: "Client Payments",
+    categoryId: "CAT1001",
     categoryName: "Client Payments",
     amount: 375000,
     type: "income",
     relatedToId: "CI1007",
     relatedToType: "client_invoice",
     accountId: "ACC1001",
-    accountName: "Business Checking",
-    createdBy: "Jane Accountant",
-    createdAt: "2025-05-05T13:10:00",
-    status: "cleared"
+    accountName: "Business Checking"
   }
 ];
 
@@ -517,65 +459,9 @@ const mockBudgetCategories: BudgetCategory[] = [
   }
 ];
 
-// New mock data for WIP reports
-const mockWIPReports: ProjectWIP[] = [
-  {
-    id: "WIP1001",
-    projectId: "P1001",
-    projectName: "GA-400 Repaving",
-    periodEndDate: "2025-05-15",
-    revenueEarned: 85000,
-    costsIncurred: 72500,
-    completionPercentage: 68,
-    billingStatus: "partially_billed",
-    contractValue: 125000,
-    billedToDate: 75000,
-    billingToDate: 75000,
-    remainingToBill: 50000,
-    overUnderBilledAmount: -10000,
-    lastUpdated: "2025-05-16",
-    updatedBy: "Jane Accountant"
-  },
-  {
-    id: "WIP1002",
-    projectId: "P1003",
-    projectName: "Peachtree Street Improvements",
-    periodEndDate: "2025-05-15",
-    revenueEarned: 28000,
-    costsIncurred: 26500,
-    completionPercentage: 62,
-    billingStatus: "over_billed",
-    contractValue: 45000,
-    billedToDate: 32000,
-    billingToDate: 32000,
-    remainingToBill: 13000,
-    overUnderBilledAmount: 4000,
-    lastUpdated: "2025-05-16",
-    updatedBy: "Jane Accountant"
-  },
-  {
-    id: "WIP1003",
-    projectId: "P1010",
-    projectName: "Rome Public Library",
-    periodEndDate: "2025-05-15",
-    revenueEarned: 60000,
-    costsIncurred: 55000,
-    completionPercentage: 50,
-    billingStatus: "not_billed",
-    contractValue: 120000,
-    billedToDate: 0,
-    billingToDate: 0,
-    remainingToBill: 120000,
-    overUnderBilledAmount: -60000,
-    lastUpdated: "2025-05-16",
-    updatedBy: "Jane Accountant"
-  }
-];
-
 const Finance = () => {
   const [activeTab, setActiveTab] = useState("clientInvoices");
   const { authState } = useAuth();
-  const isMobile = useIsMobile();
   
   // Access control
   const isAccountant = authState.user?.role === 'accountant';
@@ -621,12 +507,11 @@ const Finance = () => {
 
       {/* Main Finance Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className={`${isMobile ? "flex w-full overflow-x-auto" : "grid grid-cols-4 md:grid-cols-9 lg:grid-cols-9"}`}>
+        <TabsList className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-8">
           <TabsTrigger value="clientInvoices">Client Invoices</TabsTrigger>
           <TabsTrigger value="vendorInvoices">Vendor Invoices</TabsTrigger>
           <TabsTrigger value="purchaseOrders">Purchase Orders</TabsTrigger>
           <TabsTrigger value="transactions">General Ledger</TabsTrigger>
-          <TabsTrigger value="wip">WIP</TabsTrigger>
           <TabsTrigger value="budget">Budget</TabsTrigger>
           <TabsTrigger value="payroll">Payroll</TabsTrigger>
           <TabsTrigger value="taxForms">Tax Forms</TabsTrigger>
@@ -651,15 +536,6 @@ const Finance = () => {
         {/* Transactions Tab */}
         <TabsContent value="transactions">
           <TransactionsTab transactions={mockTransactions} canEdit={canEdit} />
-        </TabsContent>
-
-        {/* WIP Tab */}
-        <TabsContent value="wip">
-          {isMobile ? (
-            <MobileWIPView wipReports={mockWIPReports} />
-          ) : (
-            <WIPTab wipReports={mockWIPReports} canEdit={canEdit} />
-          )}
         </TabsContent>
 
         {/* Budget Tab */}

@@ -12,7 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function IncidentDashboard() {
-  const [incidents, setIncidents] = useState<SafetyIncident[]>(mockSafetyIncidents as SafetyIncident[]);
+  const [incidents, setIncidents] = useState<SafetyIncident[]>(mockSafetyIncidents);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState<string>("all");
   const isMobile = useIsMobile();

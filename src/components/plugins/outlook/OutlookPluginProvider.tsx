@@ -1,15 +1,35 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { OutlookNotification, OutlookDocument, ProjectFolder, EmailTemplate } from '@/types/outlook';
+
+interface PluginNotification {
+  id: string;
+  projectId: string;
+  projectName: string;
+  type: 'rfi' | 'submittal' | 'change_order' | 'task' | 'update';
+  priority: 'low' | 'medium' | 'high';
+  dueDate: string;
+  description: string;
+  link: string;
+  isRead: boolean;
+}
+
+interface EmailTemplate {
+  id: string;
+  name: string;
+  category: 'rfi' | 'change_order' | 'project_update' | 'submittal' | 'general';
+  subject: string;
+  content: string;
+  variables: string[];
+}
 
 interface OutlookPluginContextType {
-  notifications: OutlookNotification[];
+  notifications: PluginNotification[];
   emailTemplates: EmailTemplate[];
   markNotificationAsRead: (id: string) => void;
   getProjectFolders: (projectId: string) => { name: string; path: string }[];
   searchProjects: (query: string) => Promise<{ id: string; name: string }[]>;
-  searchDocuments: (query: string) => Promise<OutlookDocument[]>;
+  searchDocuments: (query: string) => Promise<{ id: string; name: string; type: string; projectId: string }[]>;
   getEmailTemplate: (templateId: string) => EmailTemplate | undefined;
   generateEmailContent: (templateId: string, projectId: string, recipient?: string) => Promise<string>;
   isAuthenticated: boolean;
@@ -17,8 +37,87 @@ interface OutlookPluginContextType {
 
 const OutlookPluginContext = createContext<OutlookPluginContextType | undefined>(undefined);
 
-// Sample data for notifications
-const sampleNotifications: OutlookNotification[] = [
+// Sample data for email templates
+const sampleEmailTemplates: EmailTemplate[] = [
+  {
+    id: 'template1',
+    name: 'RFI Follow-up',
+    category: 'rfi',
+    subject: 'Follow-up on RFI #{rfiNumber} - {projectName}',
+    content: `Dear {recipientName},
+
+I hope this email finds you well. I am writing to follow up on the Request for Information (RFI #{rfiNumber}) that was submitted on {submitDate} regarding {projectName}.
+
+The RFI concerns {rfiDescription} and we require this information to proceed with {taskDescription}. As the response deadline of {dueDate} has passed, we would appreciate your prompt attention to this matter.
+
+Please let me know if you need any additional information to address this RFI.
+
+Best regards,
+{senderName}
+{senderPosition}
+xDOTContractor`,
+    variables: ['rfiNumber', 'projectName', 'recipientName', 'submitDate', 'rfiDescription', 'taskDescription', 'dueDate', 'senderName', 'senderPosition']
+  },
+  {
+    id: 'template2',
+    name: 'Change Order Request',
+    category: 'change_order',
+    subject: 'Change Order Request #{changeOrderNumber} for {projectName}',
+    content: `Dear {recipientName},
+
+Please find attached Change Order Request #{changeOrderNumber} for the {projectName} project.
+
+This change order addresses the following items:
+- {changeDescription}
+
+The total cost impact of this change order is {costImpact}, with a schedule impact of {scheduleImpact} days.
+
+The change is necessary due to {reasonForChange}. All supporting documentation is attached to this email.
+
+Please review and approve this change order at your earliest convenience so that we can proceed with the adjusted scope of work.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+{senderName}
+{senderPosition}
+xDOTContractor`,
+    variables: ['changeOrderNumber', 'projectName', 'recipientName', 'changeDescription', 'costImpact', 'scheduleImpact', 'reasonForChange', 'senderName', 'senderPosition']
+  },
+  {
+    id: 'template3',
+    name: 'GA Project Update',
+    category: 'project_update',
+    subject: 'Weekly Progress Update - {projectName} - Week of {weekStartDate}',
+    content: `Dear {recipientName},
+
+I'm writing to provide you with the weekly progress update for the {projectName} project for the week of {weekStartDate}.
+
+Weekly Progress Summary:
+- Completed activities: {completedActivities}
+- Current activities: {currentActivities}
+- Planned for next week: {plannedActivities}
+
+Schedule Status:
+- Overall project completion: {completionPercentage}%
+- Current status: {onSchedule}
+- Weather days this week: {weatherDays}
+
+Issues/Concerns:
+{issuesAndConcerns}
+
+Please let me know if you need any clarification or have questions regarding this update.
+
+Best regards,
+{senderName}
+{senderPosition}
+xDOTContractor`,
+    variables: ['projectName', 'recipientName', 'weekStartDate', 'completedActivities', 'currentActivities', 'plannedActivities', 'completionPercentage', 'onSchedule', 'weatherDays', 'issuesAndConcerns', 'senderName', 'senderPosition']
+  }
+];
+
+// Sample notifications
+const sampleNotifications: PluginNotification[] = [
   {
     id: 'notif1',
     projectId: '1',
@@ -76,64 +175,48 @@ const sampleNotifications: OutlookNotification[] = [
   }
 ];
 
-// Sample data for email templates
-const sampleEmailTemplates: EmailTemplate[] = [
-  {
-    id: 'template1',
-    name: 'RFI Follow-up',
-    subject: 'Follow-up on RFI #{rfiNumber} - {projectName}',
-    content: 'Dear {recipientName},\n\nI am writing to follow up on RFI #{rfiNumber} for {projectName}...',
-    category: 'rfi'
-  },
-  {
-    id: 'template2',
-    name: 'Change Order Request',
-    subject: 'Change Order Request #{coNumber} - {projectName}',
-    content: 'Dear {recipientName},\n\nAttached is Change Order #{coNumber} for {projectName}...',
-    category: 'change_order'
-  },
-  {
-    id: 'template3',
-    name: 'Weekly Project Update',
-    subject: 'Weekly Update - {projectName} - Week of {weekDate}',
-    content: 'Dear {recipientName},\n\nHere is the weekly update for {projectName}...',
-    category: 'update'
-  }
-];
-
 interface OutlookPluginProviderProps {
   children: ReactNode;
 }
 
 export const OutlookPluginProvider = ({ children }: OutlookPluginProviderProps) => {
   const { authState } = useAuth();
-  const [notifications, setNotifications] = useState<OutlookNotification[]>(sampleNotifications);
-  const [emailTemplates] = useState<EmailTemplate[]>(sampleEmailTemplates);
+  const [notifications, setNotifications] = useState<PluginNotification[]>(sampleNotifications);
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>(sampleEmailTemplates);
   const isAuthenticated = !!authState.user;
 
   useEffect(() => {
-    // Filter notifications by user role
-    if (isAuthenticated && authState.user) {
-      const userRole = authState.user.role;
-      let filteredNotifications = [...sampleNotifications];
-      
-      if (userRole === 'accountant') {
-        filteredNotifications = filteredNotifications.filter(n => 
-          n.type === 'change_order' || n.projectName.includes('I-85')
-        );
-      } else if (userRole === 'field_worker') {
-        filteredNotifications = filteredNotifications.filter(n => 
-          n.type === 'task' || n.type === 'update'
-        );
-      }
-      
+    // In a real implementation, we would fetch the notifications from the server
+    // based on the authenticated user's role and permissions
+    if (isAuthenticated) {
+      // Filter notifications based on user role
+      const userRole = authState.user?.role;
+      const filteredNotifications = sampleNotifications.filter(notification => {
+        // This is a simplified example of role-based filtering
+        // In a real implementation, this would be more sophisticated
+        switch (userRole) {
+          case 'project_manager':
+            return true; // Project managers see all notifications
+          case 'accountant':
+            return notification.type === 'change_order'; // Accountants only see change orders
+          case 'field_worker':
+            return notification.type === 'task' || notification.type === 'update'; // Field workers see tasks and updates
+          case 'hr':
+            return false; // HR doesn't see project notifications
+          default:
+            return true; // Admin sees everything
+        }
+      });
+
       setNotifications(filteredNotifications);
     }
-  }, [isAuthenticated, authState.user]);
+  }, [authState.user, isAuthenticated]);
 
   const markNotificationAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, isRead: true } : n)
+    setNotifications(prevNotifications =>
+      prevNotifications.map(notification =>
+        notification.id === id ? { ...notification, isRead: true } : notification
+      )
     );
   };
 
@@ -144,12 +227,13 @@ export const OutlookPluginProvider = ({ children }: OutlookPluginProviderProps) 
       { name: 'Submittals', path: `/projects/${projectId}/submittals` },
       { name: 'Change Orders', path: `/projects/${projectId}/change-orders` },
       { name: 'Documents', path: `/projects/${projectId}/documents` },
-      { name: 'Schedule', path: `/projects/${projectId}/schedule` }
+      { name: 'Schedule', path: `/projects/${projectId}/schedule` },
+      { name: 'Tasks', path: `/projects/${projectId}/tasks` }
     ];
   };
 
-  const searchProjects = async (query: string) => {
-    // Mock implementation - would call an API
+  const searchProjects = async (query: string): Promise<{ id: string; name: string }[]> => {
+    // Mock implementation - in reality would call an API
     const mockProjects = [
       { id: '1', name: 'I-85 North Resurfacing' },
       { id: '2', name: 'Highway 400 Bridge Repair' },
@@ -158,100 +242,66 @@ export const OutlookPluginProvider = ({ children }: OutlookPluginProviderProps) 
       { id: '5', name: 'I-75 Bridge Repair' }
     ];
     
-    if (!query) return mockProjects;
-    
-    return mockProjects.filter(p => 
-      p.name.toLowerCase().includes(query.toLowerCase())
+    return mockProjects.filter(project => 
+      project.name.toLowerCase().includes(query.toLowerCase())
     );
   };
 
-  const searchDocuments = async (query: string): Promise<OutlookDocument[]> => {
-    // Mock implementation - would call an API
-    const mockDocuments: OutlookDocument[] = [
-      { 
-        id: 'd1', 
-        name: 'Traffic Control Plan', 
-        projectId: '1', 
-        type: 'PDF', 
-        category: 'submittal',
-        path: '/projects/1/submittals/23',
-        lastModified: '2025-05-15'
-      },
-      { 
-        id: 'd2', 
-        name: 'Structural Analysis', 
-        projectId: '2', 
-        type: 'PDF',
-        category: 'rfi',
-        path: '/projects/2/rfis/12',
-        lastModified: '2025-05-14'
-      },
-      { 
-        id: 'd3', 
-        name: 'Change Order #8', 
-        projectId: '2', 
-        type: 'PDF',
-        category: 'change_order',
-        path: '/projects/2/change-orders/8',
-        lastModified: '2025-05-16'
-      },
-      { 
-        id: 'd4', 
-        name: 'Site Survey', 
-        projectId: '3', 
-        type: 'PDF',
-        category: 'document',
-        path: '/projects/3/documents/site-survey',
-        lastModified: '2025-05-10'
-      },
-      { 
-        id: 'd5', 
-        name: 'Material Specifications', 
-        projectId: '1', 
-        type: 'DOCX',
-        category: 'document',
-        path: '/projects/1/documents/materials',
-        lastModified: '2025-05-12'
-      }
+  const searchDocuments = async (query: string): Promise<{ id: string; name: string; type: string; projectId: string }[]> => {
+    // Mock implementation - in reality would call an API
+    const mockDocuments = [
+      { id: 'doc1', name: 'I-85 Traffic Control Plan', type: 'PDF', projectId: '1' },
+      { id: 'doc2', name: 'Highway 400 Structural Analysis', type: 'PDF', projectId: '2' },
+      { id: 'doc3', name: 'Peachtree St Site Survey', type: 'PDF', projectId: '3' },
+      { id: 'doc4', name: 'Material Specifications', type: 'DOCX', projectId: '1' },
+      { id: 'doc5', name: 'Safety Compliance Checklist', type: 'XLSX', projectId: '2' }
     ];
     
-    if (!query) return mockDocuments;
-    
-    return mockDocuments.filter(d => 
-      d.name.toLowerCase().includes(query.toLowerCase()) ||
-      d.type.toLowerCase().includes(query.toLowerCase()) ||
-      d.category.toLowerCase().includes(query.toLowerCase())
+    return mockDocuments.filter(doc => 
+      doc.name.toLowerCase().includes(query.toLowerCase())
     );
   };
 
   const getEmailTemplate = (templateId: string) => {
-    return emailTemplates.find(t => t.id === templateId);
+    return emailTemplates.find(template => template.id === templateId);
   };
 
-  const generateEmailContent = async (
-    templateId: string,
-    projectId: string,
-    recipient?: string
-  ): Promise<string> => {
+  const generateEmailContent = async (templateId: string, projectId: string, recipient?: string): Promise<string> => {
     const template = getEmailTemplate(templateId);
     if (!template) return '';
-    
-    // This would be populated with real data from the project
-    const variables = {
-      projectName: 'I-85 North Resurfacing',
+
+    // Mock data for template variables - in a real implementation this would be fetched from the project data
+    const mockVariables: Record<string, string> = {
       rfiNumber: '45',
-      coNumber: '8',
-      weekDate: '05/22/2025',
-      recipientName: recipient || 'Project Team'
+      projectName: 'I-85 North Resurfacing',
+      recipientName: recipient || 'John Smith',
+      submitDate: '2025-05-10',
+      rfiDescription: 'asphalt mixture specifications',
+      taskDescription: 'road base preparation',
+      dueDate: '2025-05-22',
+      senderName: authState.user?.name || 'Site Manager',
+      senderPosition: 'Project Manager',
+      changeOrderNumber: '8',
+      changeDescription: 'Additional structural support for bridge section B',
+      costImpact: '$45,000',
+      scheduleImpact: '5',
+      reasonForChange: 'unexpected soil conditions',
+      weekStartDate: '2025-05-13',
+      completedActivities: 'Base preparation, drainage installation',
+      currentActivities: 'Concrete pouring, reinforcement installation',
+      plannedActivities: 'Curing, surface preparation',
+      completionPercentage: '45',
+      onSchedule: 'On schedule',
+      weatherDays: '1',
+      issuesAndConcerns: 'None at this time'
     };
-    
+
     let content = template.content;
-    
-    // Replace variables in template
-    Object.entries(variables).forEach(([key, value]) => {
-      content = content.replace(new RegExp(`{${key}}`, 'g'), value);
-    });
-    
+    for (const variable of template.variables) {
+      const value = mockVariables[variable] || `{${variable}}`;
+      content = content.replace(new RegExp(`{${variable}}`, 'g'), value);
+    }
+
     return content;
   };
 

@@ -12,26 +12,7 @@ import { CertificationManagement } from "@/components/safety/CertificationManage
 import { RiskDashboard } from "@/components/safety/RiskDashboard";
 import { RiskMitigation } from "@/components/safety/RiskMitigation";
 import { MobileRiskViewer } from "@/components/safety/MobileRiskViewer";
-import { JobSafetyAnalysis } from "@/components/safety/JobSafetyAnalysis";
-import { ToolboxMeetings } from "@/components/safety/ToolboxMeetings";
-import { DriverTrends } from "@/components/safety/DriverTrends";
-import { MobileDriverView } from "@/components/safety/MobileDriverView";
-import { RiskDriverIntegration } from "@/components/safety/RiskDriverIntegration";
-import { 
-  AlertTriangle, 
-  Clipboard, 
-  FileCheck, 
-  ShieldCheck, 
-  Award, 
-  ShieldAlert, 
-  Sparkles, 
-  Bell, 
-  ClipboardList, 
-  Users,
-  Car,
-  BarChart,
-  Smartphone
-} from "lucide-react";
+import { AlertTriangle, Clipboard, FileCheck, ShieldCheck, Award, ShieldAlert, Sparkles, Bell } from "lucide-react";
 
 export default function Safety() {
   const [activeTab, setActiveTab] = useState("incidents");
@@ -41,7 +22,7 @@ export default function Safety() {
     <div className="space-y-6">
       <PageHeader
         heading="Safety & Risk Management"
-        subheading="Manage safety incidents, hazards, risks, compliance, certifications, and safety meetings"
+        subheading="Manage safety incidents, hazards, risks, compliance, and certifications"
       />
       
       <div className="relative">
@@ -64,22 +45,6 @@ export default function Safety() {
               <Sparkles className="h-4 w-4" />
               <span>{isMobile ? "Mitigate" : "Risk Mitigation"}</span>
             </TabsTrigger>
-            <TabsTrigger value="drivers" className="flex items-center gap-1">
-              <Car className="h-4 w-4" />
-              <span>{isMobile ? "Drivers" : "Driver Trends"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="integration" className="flex items-center gap-1">
-              <BarChart className="h-4 w-4" />
-              <span>{isMobile ? "AI Risk" : "Risk & Driver Integration"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="jsa" className="flex items-center gap-1">
-              <ClipboardList className="h-4 w-4" />
-              <span>{isMobile ? "JSA" : "Job Safety Analysis"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="toolbox" className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              <span>{isMobile ? "Meetings" : "Toolbox Meetings"}</span>
-            </TabsTrigger>
             <TabsTrigger value="hazards" className="flex items-center gap-1">
               <Clipboard className="h-4 w-4" />
               <span>{isMobile ? "Hazards" : "Hazard Reporting"}</span>
@@ -96,13 +61,9 @@ export default function Safety() {
               <Award className="h-4 w-4" />
               <span>{isMobile ? "Certs" : "Certifications"}</span>
             </TabsTrigger>
-            <TabsTrigger value="mobile-risk" className="flex items-center gap-1">
+            <TabsTrigger value="mobile" className="flex items-center gap-1">
               <Bell className="h-4 w-4" />
-              <span>{isMobile ? "Mobile Risk" : "Mobile Risk View"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="mobile-driver" className="flex items-center gap-1">
-              <Smartphone className="h-4 w-4" />
-              <span>{isMobile ? "Mobile Driver" : "Mobile Driver View"}</span>
+              <span>{isMobile ? "Mobile" : "Mobile View"}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -126,38 +87,6 @@ export default function Safety() {
             <Card>
               <CardContent className="p-0">
                 <RiskMitigation />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="drivers" className="space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                <DriverTrends />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="integration" className="space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                <RiskDriverIntegration />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="jsa" className="space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                <JobSafetyAnalysis />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="toolbox" className="space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                <ToolboxMeetings />
               </CardContent>
             </Card>
           </TabsContent>
@@ -194,7 +123,7 @@ export default function Safety() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="mobile-risk" className="space-y-4">
+          <TabsContent value="mobile" className="space-y-4">
             <Card>
               <CardContent className="p-0">
                 <div className="max-w-md mx-auto">
@@ -204,23 +133,6 @@ export default function Safety() {
                     </div>
                     <div className="bg-background h-[600px] overflow-y-auto">
                       <MobileRiskViewer />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="mobile-driver" className="space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                <div className="max-w-md mx-auto">
-                  <div className="border-4 border-gray-300 rounded-3xl overflow-hidden">
-                    <div className="bg-gray-200 py-2 text-center text-sm font-medium border-b border-gray-300">
-                      Mobile Driver Trends Viewer
-                    </div>
-                    <div className="bg-background h-[600px] overflow-y-auto">
-                      <MobileDriverView />
                     </div>
                   </div>
                 </div>

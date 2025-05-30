@@ -1,4 +1,3 @@
-
 import { 
   ForumPost, 
   HeadOfficeTask, 
@@ -23,8 +22,6 @@ export const mockAdditionalUsers: User[] = [
     position: 'Front Desk Coordinator',
     createdAt: new Date(2023, 5, 15).toISOString(),
     lastLogin: new Date().toISOString(),
-    isVerified: true,
-    twoFactorEnabled: false,
   },
   {
     id: '7',
@@ -37,8 +34,6 @@ export const mockAdditionalUsers: User[] = [
     position: 'Senior Contractor',
     createdAt: new Date(2023, 6, 5).toISOString(),
     lastLogin: new Date().toISOString(),
-    isVerified: true,
-    twoFactorEnabled: true,
   },
   {
     id: '8',
@@ -51,8 +46,6 @@ export const mockAdditionalUsers: User[] = [
     position: 'Site Supervisor',
     createdAt: new Date(2023, 7, 20).toISOString(),
     lastLogin: new Date().toISOString(),
-    isVerified: true,
-    twoFactorEnabled: true,
   },
   {
     id: '9',
@@ -65,8 +58,6 @@ export const mockAdditionalUsers: User[] = [
     position: 'Financial Analyst',
     createdAt: new Date(2023, 8, 10).toISOString(),
     lastLogin: new Date().toISOString(),
-    isVerified: true,
-    twoFactorEnabled: false,
   },
   {
     id: '10',
@@ -79,8 +70,6 @@ export const mockAdditionalUsers: User[] = [
     position: 'Safety Coordinator',
     createdAt: new Date(2023, 9, 1).toISOString(),
     lastLogin: new Date().toISOString(),
-    isVerified: true,
-    twoFactorEnabled: true,
   },
 ];
 
