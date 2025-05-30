@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,15 +62,6 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				},
-				// Construction theme colors
-				construction: {
-					primary: '#F59E0B',
-					secondary: '#1E40AF',
-					dark: '#1F2937',
-					light: '#F3F4F6',
-					accent: '#DC2626',
-					muted: '#9CA3AF',
 				}
 			},
 			borderRadius: {
