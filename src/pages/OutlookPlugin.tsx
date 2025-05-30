@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { requireAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { OutlookPluginProvider } from '@/components/plugins/outlook/OutlookPluginProvider';
 import { OutlookSidebar } from '@/components/plugins/outlook/OutlookSidebar';
@@ -18,7 +16,6 @@ function OutlookPluginPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Left section: Plugin preview */}
         <Card className="col-span-1 xl:col-span-2 xl:row-span-3 flex flex-col">
           <CardHeader>
             <CardTitle>Plugin Preview</CardTitle>
@@ -35,7 +32,6 @@ function OutlookPluginPage() {
           </CardContent>
         </Card>
 
-        {/* Right section: Feature highlights */}
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle className="text-lg">Folder Access</CardTitle>
@@ -148,4 +144,4 @@ function OutlookPluginPage() {
   );
 }
 
-export default requireAuth()(OutlookPluginPage);
+export default OutlookPluginPage;

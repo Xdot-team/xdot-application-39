@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,8 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Search, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { mockHeadOfficeTasks } from '@/data/mockAdminData';
-import { HeadOfficeTask } from '@/types/admin';
-import { useAuth } from '@/contexts/AuthContext';
+import { HeadOfficeTask } from '@/data/mockAdminData';
 import { toast } from '@/components/ui/sonner';
 
 export function HeadOfficeTasks() {
@@ -27,8 +25,8 @@ export function HeadOfficeTasks() {
     status: 'pending',
   });
   
-  const { authState } = useAuth();
-  const currentUser = authState.user;
+  // Mock current user for demonstration
+  const currentUser = { id: '1', name: 'Demo User' };
 
   // Filter tasks based on search query and filters
   const filteredTasks = tasks.filter(task => {

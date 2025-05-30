@@ -1,351 +1,179 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Save } from 'lucide-react';
-import { mockSystemSettings } from '@/data/mockAdminData';
-import { SystemSettings as SystemSettingsType } from '@/types/admin';
-import { useAuth } from '@/contexts/AuthContext';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Settings, Save, RefreshCw, Shield, Bell, Palette } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 
 export function SystemSettings() {
-  const [settings, setSettings] = useState<SystemSettingsType[]>(mockSystemSettings);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [activeTab, setActiveTab] = useState('settings');
-  const [editedSettings, setEditedSettings] = useState<Record<string, string>>({});
-  
-  const { authState } = useAuth();
-  const currentUser = authState.user;
-  
-  // Filter settings based on search query and category
-  const filteredSettings = settings.filter(setting => {
-    const matchesCategory = categoryFilter === 'all' || setting.category === categoryFilter;
-    
-    const searchFields = [
-      setting.settingKey,
-      setting.settingValue,
-      setting.description
-    ].join(' ').toLowerCase();
-    
-    const matchesSearch = searchQuery === '' || searchFields.includes(searchQuery.toLowerCase());
-    
-    return matchesCategory && matchesSearch;
+  const [settings, setSettings] = useState({
+    companyName: 'xDOTContractor',
+    emailNotifications: true,
+    pushNotifications: false,
+    dataRetention: '365',
+    theme: 'light',
+    timezone: 'EST',
+    backupFrequency: 'daily'
   });
 
-  const handleEditSetting = (id: string, value: string) => {
-    setEditedSettings({
-      ...editedSettings,
-      [id]: value
+  const handleSave = () => {
+    toast.success("System settings saved successfully");
+  };
+
+  const handleReset = () => {
+    setSettings({
+      companyName: 'xDOTContractor',
+      emailNotifications: true,
+      pushNotifications: false,
+      dataRetention: '365',
+      theme: 'light',
+      timezone: 'EST',
+      backupFrequency: 'daily'
     });
+    toast.info("Settings reset to defaults");
   };
-
-  const handleSaveSettings = () => {
-    const updatedSettings = settings.map(setting => {
-      if (editedSettings[setting.id]) {
-        return {
-          ...setting,
-          settingValue: editedSettings[setting.id],
-          updatedAt: new Date().toISOString(),
-          updatedBy: currentUser?.name || 'Unknown'
-        };
-      }
-      return setting;
-    });
-    
-    setSettings(updatedSettings);
-    setEditedSettings({});
-    toast.success("Settings saved successfully");
-  };
-
-  const handleExportSettings = () => {
-    // In a real app, this would generate a file for download
-    toast.success("Settings exported successfully");
-  };
-
-  const isEditingAny = Object.keys(editedSettings).length > 0;
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="settings">System Settings</TabsTrigger>
-          <TabsTrigger value="backups">Backups & Recovery</TabsTrigger>
-          <TabsTrigger value="logs">System Logs</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="settings">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Settings</CardTitle>
-              <CardDescription>
-                Configure global system settings and parameters
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                <div className="flex flex-1 gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search settings..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9"
-                    />
-                  </div>
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Filter by category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      <SelectItem value="general">General</SelectItem>
-                      <SelectItem value="api">API</SelectItem>
-                      <SelectItem value="email">Email</SelectItem>
-                      <SelectItem value="security">Security</SelectItem>
-                      <SelectItem value="notifications">Notifications</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex gap-2 w-full md:w-auto">
-                  {isEditingAny && (
-                    <Button className="flex-1 md:flex-none" onClick={handleSaveSettings}>
-                      <Save className="mr-2 h-4 w-4" />
-                      Save Changes
-                    </Button>
-                  )}
-                  <Button variant="outline" className="flex-1 md:flex-none" onClick={handleExportSettings}>
-                    Export
-                  </Button>
-                </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>System Settings</CardTitle>
+          <CardDescription>
+            Configure system-wide settings and preferences
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* General Settings */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              General
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium mb-1">Company Name</label>
+                <Input
+                  value={settings.companyName}
+                  onChange={(e) => setSettings({...settings, companyName: e.target.value})}
+                />
               </div>
-              
-              <div className="border rounded-md">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Setting</TableHead>
-                      <TableHead>Value</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Last Updated</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSettings.length > 0 ? (
-                      filteredSettings.map((setting) => (
-                        <TableRow key={setting.id}>
-                          <TableCell className="font-medium">{setting.settingKey}</TableCell>
-                          <TableCell>
-                            {setting.category === 'api' || setting.category === 'security' ? (
-                              <Input
-                                type={setting.category === 'api' ? 'password' : 'text'}
-                                value={editedSettings[setting.id] !== undefined ? editedSettings[setting.id] : setting.settingValue}
-                                onChange={(e) => handleEditSetting(setting.id, e.target.value)}
-                                className="w-full"
-                              />
-                            ) : (
-                              <Input
-                                value={editedSettings[setting.id] !== undefined ? editedSettings[setting.id] : setting.settingValue}
-                                onChange={(e) => handleEditSetting(setting.id, e.target.value)}
-                                className="w-full"
-                              />
-                            )}
-                          </TableCell>
-                          <TableCell>{setting.description}</TableCell>
-                          <TableCell>
-                            <span className="capitalize">{setting.category}</span>
-                          </TableCell>
-                          <TableCell>
-                            <div className="text-sm">
-                              {new Date(setting.updatedAt).toLocaleDateString()}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              By: {setting.updatedBy}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8">
-                          No settings found matching your search or filter.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+              <div>
+                <label className="block text-sm font-medium mb-1">Timezone</label>
+                <Select value={settings.timezone} onValueChange={(value) => setSettings({...settings, timezone: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="EST">Eastern Time (EST)</SelectItem>
+                    <SelectItem value="CST">Central Time (CST)</SelectItem>
+                    <SelectItem value="MST">Mountain Time (MST)</SelectItem>
+                    <SelectItem value="PST">Pacific Time (PST)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="backups">
-          <Card>
-            <CardHeader>
-              <CardTitle>Backups & Recovery</CardTitle>
-              <CardDescription>
-                Manage system backups and data recovery options
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="border rounded-lg p-6">
-                  <h3 className="text-lg font-medium mb-4">Manual Backup</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Create an immediate backup of all system data including user information,
-                    projects, settings, and documents.
-                  </p>
-                  <div className="flex gap-4">
-                    <Button onClick={() => toast.success("Backup started. You'll be notified when complete.")}>
-                      Create Backup Now
-                    </Button>
-                    <Button variant="outline" onClick={() => toast.success("Settings exported")}>
-                      Export Settings Only
-                    </Button>
-                  </div>
+            </div>
+          </div>
+
+          {/* Notification Settings */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Bell className="h-5 w-5" />
+              Notifications
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium">Email Notifications</label>
+                  <p className="text-xs text-muted-foreground">Receive system notifications via email</p>
                 </div>
-                
-                <div className="border rounded-lg p-6">
-                  <h3 className="text-lg font-medium mb-4">Scheduled Backups</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Configure automatic backup schedule and retention policy.
-                  </p>
-                  <div className="grid gap-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Backup Frequency</label>
-                        <Select defaultValue="daily">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select frequency" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="hourly">Hourly</SelectItem>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="monthly">Monthly</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Retention Period</label>
-                        <Select defaultValue="30">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select period" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="7">7 days</SelectItem>
-                            <SelectItem value="30">30 days</SelectItem>
-                            <SelectItem value="90">90 days</SelectItem>
-                            <SelectItem value="365">1 year</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <Button onClick={() => toast.success("Backup schedule updated")}>
-                      Save Schedule
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="border rounded-lg p-6">
-                  <h3 className="text-lg font-medium mb-4">Restore Data</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Restore system data from a previous backup.
-                  </p>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Select Backup</label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a backup" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="backup1">Daily Backup - {new Date().toLocaleDateString()}</SelectItem>
-                          <SelectItem value="backup2">Daily Backup - {new Date(Date.now() - 86400000).toLocaleDateString()}</SelectItem>
-                          <SelectItem value="backup3">Weekly Backup - {new Date(Date.now() - 604800000).toLocaleDateString()}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button variant="destructive" onClick={() => toast.info("This would initiate a restore operation")}>
-                      Restore Selected Backup
-                    </Button>
-                  </div>
-                </div>
+                <Switch
+                  checked={settings.emailNotifications}
+                  onCheckedChange={(checked) => setSettings({...settings, emailNotifications: checked})}
+                />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="logs">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Logs</CardTitle>
-              <CardDescription>
-                View and analyze system activity logs
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="flex flex-col md:flex-row gap-4 mb-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search logs..."
-                      className="pl-9"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Select defaultValue="all">
-                      <SelectTrigger className="w-[140px]">
-                        <SelectValue placeholder="Log level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Levels</SelectItem>
-                        <SelectItem value="info">Info</SelectItem>
-                        <SelectItem value="warn">Warning</SelectItem>
-                        <SelectItem value="error">Error</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      type="date"
-                      className="w-[200px]"
-                      defaultValue={new Date().toISOString().split('T')[0]}
-                    />
-                  </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium">Push Notifications</label>
+                  <p className="text-xs text-muted-foreground">Receive real-time push notifications</p>
                 </div>
-                
-                <div className="border rounded-md h-96 overflow-y-auto">
-                  <Textarea 
-                    readOnly 
-                    className="font-mono text-xs h-full p-4" 
-                    value={`[${new Date().toISOString()}] [INFO] System started
-[${new Date(Date.now() - 60000).toISOString()}] [INFO] User admin@xdotcontractor.com logged in
-[${new Date(Date.now() - 120000).toISOString()}] [INFO] System settings updated
-[${new Date(Date.now() - 300000).toISOString()}] [WARN] Failed login attempt for user unknown@example.com
-[${new Date(Date.now() - 600000).toISOString()}] [INFO] Scheduled backup completed successfully
-[${new Date(Date.now() - 3600000).toISOString()}] [ERROR] Database query timeout in Projects module
-[${new Date(Date.now() - 7200000).toISOString()}] [INFO] 5 new users added to the system
-[${new Date(Date.now() - 14400000).toISOString()}] [INFO] Email notifications sent successfully
-[${new Date(Date.now() - 86400000).toISOString()}] [INFO] System updated to version 2.3.1`}
-                  />
-                </div>
-                
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline">Download Logs</Button>
-                  <Button variant="outline">Clear Logs</Button>
-                </div>
+                <Switch
+                  checked={settings.pushNotifications}
+                  onCheckedChange={(checked) => setSettings({...settings, pushNotifications: checked})}
+                />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+          </div>
+
+          {/* Security Settings */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Security & Data
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium mb-1">Data Retention (days)</label>
+                <Input
+                  type="number"
+                  value={settings.dataRetention}
+                  onChange={(e) => setSettings({...settings, dataRetention: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Backup Frequency</label>
+                <Select value={settings.backupFrequency} onValueChange={(value) => setSettings({...settings, backupFrequency: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hourly">Hourly</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Appearance Settings */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Palette className="h-5 w-5" />
+              Appearance
+            </h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">Theme</label>
+              <Select value={settings.theme} onValueChange={(value) => setSettings({...settings, theme: value})}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 pt-4 border-t">
+            <Button onClick={handleSave}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Settings
+            </Button>
+            <Button variant="outline" onClick={handleReset}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Reset to Defaults
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

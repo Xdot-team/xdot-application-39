@@ -10,15 +10,9 @@ import { EmployeeAppreciations } from '@/components/admin/EmployeeAppreciations'
 import { SystemSettings } from '@/components/admin/SystemSettings';
 import { ApiSettings } from '@/components/admin/ApiSettings';
 import KickoffMeetings from '@/components/admin/KickoffMeetings';
-import { useAuth } from '@/contexts/AuthContext';
-import { requireAuth } from '@/contexts/AuthContext';
 
 function Admin() {
   const [activeTab, setActiveTab] = useState('users');
-  const { authState } = useAuth();
-  const isAdmin = authState.user?.role === 'admin';
-  const isProjectManager = authState.user?.role === 'project_manager';
-  const isFrontDesk = authState.user?.role === 'hr'; // Using HR as proxy for front desk
 
   return (
     <div className="space-y-6">
@@ -32,14 +26,14 @@ function Admin() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 lg:w-full mb-4">
-          <TabsTrigger value="users" disabled={!isAdmin}>User Management</TabsTrigger>
+          <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="forum">Community Forum</TabsTrigger>
-          <TabsTrigger value="tasks" disabled={!isAdmin}>Head Office Tasks</TabsTrigger>
-          <TabsTrigger value="frontdesk" disabled={!isAdmin && !isFrontDesk}>Front Desk</TabsTrigger>
+          <TabsTrigger value="tasks">Head Office Tasks</TabsTrigger>
+          <TabsTrigger value="frontdesk">Front Desk</TabsTrigger>
           <TabsTrigger value="appreciations">Appreciations</TabsTrigger>
-          <TabsTrigger value="kickoff" disabled={!isAdmin && !isProjectManager}>Kickoff Meetings</TabsTrigger>
-          <TabsTrigger value="settings" disabled={!isAdmin}>Settings</TabsTrigger>
-          <TabsTrigger value="api" disabled={!isAdmin}>API & Integrations</TabsTrigger>
+          <TabsTrigger value="kickoff">Kickoff Meetings</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="api">API & Integrations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
@@ -78,4 +72,4 @@ function Admin() {
   );
 }
 
-export default requireAuth(['admin', 'hr', 'project_manager'])(Admin);
+export default Admin;

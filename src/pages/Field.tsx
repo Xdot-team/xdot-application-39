@@ -1,691 +1,350 @@
-import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
-import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
-import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap, Users } from 'lucide-react';
-import { PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
-import { FieldMap } from '@/components/field/FieldMap';
-import { DispatchManager } from '@/components/field/DispatchManager';
-import { SiteWalkthrough } from '@/components/field/SiteWalkthrough';
-import { SubcontractorManagement } from '@/components/field/SubcontractorManagement';
-
-// Mock data 
-const mockPunchlistItems: PunchlistItem[] = [
-  {
-    id: "PL-2001",
-    project: "GA-400 Repaving",
-    location: "Station 14+50",
-    description: "Edge of pavement showing raveling",
-    assignedTo: "Paving Crew A",
-    dueDate: "2025-05-20",
-    status: 'open',
-    severity: 'minor'
-  },
-  {
-    id: "PL-2002",
-    project: "GA-400 Repaving",
-    location: "Station 23+75",
-    description: "Drainage inlet not at proper elevation",
-    assignedTo: "Drainage Crew",
-    dueDate: "2025-05-19",
-    status: 'in-progress',
-    severity: 'major'
-  },
-  {
-    id: "PL-2003",
-    project: "I-85 Bridge Repair",
-    location: "Abutment B",
-    description: "Concrete spalling not fully removed",
-    assignedTo: "Bridge Crew B",
-    dueDate: "2025-05-18",
-    status: 'closed',
-    severity: 'major'
-  },
-  {
-    id: "PL-2004",
-    project: "I-85 Bridge Repair",
-    location: "Expansion Joint #3",
-    description: "Joint material improperly installed",
-    assignedTo: "Bridge Crew A",
-    dueDate: "2025-05-17",
-    status: 'open',
-    severity: 'critical'
-  },
-  {
-    id: "PL-2005",
-    project: "Peachtree Street Improvements",
-    location: "Intersection with 10th St",
-    description: "ADA ramp slope exceeds 8.33%",
-    assignedTo: "Concrete Crew",
-    dueDate: "2025-05-18",
-    status: 'open',
-    severity: 'critical'
-  },
-  {
-    id: "PL-2006",
-    project: "Peachtree Street Improvements",
-    location: "Mid-block crossing",
-    description: "Tactile warning strip not aligned properly",
-    assignedTo: "Concrete Crew",
-    dueDate: "2025-05-19",
-    status: 'in-progress',
-    severity: 'minor'
-  },
-  {
-    id: "PL-2007",
-    project: "Gwinnett County Sidewalk Project",
-    location: "Station 5+25",
-    description: "Sidewalk width less than 5 feet",
-    assignedTo: "Concrete Crew B",
-    dueDate: "2025-05-22",
-    status: 'open',
-    severity: 'major'
-  },
-  {
-    id: "PL-2008",
-    project: "Gwinnett County Sidewalk Project",
-    location: "Station 10+50",
-    description: "Tree root damage to new sidewalk",
-    assignedTo: "Landscape Crew",
-    dueDate: "2025-05-21",
-    status: 'in-progress',
-    severity: 'minor'
-  },
-  {
-    id: "PL-2009",
-    project: "Augusta Highway Extension",
-    location: "Station 42+00",
-    description: "Guardrail height incorrect",
-    assignedTo: "Guardrail Crew",
-    dueDate: "2025-05-17",
-    status: 'closed',
-    severity: 'major'
-  },
-  {
-    id: "PL-2010",
-    project: "Augusta Highway Extension",
-    location: "Culvert #4",
-    description: "Erosion control measures insufficient",
-    assignedTo: "Erosion Control Team",
-    dueDate: "2025-05-16",
-    status: 'closed',
-    severity: 'critical'
-  }
-];
-
-const mockWorkOrders: WorkOrder[] = [
-  {
-    id: "WO-3001",
-    project: "GA-400 Repaving",
-    description: "Mill and overlay section from Station 10+00 to 20+00",
-    assignedTo: "Paving Crew A",
-    priority: 'high',
-    dueDate: "2025-05-18",
-    status: 'in-progress'
-  },
-  {
-    id: "WO-3002",
-    project: "I-85 Bridge Repair",
-    description: "Replace expansion joints at north abutment",
-    assignedTo: "Bridge Crew A",
-    priority: 'medium',
-    dueDate: "2025-05-20",
-    status: 'pending'
-  },
-  {
-    id: "WO-3003",
-    project: "Peachtree Street Improvements",
-    description: "Install new traffic signal at 10th Street intersection",
-    assignedTo: "Traffic Signal Crew",
-    priority: 'high',
-    dueDate: "2025-05-25",
-    status: 'pending'
-  },
-  {
-    id: "WO-3004",
-    project: "Gwinnett County Sidewalk Project",
-    description: "Pour concrete for sidewalk section 3",
-    assignedTo: "Concrete Crew B",
-    priority: 'medium',
-    dueDate: "2025-05-19",
-    status: 'completed'
-  },
-  {
-    id: "WO-3005",
-    project: "Augusta Highway Extension",
-    description: "Install drainage structures from Station 40+00 to 50+00",
-    assignedTo: "Drainage Crew",
-    priority: 'low',
-    dueDate: "2025-05-30",
-    status: 'in-progress'
-  }
-];
-
-const mockUtilityAdjustments: UtilityAdjustment[] = [
-  {
-    id: "UA-4001",
-    project: "GA-400 Repaving",
-    utility: "water",
-    location: "Station 25+00",
-    scheduledDate: "2025-05-18",
-    contactName: "Michael Johnson",
-    contactPhone: "404-555-1234",
-    notes: "Water main lowering required for drainage installation",
-    status: "scheduled"
-  },
-  {
-    id: "UA-4002",
-    project: "Peachtree Street Improvements",
-    utility: "electric",
-    location: "Intersection with Ponce de Leon",
-    scheduledDate: "2025-05-22",
-    contactName: "Sarah Williams",
-    contactPhone: "404-555-5678",
-    notes: "Power pole relocation needed for sidewalk widening",
-    status: "in-progress"
-  },
-  {
-    id: "UA-4003",
-    project: "Gwinnett County Sidewalk Project",
-    utility: "gas",
-    location: "Station 12+50",
-    scheduledDate: "2025-05-25",
-    contactName: "Robert Davis",
-    contactPhone: "770-555-9876",
-    notes: "Gas line depth verification needed before excavation",
-    status: "scheduled"
-  },
-  {
-    id: "UA-4004",
-    project: "Augusta Highway Extension",
-    utility: "telecom",
-    location: "Station 30+25",
-    scheduledDate: "2025-05-20",
-    contactName: "Jennifer Smith",
-    contactPhone: "706-555-4321",
-    notes: "Fiber optic line protection during culvert installation",
-    status: "delayed"
-  },
-  {
-    id: "UA-4005",
-    project: "I-85 Bridge Repair",
-    utility: "sewer",
-    location: "South approach",
-    scheduledDate: "2025-05-19",
-    contactName: "Thomas Brown",
-    contactPhone: "404-555-8765",
-    notes: "Temporary bypass pumping during manhole adjustment",
-    status: "completed"
-  }
-];
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Users, Wrench, Clock, AlertTriangle, Camera, FileText, Calendar, Truck, HardHat } from "lucide-react";
 
 const Field = () => {
-  const [punchlistItems, setPunchlistItems] = useState<PunchlistItem[]>(mockPunchlistItems);
-  const [workOrders, setWorkOrders] = useState<WorkOrder[]>(mockWorkOrders);
-  const [utilityAdjustments, setUtilityAdjustments] = useState<UtilityAdjustment[]>(mockUtilityAdjustments);
-  const [searchTerm, setSearchTerm] = useState("");
-  const { authState } = useAuth();
-  
-  // Filter data based on search term
-  const filteredPunchlistItems = punchlistItems.filter(item => 
-    item.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  const filteredWorkOrders = workOrders.filter(order => 
-    order.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.assignedTo.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const filteredUtilityAdjustments = utilityAdjustments.filter(adjustment => 
-    adjustment.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    adjustment.utility.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    adjustment.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    adjustment.contactName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  // Get counts for statistics
-  const openPunchlistItems = punchlistItems.filter(item => item.status === 'open').length;
-  const pendingWorkOrders = workOrders.filter(order => order.status === 'pending').length;
-  const scheduledUtilityAdjustments = utilityAdjustments.filter(adj => adj.status === 'scheduled').length;
-  
-  // Action handlers
-  const handleAddPunchlistItem = () => {
-    toast.info("Punchlist management will be available once Supabase integration is set up.");
-  };
-  
-  const handleCreateWorkOrder = () => {
-    toast.info("Work order creation will be available once Supabase integration is set up.");
-  };
-
-  const handleScheduleUtilityAdjustment = () => {
-    toast.info("Utility adjustment scheduling will be available once Supabase integration is set up.");
-  };
-  
-  // Status badge renderer
-  const renderStatusBadge = (status: string) => {
-    let badgeClasses = "";
-    
-    switch(status) {
-      case 'open':
-      case 'pending':
-      case 'scheduled':
-        badgeClasses = "bg-yellow-100 text-yellow-800";
-        break;
-      case 'in-progress':
-        badgeClasses = "bg-blue-100 text-blue-800";
-        break;
-      case 'closed':
-      case 'completed':
-        badgeClasses = "bg-green-100 text-green-800";
-        break;
-      case 'needs-review':
-      case 'delayed':
-        badgeClasses = "bg-red-100 text-red-800";
-        break;
-      default:
-        badgeClasses = "bg-gray-100 text-gray-800";
-    }
-    
-    return (
-      <div className={cn(
-        "w-fit rounded-full px-2 py-1 text-xs font-medium",
-        badgeClasses
-      )}>
-        {status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-      </div>
-    );
-  };
-  
-  // Priority badge renderer
-  const renderPriorityBadge = (priority: 'low' | 'medium' | 'high') => {
-    let badgeClasses = "";
-    
-    switch(priority) {
-      case 'low':
-        badgeClasses = "bg-blue-100 text-blue-800";
-        break;
-      case 'medium':
-        badgeClasses = "bg-yellow-100 text-yellow-800";
-        break;
-      case 'high':
-        badgeClasses = "bg-red-100 text-red-800";
-        break;
-      default:
-        badgeClasses = "bg-gray-100 text-gray-800";
-    }
-    
-    return (
-      <div className={cn(
-        "w-fit rounded-full px-2 py-1 text-xs font-medium",
-        badgeClasses
-      )}>
-        {priority.charAt(0).toUpperCase() + priority.slice(1)}
-      </div>
-    );
-  };
-  
-  // Utility type badge renderer
-  const renderUtilityBadge = (utility: string) => {
-    let badgeClasses = "";
-    
-    switch(utility) {
-      case 'water':
-        badgeClasses = "bg-blue-100 text-blue-800";
-        break;
-      case 'gas':
-        badgeClasses = "bg-yellow-100 text-yellow-800";
-        break;
-      case 'electric':
-        badgeClasses = "bg-amber-100 text-amber-800";
-        break;
-      case 'telecom':
-        badgeClasses = "bg-purple-100 text-purple-800";
-        break;
-      case 'sewer':
-        badgeClasses = "bg-green-100 text-green-800";
-        break;
-      default:
-        badgeClasses = "bg-gray-100 text-gray-800";
-    }
-    
-    return (
-      <div className={cn(
-        "w-fit rounded-full px-2 py-1 text-xs font-medium",
-        badgeClasses
-      )}>
-        {utility.charAt(0).toUpperCase() + utility.slice(1)}
-      </div>
-    );
-  };
-  
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Field</h1>
-          <p className="text-muted-foreground">Manage site walkthroughs, punchlists, utility adjustments, and field operations</p>
+          <h1 className="text-3xl font-bold tracking-tight">Field Operations</h1>
+          <p className="text-muted-foreground">
+            Manage on-site activities, crews, equipment, and daily operations
+          </p>
         </div>
       </div>
-      
-      {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardDescription>Open Punchlist Items</CardDescription>
-              <CardTitle className="text-2xl">{openPunchlistItems}</CardTitle>
-            </div>
-            <CheckSquare className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Across all active projects</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardDescription>Pending Work Orders</CardDescription>
-              <CardTitle className="text-2xl">{pendingWorkOrders}</CardTitle>
-            </div>
-            <ClipboardCheck className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Ready for assignment</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardDescription>Scheduled Utilities</CardDescription>
-              <CardTitle className="text-2xl">{scheduledUtilityAdjustments}</CardTitle>
-            </div>
-            <Zap className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Upcoming utility adjustments</p>
-          </CardContent>
-        </Card>
-      </div>
 
-      {/* Field Map */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>On-site Tracking</CardTitle>
-          <CardDescription>Real-time location of workers and equipment</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80 rounded-md overflow-hidden border">
-            <FieldMap />
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Tabs for different tools */}
-      <Tabs defaultValue="site-walkthrough" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="site-walkthrough">Site Walkthrough</TabsTrigger>
-          <TabsTrigger value="punchlist">Punchlist</TabsTrigger>
-          <TabsTrigger value="work-orders">Work Orders</TabsTrigger>
-          <TabsTrigger value="utility-adjustments">Utility Adjustments</TabsTrigger>
-          <TabsTrigger value="subcontractors">Subcontractors</TabsTrigger>
-          <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
+      {/* Main Content */}
+      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="crews">Crews</TabsTrigger>
+          <TabsTrigger value="equipment">Equipment</TabsTrigger>
+          <TabsTrigger value="daily-logs">Daily Logs</TabsTrigger>
+          <TabsTrigger value="safety">Safety</TabsTrigger>
+          <TabsTrigger value="materials">Materials</TabsTrigger>
         </TabsList>
-        
-        {/* Site Walkthrough Tab */}
-        <TabsContent value="site-walkthrough">
-          <SiteWalkthrough />
+
+        <TabsContent value="overview" className="mt-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Crews</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">8</div>
+                <p className="text-xs text-muted-foreground">
+                  32 workers on site
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Equipment Status</CardTitle>
+                <Wrench className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">15/18</div>
+                <p className="text-xs text-muted-foreground">
+                  3 under maintenance
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Safety Incidents</CardTitle>
+                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">0</div>
+                <p className="text-xs text-muted-foreground">
+                  Last 30 days
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Hours Logged</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">256</div>
+                <p className="text-xs text-muted-foreground">
+                  This week
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Today's Activities</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm">Foundation excavation - 85% complete</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm">Concrete delivery scheduled for 2 PM</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 bg-yellow-500 rounded-full"></div>
+                    <span className="text-sm">Steel reinforcement inspection pending</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Weather & Conditions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm">Temperature:</span>
+                    <span className="text-sm font-medium">72°F</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Conditions:</span>
+                    <span className="text-sm font-medium">Partly Cloudy</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Wind:</span>
+                    <span className="text-sm font-medium">5 mph</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Rain Probability:</span>
+                    <span className="text-sm font-medium">10%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
-        
-        {/* Punchlist Tab */}
-        <TabsContent value="punchlist">
+
+        <TabsContent value="crews" className="mt-6">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Punchlist Items</CardTitle>
-                <CardDescription>Track defects and corrections needed</CardDescription>
-              </div>
-              <Button onClick={handleAddPunchlistItem}>
-                <CheckSquare className="mr-2 h-4 w-4" />
-                Add Item
-              </Button>
+            <CardHeader>
+              <CardTitle>Active Crews</CardTitle>
+              <CardDescription>
+                Manage crew assignments and track workforce allocation
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search punchlist items..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              {/* Punchlist Table */}
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Assigned To</TableHead>
-                      <TableHead>Due Date</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPunchlistItems.length > 0 ? (
-                      filteredPunchlistItems.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>{item.id}</TableCell>
-                          <TableCell>{item.project}</TableCell>
-                          <TableCell>{item.location}</TableCell>
-                          <TableCell className="max-w-xs truncate">{item.description}</TableCell>
-                          <TableCell>{item.assignedTo}</TableCell>
-                          <TableCell>{item.dueDate}</TableCell>
-                          <TableCell>{renderStatusBadge(item.status)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No punchlist items found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        {/* Work Orders Tab */}
-        <TabsContent value="work-orders">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Work Orders</CardTitle>
-                <CardDescription>Manage and assign tasks to field crews</CardDescription>
-              </div>
-              <Button onClick={handleCreateWorkOrder}>
-                <FileText className="mr-2 h-4 w-4" />
-                Create Work Order
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search work orders..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              {/* Work Orders Table */}
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Assigned To</TableHead>
-                      <TableHead>Priority</TableHead>
-                      <TableHead>Due Date</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredWorkOrders.length > 0 ? (
-                      filteredWorkOrders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell>{order.id}</TableCell>
-                          <TableCell>{order.project}</TableCell>
-                          <TableCell className="max-w-xs truncate">{order.description}</TableCell>
-                          <TableCell>{order.assignedTo}</TableCell>
-                          <TableCell>{renderPriorityBadge(order.priority)}</TableCell>
-                          <TableCell>{order.dueDate}</TableCell>
-                          <TableCell>{renderStatusBadge(order.status)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No work orders found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+              <div className="space-y-4">
+                {[
+                  { name: "Excavation Team A", members: 4, supervisor: "John Smith", status: "active", location: "Zone 1" },
+                  { name: "Concrete Team B", members: 6, supervisor: "Sarah Johnson", status: "active", location: "Zone 2" },
+                  { name: "Steel Team C", members: 5, supervisor: "Mike Wilson", status: "break", location: "Zone 3" },
+                  { name: "Electrical Team D", members: 3, supervisor: "Lisa Brown", status: "active", location: "Zone 4" }
+                ].map((crew, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <h4 className="font-medium">{crew.name}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {crew.members} members • Supervisor: {crew.supervisor}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Location: {crew.location}</p>
+                    </div>
+                    <Badge variant={crew.status === 'active' ? 'default' : 'secondary'}>
+                      {crew.status}
+                    </Badge>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Utility Adjustments Tab */}
-        <TabsContent value="utility-adjustments">
+        <TabsContent value="equipment" className="mt-6">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Utility Adjustments</CardTitle>
-                <CardDescription>Schedule and track utility relocations and adjustments</CardDescription>
-              </div>
-              <Button onClick={handleScheduleUtilityAdjustment}>
-                <Zap className="mr-2 h-4 w-4" />
-                Schedule Adjustment
-              </Button>
+            <CardHeader>
+              <CardTitle>Equipment Status</CardTitle>
+              <CardDescription>
+                Monitor equipment location, status, and maintenance schedules
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search utility adjustments..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+              <div className="space-y-4">
+                {[
+                  { name: "Excavator CAT 320", id: "EX-001", status: "active", location: "Zone 1", operator: "John Doe", hours: "1,245" },
+                  { name: "Bulldozer D6T", id: "BD-002", status: "maintenance", location: "Shop", operator: "-", hours: "2,156" },
+                  { name: "Concrete Mixer", id: "CM-003", status: "active", location: "Zone 2", operator: "Jane Smith", hours: "856" },
+                  { name: "Crane 50T", id: "CR-004", status: "active", location: "Zone 3", operator: "Bob Johnson", hours: "3,421" }
+                ].map((equipment, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <h4 className="font-medium">{equipment.name} ({equipment.id})</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Operator: {equipment.operator} • Hours: {equipment.hours}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Location: {equipment.location}</p>
+                    </div>
+                    <Badge variant={equipment.status === 'active' ? 'default' : equipment.status === 'maintenance' ? 'destructive' : 'secondary'}>
+                      {equipment.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="daily-logs" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Daily Field Reports</CardTitle>
+              <CardDescription>
+                Track daily activities, progress, and field observations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Button className="w-full md:w-auto">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Create Today's Report
+                </Button>
+                
+                <div className="space-y-3">
+                  {[
+                    { date: "2023-10-23", weather: "Sunny", crews: 8, progress: "Foundation work 85% complete", issues: "None" },
+                    { date: "2023-10-22", weather: "Cloudy", crews: 7, progress: "Excavation completed in Zone 1", issues: "Equipment delay" },
+                    { date: "2023-10-21", weather: "Rainy", crews: 5, progress: "Limited work due to weather", issues: "Weather delay" }
+                  ].map((log, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">{log.date}</h4>
+                        <Badge variant="outline">{log.weather}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Crews: {log.crews} • Progress: {log.progress}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Issues: {log.issues}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
-              
-              {/* Utility Adjustments Table */}
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Utility</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Scheduled Date</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredUtilityAdjustments.length > 0 ? (
-                      filteredUtilityAdjustments.map((adjustment) => (
-                        <TableRow key={adjustment.id}>
-                          <TableCell>{adjustment.id}</TableCell>
-                          <TableCell>{adjustment.project}</TableCell>
-                          <TableCell>{renderUtilityBadge(adjustment.utility)}</TableCell>
-                          <TableCell>{adjustment.location}</TableCell>
-                          <TableCell>{adjustment.scheduledDate}</TableCell>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{adjustment.contactName}</p>
-                              <p className="text-xs text-muted-foreground">{adjustment.contactPhone}</p>
-                            </div>
-                          </TableCell>
-                          <TableCell>{renderStatusBadge(adjustment.status)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No utility adjustments found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
             </CardContent>
-            <CardFooter className="border-t px-6 py-4 flex justify-between items-center">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredUtilityAdjustments.length} of {utilityAdjustments.length} utility adjustments
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </CardFooter>
           </Card>
         </TabsContent>
 
-        {/* Subcontractors Tab */}
-        <TabsContent value="subcontractors">
+        <TabsContent value="safety" className="mt-6">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Subcontractors</CardTitle>
-                <CardDescription>Manage subcontractors and their contracts</CardDescription>
-              </div>
+            <CardHeader>
+              <CardTitle>Safety Management</CardTitle>
+              <CardDescription>
+                Monitor safety compliance and incident reporting
+              </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <SubcontractorManagement />
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-4">
+                  <h3 className="font-medium">Safety Checklist</h3>
+                  {[
+                    { item: "Daily safety briefing completed", status: "complete" },
+                    { item: "PPE inspection conducted", status: "complete" },
+                    { item: "Equipment safety checks", status: "pending" },
+                    { item: "Site hazard assessment", status: "complete" }
+                  ].map((check, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="text-sm">{check.item}</span>
+                      <Badge variant={check.status === 'complete' ? 'default' : 'secondary'}>
+                        {check.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-4">Recent Safety Reports</h3>
+                  <div className="space-y-2">
+                    <div className="p-3 bg-green-50 border border-green-200 rounded">
+                      <p className="text-sm font-medium text-green-800">No incidents reported</p>
+                      <p className="text-xs text-green-600">Last 30 days</p>
+                    </div>
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                      <p className="text-sm font-medium text-blue-800">Safety training completed</p>
+                      <p className="text-xs text-blue-600">All crew members certified</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Dispatch Tab */}
-        <TabsContent value="dispatch">
-          <DispatchManager />
+        <TabsContent value="materials" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Material Management</CardTitle>
+              <CardDescription>
+                Track material deliveries, inventory, and usage
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium">Concrete</h4>
+                    <p className="text-2xl font-bold">150 yd³</p>
+                    <p className="text-sm text-muted-foreground">Delivered today</p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium">Rebar</h4>
+                    <p className="text-2xl font-bold">5 tons</p>
+                    <p className="text-sm text-muted-foreground">In stock</p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium">Lumber</h4>
+                    <p className="text-2xl font-bold">2,400 bf</p>
+                    <p className="text-sm text-muted-foreground">Arriving tomorrow</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-4">Upcoming Deliveries</h3>
+                  <div className="space-y-3">
+                    {[
+                      { material: "Steel Beams", quantity: "12 pieces", date: "2023-10-24", supplier: "Steel Co." },
+                      { material: "Concrete Mix", quantity: "200 yd³", date: "2023-10-25", supplier: "Ready Mix Inc." },
+                      { material: "Electrical Conduit", quantity: "500 ft", date: "2023-10-26", supplier: "Electric Supply" }
+                    ].map((delivery, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded">
+                        <div>
+                          <p className="font-medium">{delivery.material}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {delivery.quantity} • {delivery.supplier}
+                          </p>
+                        </div>
+                        <Badge variant="outline">{delivery.date}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
-      
-      <div className="text-center text-xs text-muted-foreground mt-8">
-        <p>For full functionality including location tracking, dispatch management, and offline support, Supabase integration is required.</p>
-      </div>
     </div>
   );
 };

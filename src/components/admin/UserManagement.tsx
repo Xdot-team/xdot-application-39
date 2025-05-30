@@ -6,16 +6,32 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { UserRole } from '@/types/auth';
 import { Search, UserPlus, UserMinus, Edit, Save, X } from 'lucide-react';
 import { mockAdditionalUsers } from '@/data/mockAdminData';
-import { MOCK_USERS } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/sonner';
+
+// Mock users for demonstration
+const MOCK_USERS = [
+  {
+    id: '1',
+    email: 'admin@xdotcontractor.com',
+    name: 'Admin User',
+    role: 'admin' as const,
+    lastLogin: '2023-10-23T10:30:00Z'
+  },
+  {
+    id: '2',
+    email: 'manager@xdotcontractor.com',
+    name: 'Project Manager',
+    role: 'project_manager' as const,
+    lastLogin: '2023-10-22T15:45:00Z'
+  }
+];
 
 export function UserManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
-  const [editRole, setEditRole] = useState<UserRole>('admin');
+  const [editRole, setEditRole] = useState<string>('admin');
 
   // Combine mock users from both sources
   const allUsers = [...MOCK_USERS, ...mockAdditionalUsers];
@@ -27,7 +43,7 @@ export function UserManagement() {
     user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleEdit = (userId: string, role: UserRole) => {
+  const handleEdit = (userId: string, role: string) => {
     setEditingUserId(userId);
     setEditRole(role);
   };
@@ -93,7 +109,7 @@ export function UserManagement() {
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       {editingUserId === user.id ? (
-                        <Select value={editRole} onValueChange={(value) => setEditRole(value as UserRole)}>
+                        <Select value={editRole} onValueChange={(value) => setEditRole(value)}>
                           <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder={editRole} />
                           </SelectTrigger>

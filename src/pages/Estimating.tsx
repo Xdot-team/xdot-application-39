@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -84,7 +83,6 @@ const Estimating = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("estimates");
   const [selectedEstimate, setSelectedEstimate] = useState<Estimate | null>(null);
-  const { authState } = useAuth();
   
   // Filter estimates based on search term
   const filteredEstimates = estimates.filter(estimate => 

@@ -6,7 +6,6 @@ import { ReportsList } from '@/components/reports/ReportsList';
 import { ReportBuilder } from '@/components/reports/ReportBuilder';
 import { ReportTemplates } from '@/components/reports/ReportTemplates';
 import { ReportScheduling } from '@/components/reports/ReportScheduling';
-import { requireAuth } from '@/contexts/AuthContext';
 
 function Reports() {
   const [activeTab, setActiveTab] = useState('reports');
@@ -56,4 +55,4 @@ function Reports() {
   );
 }
 
-export default requireAuth(['admin', 'project_manager', 'accountant'])(Reports);
+export default Reports;
