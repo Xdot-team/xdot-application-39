@@ -2,12 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search } from "lucide-react";
-import { useAuth } from '@/contexts/AuthContext';
 
 const ProjectHeader = () => {
-  const { authState } = useAuth();
-  const canCreateProject = ['admin', 'project_manager'].includes(authState.user?.role || '');
-  
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
@@ -27,12 +23,10 @@ const ProjectHeader = () => {
           />
         </div>
         
-        {canCreateProject && (
-          <Button className="gap-1">
-            <Plus className="h-4 w-4" />
-            New Project
-          </Button>
-        )}
+        <Button className="gap-1">
+          <Plus className="h-4 w-4" />
+          New Project
+        </Button>
       </div>
     </div>
   );
