@@ -64,7 +64,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				construction: {
+					primary: 'hsl(var(--construction-primary))',
 					accent: 'hsl(var(--construction-accent))',
+					light: 'hsl(var(--construction-light))',
 				}
 			},
 			borderRadius: {
