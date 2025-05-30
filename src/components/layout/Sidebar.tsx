@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -172,8 +173,8 @@ export function Sidebar() {
           {/* Logo */}
           <div className="p-6 border-b border-sidebar-border">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <ShieldAlert size={24} className="text-orange-500" />
-              <span className="text-xl font-bold text-white">xDOTContractor</span>
+              <ShieldAlert size={24} className="text-sidebar-primary" />
+              <span className="text-xl font-bold text-sidebar-foreground">xDOTContractor</span>
             </Link>
           </div>
 
