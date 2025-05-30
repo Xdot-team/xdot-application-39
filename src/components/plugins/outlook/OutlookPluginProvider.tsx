@@ -29,7 +29,7 @@ interface OutlookPluginContextType {
     name: string;
     type: string;
     projectId: string;
-    category: string;
+    category: 'rfi' | 'submittal' | 'change_order' | 'document' | 'other';
     path: string;
     lastModified: string;
   }>>;
@@ -84,9 +84,27 @@ export function OutlookPluginProvider({ children }: { children: ReactNode }) {
         name: 'Project Specification.pdf',
         type: 'pdf',
         projectId: 'project-1',
-        category: 'document',
+        category: 'document' as const,
         path: '/projects/project-1/docs/spec.pdf',
         lastModified: '2024-01-20T10:00:00Z'
+      },
+      {
+        id: 'doc-2',
+        name: 'RFI-001.pdf',
+        type: 'pdf',
+        projectId: 'project-1',
+        category: 'rfi' as const,
+        path: '/projects/project-1/rfis/rfi-001.pdf',
+        lastModified: '2024-01-19T14:30:00Z'
+      },
+      {
+        id: 'doc-3',
+        name: 'Submittal Package.pdf',
+        type: 'pdf',
+        projectId: 'project-1',
+        category: 'submittal' as const,
+        path: '/projects/project-1/submittals/package.pdf',
+        lastModified: '2024-01-18T09:15:00Z'
       }
     ];
   };
