@@ -100,13 +100,16 @@ export type RiskCategory =
   | 'equipment' 
   | 'environmental' 
   | 'regulatory'
+  | 'driver'
   | 'other';
   
 export type RiskSource = 
   | 'ai-prediction' 
   | 'manual-entry' 
   | 'incident-escalation'
-  | 'compliance-issue';
+  | 'compliance-issue'
+  | 'driver-data'
+  | 'jsa-analysis';
 
 export interface Risk {
   id: string;
@@ -126,10 +129,13 @@ export interface Risk {
   affectedAreas?: string[];
   mitigation?: RiskMitigation;
   relatedIncidents?: string[];
+  relatedDriverData?: string[];
+  relatedJsaData?: string[];
   relatedDocuments?: string[];
   lastUpdated: string;
   assignedTo?: string;
   isHighPriority?: boolean;
+  aiConfidence?: number; // Added for AI confidence score
 }
 
 export interface RiskMitigation {
@@ -163,4 +169,227 @@ export interface RiskAlert {
   requiresAcknowledgement: boolean;
   acknowledgedBy?: string;
   acknowledgedAt?: string;
+}
+
+// Job Safety Analysis Types
+export type TaskStatus = 'not_started' | 'in_progress' | 'completed';
+
+export interface JobSafetyAnalysisItem {
+  id: string;
+  jsaId: string;
+  taskStep: string;
+  potentialHazards: string[];
+  controlMeasures: string[];
+  responsible?: string;
+  status: TaskStatus;
+  photos?: string[];
+}
+
+export interface JobSafetyAnalysisData {
+  id: string;
+  title: string;
+  projectId: string;
+  projectName: string;
+  location: string;
+  taskDescription: string;
+  createdBy: string;
+  createdDate: string;
+  reviewedBy?: string;
+  reviewDate?: string;
+  approvedBy?: string;
+  approvalDate?: string;
+  status: 'draft' | 'submitted' | 'approved' | 'rejected' | 'in_progress' | 'completed';
+  requiredPPE: string[];
+  requiredEquipment: string[];
+  items: JobSafetyAnalysisItem[];
+  templateId?: string;
+  isTemplate: boolean;
+  lastUpdated: string;
+  comments?: string;
+}
+
+// Toolbox Meeting Types
+export type MeetingStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+export type AttendanceStatus = 'present' | 'absent' | 'excused' | 'pending';
+
+export interface MeetingAttendee {
+  id: string;
+  meetingId: string;
+  employeeId: string;
+  employeeName: string;
+  role?: string;
+  status: AttendanceStatus;
+  signatureTimestamp?: string;
+  feedback?: string;
+}
+
+export interface ToolboxMeetingData {
+  id: string;
+  title: string;
+  projectId: string;
+  projectName: string;
+  location: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  conductor: string;
+  topics: string[];
+  safetyFocus: string;
+  status: MeetingStatus;
+  attendees: MeetingAttendee[];
+  notes?: string;
+  attachments?: string[];
+  createdBy: string;
+  createdDate: string;
+  lastUpdated: string;
+  weatherConditions?: string;
+  questionsAsked?: string[];
+  followUpActions?: {
+    id: string;
+    description: string;
+    assignedTo: string;
+    dueDate: string;
+    status: 'pending' | 'in_progress' | 'completed';
+  }[];
+}
+
+export interface JSATemplate {
+  id: string;
+  title: string;
+  category: string;
+  taskDescription: string;
+  items: {
+    taskStep: string;
+    potentialHazards: string[];
+    controlMeasures: string[];
+    responsibleRole?: string; // Changed from responsiblePerson to match the implementation
+  }[];
+  requiredPPE: string[];
+  requiredEquipment: string[];
+  createdBy: string;
+  createdDate: string;
+  lastUpdated: string;
+}
+
+export interface ToolboxMeetingTemplate {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  topics: string[];
+  safetyFocus: string;
+  suggestedDuration: number; // in minutes
+  materials: string[];
+  createdBy: string;
+  createdDate: string;
+  lastUpdated: string;
+}
+
+// New Driver Trends Types
+export type VehicleType = 'truck' | 'car' | 'van' | 'heavy_equipment' | 'specialized';
+export type ComplianceStatus = 'compliant' | 'minor_issues' | 'major_issues' | 'non_compliant';
+export type IncidentType = 'near_miss' | 'collision' | 'damage' | 'injury' | 'violation';
+export type TrendDirection = 'improving' | 'stable' | 'worsening';
+
+export interface DriverData {
+  id: string;
+  driverId: string;
+  driverName: string;
+  employeeId: string;
+  licenseNumber: string;
+  licenseClass: string;
+  licenseExpiry: string;
+  endorsements: string[];
+  restrictions: string[];
+  trainingCompleted: {
+    id: string;
+    name: string;
+    completionDate: string;
+    expiryDate?: string;
+  }[];
+  complianceStatus: ComplianceStatus;
+  complianceNotes?: string;
+  lastReviewDate: string;
+  reviewedBy?: string;
+}
+
+export interface VehicleData {
+  id: string;
+  vehicleId: string;
+  make: string;
+  model: string;
+  year: number;
+  type: VehicleType;
+  licensePlate: string;
+  vin: string;
+  department: string;
+  assignedTo?: string;
+  status: 'active' | 'maintenance' | 'repair' | 'out_of_service';
+  lastMaintenanceDate: string;
+  nextMaintenanceDate: string;
+  mileage: number;
+  fuelType: string;
+}
+
+export interface TripData {
+  id: string;
+  driverId: string;
+  driverName: string;
+  vehicleId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  startLocation: string;
+  endLocation: string;
+  mileage: number;
+  purpose: string;
+  projectId?: string;
+  projectName?: string;
+  incidents?: IncidentData[];
+  notes?: string;
+}
+
+export interface IncidentData {
+  id: string;
+  tripId: string;
+  driverId: string;
+  vehicleId: string;
+  timestamp: string;
+  type: IncidentType;
+  description: string;
+  location: string;
+  severity: IncidentSeverity;
+  reportedBy: string;
+  reportedDate: string;
+  status: IncidentStatus;
+  relatedSafetyIncidentId?: string;
+  photos?: string[];
+  witnesses?: string[];
+  followUpRequired: boolean;
+  followUpNotes?: string;
+}
+
+export interface DriverTrendData {
+  id: string;
+  driverId: string;
+  driverName: string;
+  period: 'week' | 'month' | 'quarter' | 'year';
+  startDate: string;
+  endDate: string;
+  mileageDriven: number;
+  fuelUsed: number;
+  fuelEfficiency: number;
+  incidentCount: number;
+  incidentRate: number; // incidents per X miles
+  harshBrakingEvents: number;
+  harshAccelerationEvents: number;
+  speedingEvents: number;
+  idlingTime: number; // minutes
+  distractionEvents: number;
+  fatigueWarnings: number;
+  safetyScore: number; // 0-100
+  trendDirection: TrendDirection;
+  riskLevel: 'low' | 'medium' | 'high';
+  improvementSuggestions?: string[];
+  lastUpdated: string;
 }

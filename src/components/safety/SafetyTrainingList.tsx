@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { SafetyTraining } from "@/types/safety";
 import { Clock, FileCheck, Users } from "lucide-react";
 
 export function SafetyTrainingList() {
-  const [trainings] = useState<SafetyTraining[]>(mockSafetyTrainings || []);
+  const [trainings] = useState<SafetyTraining[]>(mockSafetyTrainings as SafetyTraining[]);
 
   const getFrequencyColor = (frequency: string) => {
     switch (frequency) {

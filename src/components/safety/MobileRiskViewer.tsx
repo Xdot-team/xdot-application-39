@@ -9,7 +9,7 @@ import { mockRisks } from "@/data/mockSafetyData";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export function MobileRiskViewer() {
-  const [risks] = useState<Risk[]>(mockRisks);
+  const [risks] = useState<Risk[]>(mockRisks as Risk[]);
   const [expandedRiskId, setExpandedRiskId] = useState<string | null>(null);
   
   const toggleRiskExpand = (riskId: string) => {

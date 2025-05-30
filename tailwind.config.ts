@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -65,12 +64,12 @@ export default {
 				},
 				// Construction theme colors
 				construction: {
-					primary: '#F59E0B', // Construction yellow
-					secondary: '#1E40AF', // Deep blue for contrast
-					dark: '#1F2937', // Dark gray for text
-					light: '#F3F4F6', // Light gray for backgrounds
-					accent: '#DC2626', // Red for accent/warning
-					muted: '#9CA3AF', // Muted gray for subtle elements
+					primary: '#F59E0B',
+					secondary: '#1E40AF',
+					dark: '#1F2937',
+					light: '#F3F4F6',
+					accent: '#DC2626',
+					muted: '#9CA3AF',
 				}
 			},
 			borderRadius: {
@@ -94,11 +93,22 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.7s ease-out'
 			}
 		}
 	},

@@ -1,211 +1,136 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useOutlookPlugin } from './OutlookPluginProvider';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Mail, FileText, Paperclip, Send } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Mail, Copy, Send } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 interface EmailAssistantProps {
   searchQuery: string;
 }
 
 export function EmailAssistant({ searchQuery }: EmailAssistantProps) {
-  const { emailTemplates, searchProjects, generateEmailContent } = useOutlookPlugin();
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
-  const [subject, setSubject] = useState<string>('');
-  const [emailBody, setEmailBody] = useState<string>('');
+  const { emailTemplates, generateEmailContent, searchProjects } = useOutlookPlugin();
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const [selectedProject, setSelectedProject] = useState<string>('');
   const [recipient, setRecipient] = useState<string>('');
-  const [projects, setProjects] = useState<{id: string; name: string}[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [emailContent, setEmailContent] = useState<string>('');
+  const [projects, setProjects] = useState<{id: string, name: string}[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const projectsData = await searchProjects('');
-        setProjects(projectsData);
-        if (projectsData.length > 0) {
-          setSelectedProjectId(projectsData[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-      }
+  React.useEffect(() => {
+    const loadProjects = async () => {
+      const projectsList = await searchProjects('');
+      setProjects(projectsList);
     };
-
-    fetchProjects();
+    loadProjects();
   }, [searchProjects]);
 
-  const handleTemplateChange = async (templateId: string) => {
-    setSelectedTemplateId(templateId);
+  const filteredTemplates = searchQuery 
+    ? emailTemplates.filter(template => 
+        template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        template.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : emailTemplates;
+
+  const handleGenerateEmail = async () => {
+    if (!selectedTemplate || !selectedProject) return;
     
-    if (templateId && selectedProjectId) {
-      setIsLoading(true);
-      try {
-        const template = emailTemplates.find(t => t.id === templateId);
-        if (template) {
-          setSubject(template.subject);
-          
-          // Replace project name placeholder in subject
-          if (selectedProjectId) {
-            const project = projects.find(p => p.id === selectedProjectId);
-            if (project) {
-              setSubject(prev => prev.replace('{projectName}', project.name));
-            }
-          }
-          
-          const content = await generateEmailContent(templateId, selectedProjectId, recipient);
-          setEmailBody(content);
-        }
-      } catch (error) {
-        console.error('Error generating email content:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    setIsGenerating(true);
+    try {
+      const content = await generateEmailContent(selectedTemplate, selectedProject, recipient);
+      setEmailContent(content);
+    } catch (error) {
+      console.error('Error generating email content:', error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
-  const handleProjectChange = async (projectId: string) => {
-    setSelectedProjectId(projectId);
-    
-    if (selectedTemplateId && projectId) {
-      setIsLoading(true);
-      try {
-        const project = projects.find(p => p.id === projectId);
-        if (project && subject.includes('{projectName}')) {
-          setSubject(prev => prev.replace('{projectName}', project.name));
-        }
-        
-        const content = await generateEmailContent(selectedTemplateId, projectId, recipient);
-        setEmailBody(content);
-      } catch (error) {
-        console.error('Error updating email content:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const handleRecipientChange = async (value: string) => {
-    setRecipient(value);
-    
-    if (selectedTemplateId && selectedProjectId && value) {
-      // Update email content with new recipient
-      try {
-        const content = await generateEmailContent(selectedTemplateId, selectedProjectId, value);
-        setEmailBody(content);
-      } catch (error) {
-        console.error('Error updating recipient in email:', error);
-      }
-    }
-  };
-
-  const handleInsertTemplate = () => {
-    // In a real implementation, this would insert the template into Outlook
-    alert('Template would be inserted into Outlook compose window');
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(emailContent);
+    // Would add toast notification here in a real app
   };
 
   return (
     <div className="p-3">
-      <h3 className="font-medium text-sm mb-3">Email Assistant</h3>
-      
-      <div className="space-y-3">
-        <div>
-          <label className="block text-xs font-medium mb-1">Email Template</label>
-          <Select value={selectedTemplateId} onValueChange={handleTemplateChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select template" />
-            </SelectTrigger>
-            <SelectContent>
-              {emailTemplates.map(template => (
-                <SelectItem key={template.id} value={template.id}>
-                  {template.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div>
-          <label className="block text-xs font-medium mb-1">Project Context</label>
-          <Select value={selectedProjectId} onValueChange={handleProjectChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select project" />
-            </SelectTrigger>
-            <SelectContent>
-              {projects.map(project => (
-                <SelectItem key={project.id} value={project.id}>
-                  {project.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div>
-          <label className="block text-xs font-medium mb-1">Recipient</label>
-          <Input 
-            placeholder="Enter recipient name" 
-            value={recipient} 
-            onChange={(e) => handleRecipientChange(e.target.value)}
-          />
-        </div>
-        
-        {isLoading ? (
-          <div className="flex justify-center items-center h-32">
-            <p className="text-sm text-muted-foreground">Generating email template...</p>
+      <div className="mb-4">
+        <h3 className="font-medium text-sm mb-3">Email Assistant</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">Select Template</label>
+            <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose a template" />
+              </SelectTrigger>
+              <SelectContent>
+                {filteredTemplates.map(template => (
+                  <SelectItem key={template.id} value={template.id}>
+                    {template.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        ) : (
-          <>
-            {selectedTemplateId && (
-              <>
-                <div>
-                  <label className="block text-xs font-medium mb-1">Subject</label>
-                  <Input value={subject} onChange={(e) => setSubject(e.target.value)} />
-                </div>
-                
-                <div>
-                  <label className="block text-xs font-medium mb-1">Email Body</label>
-                  <Textarea 
-                    rows={8} 
-                    value={emailBody} 
-                    onChange={(e) => setEmailBody(e.target.value)} 
-                    className="resize-none"
-                  />
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </div>
-      
-      <div className="flex items-center justify-between mt-4 space-x-3">
-        <Button variant="outline" size="sm" className="w-full">
-          <Paperclip className="h-4 w-4 mr-2" />
-          Attach
-        </Button>
-        
-        <Button onClick={handleInsertTemplate} className="w-full">
-          <Send className="h-4 w-4 mr-2" />
-          Use Template
-        </Button>
-      </div>
-      
-      <div className="mt-4 pt-3 border-t text-center">
-        <div className="flex items-center justify-center">
-          <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">
-            Templates are context-aware and include project data
-          </span>
+
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">Select Project</label>
+            <Select value={selectedProject} onValueChange={setSelectedProject}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose a project" />
+              </SelectTrigger>
+              <SelectContent>
+                {projects.map(project => (
+                  <SelectItem key={project.id} value={project.id}>
+                    {project.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">Recipient Name (Optional)</label>
+            <Input 
+              placeholder="Enter recipient name" 
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+            />
+          </div>
+
+          <Button 
+            onClick={handleGenerateEmail} 
+            disabled={!selectedTemplate || !selectedProject || isGenerating}
+            className="w-full"
+          >
+            <Mail className="mr-2 h-4 w-4" />
+            Generate Email
+          </Button>
         </div>
       </div>
+
+      {emailContent && (
+        <Card className="p-3 mt-4">
+          <h4 className="text-sm font-medium mb-2">Generated Email</h4>
+          <Textarea 
+            value={emailContent} 
+            rows={8}
+            className="resize-none mb-3"
+            readOnly
+          />
+          <div className="flex justify-between">
+            <Button variant="outline" size="sm" onClick={handleCopyToClipboard}>
+              <Copy className="mr-1 h-4 w-4" /> Copy
+            </Button>
+            <Button size="sm">
+              <Send className="mr-1 h-4 w-4" /> Create in Outlook
+            </Button>
+          </div>
+        </Card>
+      )}
     </div>
   );
 }
