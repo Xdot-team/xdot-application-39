@@ -1,5 +1,7 @@
 
 import { useNavigate } from 'react-router-dom';
+import { requireAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types/auth';
 import { generateMockProjects } from '@/data/mockProjects';
 import ProjectHeader from '@/components/projects/ProjectHeader';
 import ProjectStatusOverview from '@/components/projects/ProjectStatusOverview';
@@ -42,4 +44,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default requireAuth(['admin', 'project_manager', 'accountant', 'field_worker'])(Projects);

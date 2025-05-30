@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
-  DropdownMenuItem,
+  DropdownMenuGroup, 
+  DropdownMenuItem, 
   DropdownMenuLabel,
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { Bell } from 'lucide-react';
+import { Bell, Settings, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
 // Sample notifications
@@ -38,9 +40,13 @@ const notifications = [
 ];
 
 export function Header() {
+  const { authState, logout } = useAuth();
   const [unreadCount, setUnreadCount] = useState(
     notifications.filter(n => !n.read).length
   );
+  
+  // If no user, don't render header
+  if (!authState.user) return null;
   
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -94,6 +100,57 @@ export function Header() {
                 <Link to="/notifications" className="w-full text-center text-sm">
                   View all notifications
                 </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          {/* User menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative rounded-full h-8 w-8 border">
+                {authState.user?.profilePicture ? (
+                  <img 
+                    src={authState.user.profilePicture} 
+                    alt={authState.user.name}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <span className="flex items-center justify-center text-xs font-medium">
+                    {authState.user?.name.charAt(0)}
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                <div className="flex flex-col">
+                  <p>{authState.user?.name}</p>
+                  <p className="text-xs font-normal text-muted-foreground">
+                    {authState.user?.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                {authState.user?.role === 'admin' && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => logout()} className="cursor-pointer">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

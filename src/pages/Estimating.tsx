@@ -1,130 +1,323 @@
 
-import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PageHeader } from '@/components/ui/page-header';
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useAuth } from '@/contexts/AuthContext';
+import { FilePlus, FileText, Search, FileCheck, FilePen } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+// Import estimate components
 import QuickEstimate from '@/components/estimating/QuickEstimate';
 import DetailedEstimate from '@/components/estimating/DetailedEstimate';
-import CostAnalysis from '@/components/estimating/CostAnalysis';
-import SpreadsheetView from '@/components/estimating/spreadsheet/SpreadsheetView';
-import SiteVisits from '@/components/estimating/SiteVisits';
 import VendorEngagement from '@/components/estimating/VendorEngagement';
+import CostAnalysis from '@/components/estimating/CostAnalysis';
 import TakeoffAI from '@/components/estimating/TakeoffAI';
-import Buyout from '@/components/estimating/Buyout';
+import SiteVisits from '@/components/estimating/SiteVisits';
 import BidDocuments from '@/components/estimating/BidDocuments';
-import MobileEstimating from '@/components/estimating/mobile/MobileEstimating';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { EstimateItem } from '@/types/estimates';
+import Buyout from '@/components/estimating/Buyout';
+import { Estimate, EstimateStatus } from '@/types/estimates';
 
-function Estimating() {
-  const [activeTab, setActiveTab] = useState('quick');
-  const isMobile = useIsMobile();
-  const [items, setItems] = useState<EstimateItem[]>([
-    {
-      id: 'item-1',
-      description: 'Concrete Foundation',
-      category: 'material',
-      quantity: 100,
-      unit: 'cubic yards',
-      unitPrice: 150,
-      totalPrice: 15000,
-      formula: ''
-    },
-    {
-      id: 'item-2',
-      description: 'Steel Reinforcement',
-      category: 'material',
-      quantity: 2000,
-      unit: 'lbs',
-      unitPrice: 1.25,
-      totalPrice: 2500,
-      formula: ''
-    }
-  ]);
-  const [errors, setErrors] = useState<{id: string, message: string}[]>([]);
-
-  const handleItemUpdate = (updatedItem: EstimateItem) => {
-    setItems(prevItems => {
-      const existingIndex = prevItems.findIndex(item => item.id === updatedItem.id);
-      if (existingIndex >= 0) {
-        // Update existing item
-        const newItems = [...prevItems];
-        newItems[existingIndex] = updatedItem;
-        return newItems;
-      } else {
-        // Add new item
-        return [...prevItems, updatedItem];
-      }
-    });
-  };
-
-  if (isMobile) {
-    return <MobileEstimating />;
+// Mock data for the estimates
+const mockEstimates: Estimate[] = [
+  {
+    id: "EST-10001",
+    projectId: "PRJ-001",
+    projectName: "GA-400 Repaving",
+    client: "Georgia DOT",
+    dateCreated: "2025-04-10",
+    dateModified: "2025-04-10",
+    status: "approved",
+    totalCost: 1250000,
+    createdBy: "John Smith"
+  },
+  {
+    id: "EST-10002",
+    projectId: "PRJ-002",
+    projectName: "I-85 Bridge Repair",
+    client: "Georgia DOT",
+    dateCreated: "2025-04-15",
+    dateModified: "2025-04-15",
+    status: "submitted",
+    totalCost: 875000,
+    createdBy: "Sarah Johnson"
+  },
+  {
+    id: "EST-10003",
+    projectId: "PRJ-003",
+    projectName: "Peachtree Street Improvements",
+    client: "City of Atlanta",
+    dateCreated: "2025-04-18",
+    dateModified: "2025-04-18",
+    status: "draft",
+    totalCost: 450000,
+    createdBy: "Robert Williams"
+  },
+  {
+    id: "EST-10004",
+    projectId: "PRJ-004",
+    projectName: "Gwinnett County Sidewalk Project",
+    client: "Gwinnett County",
+    dateCreated: "2025-04-22",
+    dateModified: "2025-04-22",
+    status: "draft",
+    totalCost: 325000,
+    createdBy: "Emily Davis"
+  },
+  {
+    id: "EST-10005",
+    projectId: "PRJ-005",
+    projectName: "Augusta Highway Extension",
+    client: "Georgia DOT",
+    dateCreated: "2025-04-25",
+    dateModified: "2025-04-25",
+    status: "rejected",
+    totalCost: 2100000,
+    createdBy: "Michael Brown"
   }
+];
+
+const Estimating = () => {
+  const [estimates, setEstimates] = useState<Estimate[]>(mockEstimates);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("estimates");
+  const [selectedEstimate, setSelectedEstimate] = useState<Estimate | null>(null);
+  const { authState } = useAuth();
+  
+  // Filter estimates based on search term
+  const filteredEstimates = estimates.filter(estimate => 
+    estimate.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    estimate.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    estimate.id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  // Calculate total estimated value
+  const totalEstimatedValue = estimates.reduce((acc, curr) => acc + curr.totalCost, 0);
+  
+  // Get counts by status
+  const getCountByStatus = (status: EstimateStatus) => 
+    estimates.filter(est => est.status === status).length;
+  
+  // Format currency
+  const formatCurrency = (amount: number) => 
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  
+  const handleCreateEstimate = () => {
+    setActiveTab("quickEstimate");
+    toast.info("Creating a new estimate.");
+  };
+  
+  const handleEstimateSelect = (estimate: Estimate) => {
+    setSelectedEstimate(estimate);
+    setActiveTab("detailedEstimate");
+    toast.info(`Viewing estimate ${estimate.id} details.`);
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-        <PageHeader 
-          heading="Estimating"
-          subheading="Create accurate project estimates and cost analysis"
-        />
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Estimating</h1>
+          <p className="text-muted-foreground">Manage cost estimations and bidding processes</p>
+        </div>
+        <Button onClick={handleCreateEstimate}>
+          <FilePlus className="mr-2 h-4 w-4" />
+          New Estimate
+        </Button>
       </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 lg:w-full mb-4">
-          <TabsTrigger value="quick">Quick Estimate</TabsTrigger>
-          <TabsTrigger value="detailed">Detailed Estimate</TabsTrigger>
-          <TabsTrigger value="analysis">Cost Analysis</TabsTrigger>
-          <TabsTrigger value="spreadsheet">Spreadsheet</TabsTrigger>
-          <TabsTrigger value="visits">Site Visits</TabsTrigger>
-          <TabsTrigger value="vendors">Vendor Engagement</TabsTrigger>
+      
+      {/* Stats Overview */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Total Estimated Value</CardDescription>
+            <CardTitle className="text-2xl">{formatCurrency(totalEstimatedValue)}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Across {estimates.length} estimates</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Draft Estimates</CardDescription>
+            <CardTitle className="text-2xl">{getCountByStatus('draft')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Ready for review</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Submitted Estimates</CardDescription>
+            <CardTitle className="text-2xl">{getCountByStatus('submitted')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Pending approval</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Approved Estimates</CardDescription>
+            <CardTitle className="text-2xl">{getCountByStatus('approved')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Ready for execution</p>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Main Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="estimates">Estimates List</TabsTrigger>
+          <TabsTrigger value="quickEstimate">Quick Estimate</TabsTrigger>
+          <TabsTrigger value="detailedEstimate">Detailed Estimate</TabsTrigger>
+          <TabsTrigger value="siteVisits">Site Visits</TabsTrigger>
+          <TabsTrigger value="vendorEngagement">Vendor Engagement</TabsTrigger>
+          <TabsTrigger value="costAnalysis">Cost Analysis</TabsTrigger>
           <TabsTrigger value="takeoff">Takeoff AI</TabsTrigger>
-          <TabsTrigger value="buyout">Buyout</TabsTrigger>
-          <TabsTrigger value="documents">Bid Documents</TabsTrigger>
+          <TabsTrigger value="bidDocuments">
+            <span className="flex items-center gap-1">
+              <FileText className="h-4 w-4" />
+              <span>Bid Docs</span>
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="buyout">
+            <span className="flex items-center gap-1">
+              <FileCheck className="h-4 w-4" />
+              <span>Buyout</span>
+            </span>
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="quick" className="space-y-4">
+        {/* Estimates List Tab */}
+        <TabsContent value="estimates">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Estimates</CardTitle>
+              <CardDescription>View and manage all project estimates</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4 flex items-center gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search estimates..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              {/* Estimates Table */}
+              <div className="rounded-md border">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Estimate ID</th>
+                      <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Project Name</th>
+                      <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Client</th>
+                      <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Date</th>
+                      <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Status</th>
+                      <th className="h-10 px-2 text-right align-middle font-medium text-muted-foreground">Total Cost</th>
+                      <th className="h-10 px-2 text-right align-middle font-medium text-muted-foreground">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredEstimates.length > 0 ? (
+                      filteredEstimates.map((estimate) => (
+                        <tr key={estimate.id} className="border-b transition-colors hover:bg-muted/50">
+                          <td className="p-2 align-middle">{estimate.id}</td>
+                          <td className="p-2 align-middle">{estimate.projectName}</td>
+                          <td className="p-2 align-middle">{estimate.client}</td>
+                          <td className="p-2 align-middle">{estimate.dateModified}</td>
+                          <td className="p-2 align-middle">
+                            <div className={cn(
+                              "w-fit rounded-full px-2 py-1 text-xs font-medium",
+                              {
+                                "bg-yellow-100 text-yellow-800": estimate.status === "draft",
+                                "bg-blue-100 text-blue-800": estimate.status === "submitted",
+                                "bg-green-100 text-green-800": estimate.status === "approved",
+                                "bg-red-100 text-red-800": estimate.status === "rejected",
+                              }
+                            )}>
+                              {estimate.status.charAt(0).toUpperCase() + estimate.status.slice(1)}
+                            </div>
+                          </td>
+                          <td className="p-2 align-middle text-right">{formatCurrency(estimate.totalCost)}</td>
+                          <td className="p-2 align-middle text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleEstimateSelect(estimate)}
+                            >
+                              <FileText className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="text-center py-4">
+                          No estimates found matching your search.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Quick Estimate Tab */}
+        <TabsContent value="quickEstimate">
           <QuickEstimate />
         </TabsContent>
-
-        <TabsContent value="detailed" className="space-y-4">
-          <DetailedEstimate />
+        
+        {/* Detailed Estimate Tab */}
+        <TabsContent value="detailedEstimate">
+          <DetailedEstimate estimateId={selectedEstimate?.id} />
         </TabsContent>
-
-        <TabsContent value="analysis" className="space-y-4">
-          <CostAnalysis />
-        </TabsContent>
-
-        <TabsContent value="spreadsheet" className="space-y-4">
-          <SpreadsheetView 
-            items={items}
-            onItemUpdate={handleItemUpdate}
-            errors={errors}
-          />
-        </TabsContent>
-
-        <TabsContent value="visits" className="space-y-4">
+        
+        {/* Site Visits Tab */}
+        <TabsContent value="siteVisits">
           <SiteVisits />
         </TabsContent>
-
-        <TabsContent value="vendors" className="space-y-4">
+        
+        {/* Vendor Engagement Tab */}
+        <TabsContent value="vendorEngagement">
           <VendorEngagement />
         </TabsContent>
-
-        <TabsContent value="takeoff" className="space-y-4">
+        
+        {/* Cost Analysis Tab */}
+        <TabsContent value="costAnalysis">
+          <CostAnalysis />
+        </TabsContent>
+        
+        {/* Takeoff AI Tab */}
+        <TabsContent value="takeoff">
           <TakeoffAI />
         </TabsContent>
 
-        <TabsContent value="buyout" className="space-y-4">
-          <Buyout />
+        {/* Bid Documents Tab */}
+        <TabsContent value="bidDocuments">
+          <BidDocuments />
         </TabsContent>
 
-        <TabsContent value="documents" className="space-y-4">
-          <BidDocuments />
+        {/* Buyout Tab */}
+        <TabsContent value="buyout">
+          <Buyout />
         </TabsContent>
       </Tabs>
     </div>
   );
-}
+};
 
 export default Estimating;

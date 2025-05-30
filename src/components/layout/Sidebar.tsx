@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   LucideIcon,
   Home, 
@@ -23,96 +24,127 @@ import {
   ShieldAlert,
   Mail
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { UserRole } from '@/types/auth';
 
 interface NavItem {
   title: string;
   href: string;
   icon: LucideIcon;
+  allowedRoles: UserRole[];
 }
 
-const navItems: NavItem[] = [
+// Default navigation items order
+const defaultNavItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: '/dashboard',
     icon: Home,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker', 'hr'],
   },
   {
     title: 'Projects',
     href: '/projects',
     icon: FileText,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
   },
   {
     title: 'Documents',
     href: '/documents',
     icon: FolderOpen,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker'],
   },
   {
     title: 'Estimating',
     href: '/estimating',
     icon: BarChart,
+    allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
     title: 'Field',
     href: '/field',
     icon: MapPin,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {
     title: 'Finance',
     href: '/finance',
     icon: DollarSign,
+    allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
     title: 'Assets',
     href: '/assets',
     icon: Truck,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {
     title: 'Workforce',
     href: '/workforce',
     icon: UserRound,
+    allowedRoles: ['admin', 'hr', 'project_manager'],
   },
   {
     title: 'Safety & Risk',
     href: '/safety',
     icon: ShieldAlert,
+    allowedRoles: ['admin', 'project_manager', 'field_worker', 'hr'],
   },
   {
     title: 'Schedule',
     href: '/schedule',
     icon: Calendar,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {
     title: 'Survey',
     href: '/survey',
     icon: Satellite,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {
     title: 'Organization',
     href: '/organization',
     icon: LineChart,
+    allowedRoles: ['admin', 'project_manager'],
   },
   {
     title: 'Reports',
     href: '/reports',
     icon: BarChart2,
+    allowedRoles: ['admin', 'project_manager', 'accountant'],
   },
   {
     title: 'Outlook Plugin',
     href: '/outlook-plugin',
     icon: Mail,
+    allowedRoles: ['admin', 'project_manager', 'accountant', 'field_worker', 'hr'],
   },
   {
     title: 'Administration',
     href: '/admin',
     icon: Settings,
+    allowedRoles: ['admin', 'hr'],
   },
 ];
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
+  const { authState } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   
+  // If no user, don't render sidebar
+  if (!authState.user) return null;
+  
+  const { role } = authState.user;
+  
+  // Filter menu items based on user role
+  const filteredNavItems = defaultNavItems.filter(item => 
+    item.allowedRoles.includes(role)
+  );
+  
+  // Handle navigation
   const handleNavigation = (path: string) => {
     navigate(path);
   };
@@ -141,8 +173,8 @@ export function Sidebar() {
           {/* Logo */}
           <div className="p-6 border-b border-sidebar-border">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <ShieldAlert size={24} className="text-sidebar-primary" />
-              <span className="text-xl font-bold text-sidebar-foreground">xDOTContractor</span>
+              <ShieldAlert size={24} className="text-construction-primary" />
+              <span className="text-xl font-bold text-white">xDOTContractor</span>
             </Link>
           </div>
 
@@ -153,7 +185,7 @@ export function Sidebar() {
             </div>
             
             <ul className="space-y-1 px-3">
-              {navItems.map((item) => (
+              {filteredNavItems.map((item) => (
                 <li key={item.href}>
                   <Button
                     variant="ghost"
@@ -172,6 +204,33 @@ export function Sidebar() {
               ))}
             </ul>
           </nav>
+
+          {/* User info */}
+          <div className="p-4 border-t border-sidebar-border">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-full bg-sidebar-accent overflow-hidden">
+                {authState.user?.profilePicture ? (
+                  <img 
+                    src={authState.user.profilePicture} 
+                    alt={authState.user.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-sidebar-accent text-sidebar-accent-foreground">
+                    {authState.user?.name.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                  {authState.user?.name}
+                </p>
+                <p className="text-xs text-sidebar-foreground/70 truncate capitalize">
+                  {authState.user?.role.replace('_', ' ')}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </aside>
     </div>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, MessageSquare, ThumbsUp, Reply } from 'lucide-react';
 import { mockForumPosts } from '@/data/mockAdminData';
-import { ForumPost, ForumReply } from '@/data/mockAdminData';
+import { ForumPost, ForumReply } from '@/types/admin';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/sonner';
 
 export function ForumDiscussions() {
@@ -22,8 +24,8 @@ export function ForumDiscussions() {
   const [replyingToPost, setReplyingToPost] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   
-  // Mock current user for demonstration
-  const currentUser = { id: '1', name: 'Demo User' };
+  const { authState } = useAuth();
+  const currentUser = authState.user;
 
   // Filter posts by category and search query
   const filteredPosts = posts.filter(post => {

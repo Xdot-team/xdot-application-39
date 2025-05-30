@@ -49,8 +49,8 @@ export function NotificationsView({ searchQuery }: NotificationsViewProps) {
               key={notification.id}
               id={notification.id}
               projectName={notification.projectName}
-              type={notification.type as "rfi" | "submittal" | "update" | "change_order" | "task"}
-              priority={notification.priority as "high" | "low" | "medium"}
+              type={notification.type}
+              priority={notification.priority}
               dueDate={notification.dueDate}
               description={notification.description}
               isRead={notification.isRead}

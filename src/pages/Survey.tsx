@@ -1,4 +1,5 @@
 
+import { requireAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Box, MapPin, Satellite, Construction, Link2 } from "lucide-react";
@@ -82,4 +83,4 @@ const Survey = () => {
   );
 };
 
-export default Survey;
+export default requireAuth()(Survey);

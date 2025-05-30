@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import { requireAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -299,4 +301,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default requireAuth()(Dashboard);
