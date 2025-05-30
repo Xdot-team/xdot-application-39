@@ -9,8 +9,8 @@ interface OutlookPluginContextType {
   notifications: Array<{
     id: string;
     projectName: string;
-    type: string;
-    priority: string;
+    type: "rfi" | "submittal" | "update" | "change_order" | "task";
+    priority: "high" | "low" | "medium";
     dueDate: string;
     description: string;
     isRead: boolean;
@@ -30,6 +30,8 @@ interface OutlookPluginContextType {
     type: string;
     projectId: string;
     category: string;
+    path: string;
+    lastModified: string;
   }>>;
 }
 
@@ -43,8 +45,8 @@ export function OutlookPluginProvider({ children }: { children: ReactNode }) {
     {
       id: '1',
       projectName: 'I-75 Bridge Project',
-      type: 'deadline',
-      priority: 'high',
+      type: 'task' as const,
+      priority: 'high' as const,
       dueDate: '2024-01-25',
       description: 'Submit progress report',
       isRead: false
@@ -82,7 +84,9 @@ export function OutlookPluginProvider({ children }: { children: ReactNode }) {
         name: 'Project Specification.pdf',
         type: 'pdf',
         projectId: 'project-1',
-        category: 'document'
+        category: 'document',
+        path: '/projects/project-1/docs/spec.pdf',
+        lastModified: '2024-01-20T10:00:00Z'
       }
     ];
   };

@@ -1,3 +1,4 @@
+
 // Mock data for admin components
 
 export interface ForumPost {
@@ -47,6 +48,35 @@ export interface EmployeeAppreciation {
   category: 'achievement' | 'teamwork' | 'innovation' | 'safety' | 'leadership';
   createdAt: string;
   isPublic: boolean;
+}
+
+export interface KickoffMeeting {
+  id: string;
+  projectId: string;
+  projectName: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  attendees: string[];
+  status: 'scheduled' | 'completed' | 'cancelled' | 'postponed';
+  notes: string;
+  actionItems: ActionItem[];
+  documents?: Document[];
+}
+
+export interface ActionItem {
+  id: string;
+  description: string;
+  assignedTo: string;
+  dueDate: string;
+  status: 'pending' | 'in_progress' | 'completed';
+}
+
+export interface Document {
+  id: string;
+  name: string;
+  type: string;
 }
 
 // Mock additional users
@@ -239,27 +269,61 @@ export const mockEmployeeAppreciations: EmployeeAppreciation[] = [
   }
 ];
 
-export const mockKickoffMeetings = [
+export const mockKickoffMeetings: KickoffMeeting[] = [
   {
     id: '1',
     projectId: 'project-1',
+    projectName: 'I-75 Bridge Project',
     title: 'I-75 Bridge Project Kickoff',
     date: '2024-01-15',
     time: '09:00',
     location: 'Main Conference Room',
     attendees: ['John Smith', 'Jane Doe', 'Mike Johnson'],
-    status: 'completed' as const,
-    notes: 'Initial project planning and timeline discussion'
+    status: 'completed',
+    notes: 'Initial project planning and timeline discussion',
+    actionItems: [
+      {
+        id: 'action_1',
+        description: 'Review environmental permits',
+        assignedTo: 'John Smith',
+        dueDate: '2024-01-20',
+        status: 'completed'
+      },
+      {
+        id: 'action_2',
+        description: 'Coordinate with utility companies',
+        assignedTo: 'Jane Doe',
+        dueDate: '2024-01-25',
+        status: 'in_progress'
+      }
+    ],
+    documents: [
+      {
+        id: 'doc_1',
+        name: 'Project Charter.pdf',
+        type: 'pdf'
+      }
+    ]
   },
   {
     id: '2',
     projectId: 'project-2',
+    projectName: 'Highway 400 Extension',
     title: 'Highway 400 Extension Kickoff',
     date: '2024-01-20',
     time: '14:00',
     location: 'Virtual Meeting',
     attendees: ['Sarah Wilson', 'Tom Brown', 'Lisa Davis'],
-    status: 'scheduled' as const,
-    notes: 'Review project scope and requirements'
+    status: 'scheduled',
+    notes: 'Review project scope and requirements',
+    actionItems: [
+      {
+        id: 'action_3',
+        description: 'Finalize design specifications',
+        assignedTo: 'Tom Brown',
+        dueDate: '2024-01-30',
+        status: 'pending'
+      }
+    ]
   }
 ];
