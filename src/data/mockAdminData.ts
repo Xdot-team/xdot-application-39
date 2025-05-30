@@ -1,4 +1,3 @@
-
 // Mock data for admin components
 
 export interface ForumPost {
@@ -237,5 +236,30 @@ export const mockEmployeeAppreciations: EmployeeAppreciation[] = [
     category: 'teamwork',
     createdAt: '2023-10-16T14:20:00Z',
     isPublic: false
+  }
+];
+
+export const mockKickoffMeetings = [
+  {
+    id: '1',
+    projectId: 'project-1',
+    title: 'I-75 Bridge Project Kickoff',
+    date: '2024-01-15',
+    time: '09:00',
+    location: 'Main Conference Room',
+    attendees: ['John Smith', 'Jane Doe', 'Mike Johnson'],
+    status: 'completed' as const,
+    notes: 'Initial project planning and timeline discussion'
+  },
+  {
+    id: '2',
+    projectId: 'project-2',
+    title: 'Highway 400 Extension Kickoff',
+    date: '2024-01-20',
+    time: '14:00',
+    location: 'Virtual Meeting',
+    attendees: ['Sarah Wilson', 'Tom Brown', 'Lisa Davis'],
+    status: 'scheduled' as const,
+    notes: 'Review project scope and requirements'
   }
 ];
