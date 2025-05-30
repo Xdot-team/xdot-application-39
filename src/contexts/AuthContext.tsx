@@ -1,71 +1,12 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials, RegisterCredentials, UserRole } from '@/types/auth';
+import { ENHANCED_MOCK_USERS, INDIVIDUAL_PROFILES } from '@/data/mockAuthData';
 import { toast } from '@/components/ui/sonner';
 import { useNavigate } from 'react-router-dom';
 
-// Mock users for the prototype
-export const MOCK_USERS: User[] = [
-  {
-    id: '1',
-    email: 'admin@xdotcontractor.com',
-    name: 'Admin User',
-    role: 'admin',
-    profilePicture: 'https://i.pravatar.cc/150?u=admin',
-    phoneNumber: '678-123-4567',
-    department: 'Administration',
-    position: 'System Administrator',
-    createdAt: new Date(2023, 0, 1).toISOString(),
-    lastLogin: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    email: 'pm@xdotcontractor.com',
-    name: 'Project Manager',
-    role: 'project_manager',
-    profilePicture: 'https://i.pravatar.cc/150?u=pm',
-    phoneNumber: '678-234-5678',
-    department: 'Operations',
-    position: 'Senior Project Manager',
-    createdAt: new Date(2023, 1, 15).toISOString(),
-    lastLogin: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    email: 'accountant@xdotcontractor.com',
-    name: 'Finance User',
-    role: 'accountant',
-    profilePicture: 'https://i.pravatar.cc/150?u=accountant',
-    phoneNumber: '678-345-6789',
-    department: 'Finance',
-    position: 'Senior Accountant',
-    createdAt: new Date(2023, 2, 10).toISOString(),
-    lastLogin: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    email: 'field@xdotcontractor.com',
-    name: 'Field Worker',
-    role: 'field_worker',
-    profilePicture: 'https://i.pravatar.cc/150?u=field',
-    phoneNumber: '678-456-7890',
-    department: 'Operations',
-    position: 'Site Supervisor',
-    createdAt: new Date(2023, 3, 5).toISOString(),
-    lastLogin: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    email: 'hr@xdotcontractor.com',
-    name: 'HR Manager',
-    role: 'hr',
-    profilePicture: 'https://i.pravatar.cc/150?u=hr',
-    phoneNumber: '678-567-8901',
-    department: 'Human Resources',
-    position: 'HR Director',
-    createdAt: new Date(2023, 4, 20).toISOString(),
-    lastLogin: new Date().toISOString(),
-  },
-];
+// All available users for authentication
+const ALL_MOCK_USERS = [...ENHANCED_MOCK_USERS, ...INDIVIDUAL_PROFILES];
 
 // Password for all mock users is 'password'
 const MOCK_PASSWORD = 'password';
@@ -90,38 +31,48 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const navigate = useNavigate();
 
   useEffect(() => {
-    // For prototype: automatically log in as admin
-    const autoLogin = async () => {
+    // Check for existing session
+    const checkExistingSession = async () => {
       try {
-        const adminUser = MOCK_USERS.find(user => user.role === 'admin')!;
-        
-        // Update with current timestamp
-        const updatedUser = {
-          ...adminUser,
-          lastLogin: new Date().toISOString(),
-        };
-        
-        // Save to localStorage
-        localStorage.setItem('xdot-user', JSON.stringify(updatedUser));
-        
-        setAuthState({
-          user: updatedUser,
-          isLoading: false,
-          error: null,
-        });
-        
-        // No need to navigate as App.tsx handles initial routing
+        const savedUser = localStorage.getItem('xdot-user');
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          setAuthState({
+            user: {
+              ...user,
+              lastLogin: new Date().toISOString(),
+            },
+            isLoading: false,
+            error: null,
+          });
+        } else {
+          // For demo: auto-login as admin after a brief delay
+          setTimeout(() => {
+            const adminUser = ALL_MOCK_USERS.find(user => user.role === 'admin')!;
+            const updatedUser = {
+              ...adminUser,
+              lastLogin: new Date().toISOString(),
+            };
+            
+            localStorage.setItem('xdot-user', JSON.stringify(updatedUser));
+            setAuthState({
+              user: updatedUser,
+              isLoading: false,
+              error: null,
+            });
+          }, 1000);
+        }
       } catch (error) {
-        console.error('Auto-login error:', error);
+        console.error('Session check error:', error);
         setAuthState({
           user: null,
           isLoading: false,
-          error: 'Failed to auto-authenticate',
+          error: 'Failed to restore session',
         });
       }
     };
 
-    autoLogin();
+    checkExistingSession();
   }, []);
 
   const login = async (credentials: LoginCredentials): Promise<void> => {
@@ -129,7 +80,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     try {
       // Mock authentication
-      const matchedUser = MOCK_USERS.find(user => user.email === credentials.email);
+      const matchedUser = ALL_MOCK_USERS.find(user => user.email === credentials.email);
       
       if (matchedUser && credentials.password === MOCK_PASSWORD) {
         // Update last login time
@@ -171,7 +122,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       error: null,
     });
     toast.info('You have been logged out.');
-    navigate('/dashboard'); // Changed from '/login' to '/dashboard' since we removed the login page
+    navigate('/login');
   };
 
   const register = async (userData: RegisterCredentials): Promise<void> => {
@@ -179,23 +130,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     try {
       // Check if email already exists
-      const existingUser = MOCK_USERS.find(user => user.email === userData.email);
+      const existingUser = ALL_MOCK_USERS.find(user => user.email === userData.email);
       if (existingUser) {
         throw new Error('Email already in use');
       }
       
-      // Create a new user (in a real app this would be done on the backend)
+      // Create a new user
       const newUser: User = {
         id: `user_${Date.now()}`,
         email: userData.email,
         name: userData.name,
         role: userData.role,
+        phoneNumber: userData.phoneNumber,
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
+        isVerified: false,
+        twoFactorEnabled: true,
+        verificationProviders: {},
       };
       
-      // In a real app, we would save this user to the database
-      // For the prototype, we'll just save to localStorage
+      // Save to localStorage
       localStorage.setItem('xdot-user', JSON.stringify(newUser));
       
       setAuthState({
@@ -254,7 +208,7 @@ export const requireAuth = (role: UserRole | UserRole[] | null = null) =>
       
       useEffect(() => {
         if (!authState.isLoading && !authState.user) {
-          navigate('/dashboard'); // Keep consistent with routing to dashboard
+          navigate('/login');
         } else if (
           !authState.isLoading && 
           authState.user && 
@@ -286,3 +240,6 @@ export const requireAuth = (role: UserRole | UserRole[] | null = null) =>
       return <Component {...props} />;
     };
   };
+
+// Export mock users for backward compatibility
+export { ENHANCED_MOCK_USERS as MOCK_USERS };
