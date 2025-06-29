@@ -14,13 +14,6 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { authState } = useAuth();
   const location = useLocation();
   
-  // Don't render layout for login/register pages
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
-  
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
-  
   // Show loading state if auth is loading
   if (authState.isLoading) {
     return (
@@ -29,8 +22,6 @@ export function MainLayout({ children }: MainLayoutProps) {
       </div>
     );
   }
-  
-  // Redirect to login happens in the useEffect in requireAuth HOC
   
   return (
     <div className="flex min-h-screen">

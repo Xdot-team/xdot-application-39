@@ -23,7 +23,6 @@ import Admin from '@/pages/Admin';
 import Estimating from '@/pages/Estimating';
 import OutlookPluginPage from '@/pages/OutlookPlugin';
 import Index from '@/pages/Index';
-import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 
 function App() {
@@ -32,7 +31,6 @@ function App() {
       <MainLayout>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:projectId" element={<ProjectDetails />} />
