@@ -17,7 +17,7 @@ export const useCreateSubmittal = () => {
   return useMutation({
     mutationFn: submittalService.create,
     onSuccess: (data) => {
-      if (data?.project_id) {
+      if (data && data.project_id) {
         queryClient.invalidateQueries({ queryKey: ['submittals', data.project_id] });
       }
       toast.success('Submittal created successfully');
@@ -35,7 +35,7 @@ export const useUpdateSubmittal = () => {
     mutationFn: ({ id, updates }: { id: string; updates: any }) => 
       submittalService.update(id, updates),
     onSuccess: (data) => {
-      if (data?.project_id) {
+      if (data && data.project_id) {
         queryClient.invalidateQueries({ queryKey: ['submittals', data.project_id] });
       }
       toast.success('Submittal updated successfully');

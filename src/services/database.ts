@@ -1,11 +1,14 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
+// Temporary type workaround until database schema is created
+const supabaseAny = supabase as any;
+
 // Project services
 export const projectService = {
   async getAll() {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('projects')
         .select('*')
         .order('created_at', { ascending: false });
@@ -20,7 +23,7 @@ export const projectService = {
 
   async getById(id: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('projects')
         .select('*')
         .eq('id', id)
@@ -36,7 +39,7 @@ export const projectService = {
 
   async create(project: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('projects')
         .insert(project)
         .select()
@@ -52,7 +55,7 @@ export const projectService = {
 
   async update(id: string, updates: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('projects')
         .update(updates)
         .eq('id', id)
@@ -72,7 +75,7 @@ export const projectService = {
 export const rfiService = {
   async getByProjectId(projectId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('rfis')
         .select('*')
         .eq('project_id', projectId)
@@ -88,7 +91,7 @@ export const rfiService = {
 
   async create(rfi: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('rfis')
         .insert(rfi)
         .select()
@@ -104,7 +107,7 @@ export const rfiService = {
 
   async update(id: string, updates: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('rfis')
         .update(updates)
         .eq('id', id)
@@ -124,7 +127,7 @@ export const rfiService = {
 export const submittalService = {
   async getByProjectId(projectId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('submittals')
         .select('*')
         .eq('project_id', projectId)
@@ -140,7 +143,7 @@ export const submittalService = {
 
   async create(submittal: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('submittals')
         .insert(submittal)
         .select()
@@ -156,7 +159,7 @@ export const submittalService = {
 
   async update(id: string, updates: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('submittals')
         .update(updates)
         .eq('id', id)
@@ -176,7 +179,7 @@ export const submittalService = {
 export const changeOrderService = {
   async getByProjectId(projectId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('change_orders')
         .select('*')
         .eq('project_id', projectId)
@@ -192,7 +195,7 @@ export const changeOrderService = {
 
   async create(changeOrder: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('change_orders')
         .insert(changeOrder)
         .select()
@@ -208,7 +211,7 @@ export const changeOrderService = {
 
   async update(id: string, updates: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('change_orders')
         .update(updates)
         .eq('id', id)
@@ -228,7 +231,7 @@ export const changeOrderService = {
 export const documentService = {
   async getByProjectId(projectId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('documents')
         .select('*')
         .eq('project_id', projectId)
@@ -244,7 +247,7 @@ export const documentService = {
 
   async create(document: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('documents')
         .insert(document)
         .select()
@@ -263,7 +266,7 @@ export const documentService = {
 export const projectNotesService = {
   async getByProjectId(projectId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('project_notes')
         .select('*')
         .eq('project_id', projectId)
@@ -279,7 +282,7 @@ export const projectNotesService = {
 
   async create(note: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('project_notes')
         .insert(note)
         .select()
@@ -295,7 +298,7 @@ export const projectNotesService = {
 
   async update(id: string, updates: any) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('project_notes')
         .update(updates)
         .eq('id', id)
@@ -315,7 +318,7 @@ export const projectNotesService = {
 export const notificationService = {
   async getByUserId(userId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('notifications')
         .select('*')
         .eq('user_id', userId)
@@ -331,7 +334,7 @@ export const notificationService = {
 
   async markAsRead(id: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('notifications')
         .update({ status: 'read' })
         .eq('id', id)
@@ -354,7 +357,7 @@ export const profileService = {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -373,7 +376,7 @@ export const profileService = {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('profiles')
         .update(updates)
         .eq('id', user.id)
