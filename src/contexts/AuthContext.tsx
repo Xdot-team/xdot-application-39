@@ -44,27 +44,35 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           // Fetch user profile from database
           profileService.getCurrent()
             .then((profile) => {
-              const user: User = {
-                id: profile.id,
-                email: profile.email,
-                name: profile.name,
-                role: profile.role as UserRole,
-                profilePicture: profile.profile_picture,
-                phoneNumber: profile.phone_number,
-                department: profile.department,
-                position: profile.position,
-                createdAt: profile.created_at,
-                lastLogin: new Date().toISOString(),
-                isVerified: profile.is_verified,
-                twoFactorEnabled: profile.two_factor_enabled,
-                companyId: profile.company_id,
-              };
-              
-              setAuthState({
-                user,
-                isLoading: false,
-                error: null,
-              });
+              if (profile) {
+                const user: User = {
+                  id: profile.id || '',
+                  email: profile.email || '',
+                  name: profile.name || '',
+                  role: (profile.role as UserRole) || 'field_worker',
+                  profilePicture: profile.profile_picture || undefined,
+                  phoneNumber: profile.phone_number || undefined,
+                  department: profile.department || undefined,
+                  position: profile.position || undefined,
+                  createdAt: profile.created_at || new Date().toISOString(),
+                  lastLogin: new Date().toISOString(),
+                  isVerified: profile.is_verified || false,
+                  twoFactorEnabled: profile.two_factor_enabled || false,
+                  companyId: profile.company_id || undefined,
+                };
+                
+                setAuthState({
+                  user,
+                  isLoading: false,
+                  error: null,
+                });
+              } else {
+                setAuthState({
+                  user: null,
+                  isLoading: false,
+                  error: 'Profile not found',
+                });
+              }
             })
             .catch((error) => {
               console.error('Failed to fetch user profile:', error);
