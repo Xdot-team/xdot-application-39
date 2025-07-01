@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +33,7 @@ import {
 
 const Field = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
+  const [isFieldDataDialogOpen, setIsFieldDataDialogOpen] = useState(false);
   
   // Get all field data
   const { punchlistItems, isLoading: punchlistLoading } = usePunchlistItems(selectedProjectId);
@@ -86,7 +86,10 @@ const Field = () => {
               Manage field activities, track progress, and coordinate teams
             </p>
           </div>
-          <FieldDataCollectionDialog />
+          <FieldDataCollectionDialog 
+            open={isFieldDataDialogOpen} 
+            onOpenChange={setIsFieldDataDialogOpen} 
+          />
         </div>
 
         {/* Overview Statistics */}

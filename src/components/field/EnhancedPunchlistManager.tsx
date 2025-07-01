@@ -30,7 +30,8 @@ import {
 import { format } from 'date-fns';
 import { toast } from '@/components/ui/sonner';
 
-interface PunchlistItem {
+// Use the actual database type structure instead of defining our own
+interface DatabasePunchlistItem {
   id: string;
   project_id: string;
   site_id: string;
@@ -39,13 +40,13 @@ interface PunchlistItem {
   description: string;
   detailed_description: string;
   category: string;
-  severity: 'minor' | 'major' | 'critical';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  severity: string; // This matches the database string type
+  priority: string;
   assigned_to: string;
   assigned_crew: string;
   reporter_name: string;
   due_date: string;
-  status: 'open' | 'in-progress' | 'resolved' | 'closed' | 'rejected';
+  status: string;
   resolution_notes: string;
   resolution_date: string;
   resolved_by: string;
@@ -67,7 +68,7 @@ interface EnhancedPunchlistManagerProps {
 }
 
 export const EnhancedPunchlistManager = ({ projectId }: EnhancedPunchlistManagerProps) => {
-  const [selectedItem, setSelectedItem] = useState<PunchlistItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<DatabasePunchlistItem | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -83,7 +84,7 @@ export const EnhancedPunchlistManager = ({ projectId }: EnhancedPunchlistManager
   const { location, getCurrentLocation } = useGPSLocation();
 
   // Filter punchlist items
-  const filteredItems = punchlistItems.filter((item: PunchlistItem) => {
+  const filteredItems = punchlistItems.filter((item: DatabasePunchlistItem) => {
     const matchesSearch = item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          item.assigned_to.toLowerCase().includes(searchQuery.toLowerCase());
@@ -362,7 +363,7 @@ export const EnhancedPunchlistManager = ({ projectId }: EnhancedPunchlistManager
 
       {/* Punchlist Items Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredItems.map((item: PunchlistItem) => (
+        {filteredItems.map((item: DatabasePunchlistItem) => (
           <Card key={item.id} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
@@ -621,7 +622,7 @@ export const EnhancedPunchlistManager = ({ projectId }: EnhancedPunchlistManager
 };
 
 // Detailed view component for punchlist items
-const PunchlistItemDetails = ({ item }: { item: PunchlistItem }) => {
+const PunchlistItemDetails = ({ item }: { item: DatabasePunchlistItem }) => {
   const { photos } = useFieldPhotos('punchlist_items', item.id);
 
   return (
