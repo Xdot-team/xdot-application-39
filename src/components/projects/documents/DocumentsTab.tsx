@@ -1,5 +1,5 @@
 
-import DocumentsManager from './DocumentsManager';
+import DocumentsManager from '@/components/documents/DocumentsManager';
 
 interface DocumentsTabProps {
   projectId: string;

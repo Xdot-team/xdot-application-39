@@ -94,8 +94,8 @@ export const projectService = {
   }
 };
 
-// Remove the old documentService and replace with import
-import { documentService } from './documentService';
+// Import and re-export the document service
+export { documentService } from './documentService';
 
 // RFI services
 export const rfiService = {
