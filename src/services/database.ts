@@ -1,5 +1,6 @@
+
 import { supabase } from '@/integrations/supabase/client';
-import { transformDatabaseProject } from '@/utils/projectTransforms';
+import { transformDatabaseProject, transformProjectToDatabase } from '@/utils/projectTransforms';
 
 // Project services
 export const projectService = {
@@ -38,10 +39,11 @@ export const projectService = {
 
   async create(project: any) {
     try {
+      const dbProject = transformProjectToDatabase(project);
       const { data, error } = await supabase
         .from('projects')
         .insert({
-          ...project,
+          ...dbProject,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
@@ -49,7 +51,7 @@ export const projectService = {
         .single();
       
       if (error) throw error;
-      return data;
+      return transformDatabaseProject(data);
     } catch (error) {
       console.error('Error creating project:', error);
       throw error;
@@ -58,10 +60,11 @@ export const projectService = {
 
   async update(id: string, updates: any) {
     try {
+      const dbUpdates = transformProjectToDatabase(updates);
       const { data, error } = await supabase
         .from('projects')
         .update({
-          ...updates,
+          ...dbUpdates,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
@@ -69,7 +72,7 @@ export const projectService = {
         .single();
       
       if (error) throw error;
-      return data;
+      return transformDatabaseProject(data);
     } catch (error) {
       console.error('Error updating project:', error);
       throw error;

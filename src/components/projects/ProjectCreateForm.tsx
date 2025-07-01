@@ -36,7 +36,9 @@ const ProjectCreateForm = ({ isOpen, onClose }: ProjectCreateFormProps) => {
     start_date: '',
     end_date: '',
     client_name: '',
-    project_manager: ''
+    project_manager: '',
+    budget_allocated: '',
+    total_tasks: ''
   });
 
   const createProjectMutation = useCreateProject();
@@ -47,12 +49,15 @@ const ProjectCreateForm = ({ isOpen, onClose }: ProjectCreateFormProps) => {
     const projectData = {
       ...formData,
       contract_value: formData.contract_value ? parseFloat(formData.contract_value) : 0,
+      budget_allocated: formData.budget_allocated ? parseFloat(formData.budget_allocated) : (formData.contract_value ? parseFloat(formData.contract_value) : 0),
+      total_tasks: formData.total_tasks ? parseInt(formData.total_tasks) : 0,
       start_date: formData.start_date || null,
       end_date: formData.end_date || null,
       completed_tasks: 0,
-      total_tasks: 0,
       rfi_count: 0,
-      delay_days: 0
+      delay_days: 0,
+      budget_spent: 0,
+      progress_percentage: 0
     };
 
     createProjectMutation.mutate(projectData, {
@@ -68,7 +73,9 @@ const ProjectCreateForm = ({ isOpen, onClose }: ProjectCreateFormProps) => {
           start_date: '',
           end_date: '',
           client_name: '',
-          project_manager: ''
+          project_manager: '',
+          budget_allocated: '',
+          total_tasks: ''
         });
       }
     });
@@ -80,7 +87,7 @@ const ProjectCreateForm = ({ isOpen, onClose }: ProjectCreateFormProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Project</DialogTitle>
           <DialogDescription>
@@ -88,113 +95,154 @@ const ProjectCreateForm = ({ isOpen, onClose }: ProjectCreateFormProps) => {
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Basic Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">Project Name *</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => handleChange('name', e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="project_id">Project ID *</Label>
+                <Input
+                  id="project_id"
+                  value={formData.project_id}
+                  onChange={(e) => handleChange('project_id', e.target.value)}
+                  placeholder="e.g., HWY-101-2024"
+                  required
+                />
+              </div>
+            </div>
+
             <div>
-              <Label htmlFor="name">Project Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
-                required
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleChange('description', e.target.value)}
+                rows={3}
               />
             </div>
-            <div>
-              <Label htmlFor="project_id">Project ID *</Label>
-              <Input
-                id="project_id"
-                value={formData.project_id}
-                onChange={(e) => handleChange('project_id', e.target.value)}
-                placeholder="e.g., HWY-101-2024"
-                required
-              />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="status">Status</Label>
+                <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => handleChange('location', e.target.value)}
+                  placeholder="e.g., San Francisco, CA"
+                />
+              </div>
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-              rows={3}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="status">Status</Label>
-              <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="upcoming">Upcoming</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => handleChange('location', e.target.value)}
-                placeholder="e.g., San Francisco, CA"
-              />
+          {/* Project Team */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Project Team</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="client_name">Client Name *</Label>
+                <Input
+                  id="client_name"
+                  value={formData.client_name}
+                  onChange={(e) => handleChange('client_name', e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="project_manager">Project Manager *</Label>
+                <Input
+                  id="project_manager"
+                  value={formData.project_manager}
+                  onChange={(e) => handleChange('project_manager', e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="client_name">Client Name</Label>
-              <Input
-                id="client_name"
-                value={formData.client_name}
-                onChange={(e) => handleChange('client_name', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="project_manager">Project Manager</Label>
-              <Input
-                id="project_manager"
-                value={formData.project_manager}
-                onChange={(e) => handleChange('project_manager', e.target.value)}
-              />
+          {/* Financial Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Financial Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="contract_value">Contract Value</Label>
+                <Input
+                  id="contract_value"
+                  type="number"
+                  value={formData.contract_value}
+                  onChange={(e) => handleChange('contract_value', e.target.value)}
+                  placeholder="0.00"
+                  step="0.01"
+                />
+              </div>
+              <div>
+                <Label htmlFor="budget_allocated">Budget Allocated</Label>
+                <Input
+                  id="budget_allocated"
+                  type="number"
+                  value={formData.budget_allocated}
+                  onChange={(e) => handleChange('budget_allocated', e.target.value)}
+                  placeholder="0.00"
+                  step="0.01"
+                />
+              </div>
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="contract_value">Contract Value</Label>
-            <Input
-              id="contract_value"
-              type="number"
-              value={formData.contract_value}
-              onChange={(e) => handleChange('contract_value', e.target.value)}
-              placeholder="0.00"
-              step="0.01"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="start_date">Start Date</Label>
-              <Input
-                id="start_date"
-                type="date"
-                value={formData.start_date}
-                onChange={(e) => handleChange('start_date', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="end_date">End Date</Label>
-              <Input
-                id="end_date"
-                type="date"
-                value={formData.end_date}
-                onChange={(e) => handleChange('end_date', e.target.value)}
-              />
+          {/* Project Timeline */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Project Timeline</h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="start_date">Start Date</Label>
+                <Input
+                  id="start_date"
+                  type="date"
+                  value={formData.start_date}
+                  onChange={(e) => handleChange('start_date', e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="end_date">End Date</Label>
+                <Input
+                  id="end_date"
+                  type="date"
+                  value={formData.end_date}
+                  onChange={(e) => handleChange('end_date', e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="total_tasks">Total Tasks</Label>
+                <Input
+                  id="total_tasks"
+                  type="number"
+                  value={formData.total_tasks}
+                  onChange={(e) => handleChange('total_tasks', e.target.value)}
+                  placeholder="0"
+                />
+              </div>
             </div>
           </div>
 

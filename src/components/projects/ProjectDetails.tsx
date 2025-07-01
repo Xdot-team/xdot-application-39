@@ -19,6 +19,7 @@ import NotificationsTab from './notifications/NotificationsTab';
 import DocumentsTab from './documents/DocumentsTab';
 import RFIsTab from './rfis/RFIsTab';
 import SubmittalsTab from './submittals/SubmittalsTab';
+import ProjectTeamTab from './team/ProjectTeamTab';
 import { formatCurrency } from '@/lib/formatters';
 
 const ProjectDetails = () => {
@@ -126,7 +127,7 @@ const ProjectDetails = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Duration</p>
                 <p className="font-medium">
-                  {new Date(project.startDate).toLocaleDateString()} - {new Date(project.endDate).toLocaleDateString()}
+                  {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'TBD'} - {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD'}
                 </p>
               </div>
             </div>
@@ -138,10 +139,10 @@ const ProjectDetails = () => {
                   <div className="w-32 h-2 bg-gray-200 rounded-full mr-2">
                     <div 
                       className="h-full bg-blue-600 rounded-full" 
-                      style={{ width: `${(project.completedTasks / project.totalTasks) * 100}%` }}
+                      style={{ width: `${project.totalTasks > 0 ? (project.completedTasks / project.totalTasks) * 100 : 0}%` }}
                     ></div>
                   </div>
-                  <span>{Math.round((project.completedTasks / project.totalTasks) * 100)}%</span>
+                  <span>{project.totalTasks > 0 ? Math.round((project.completedTasks / project.totalTasks) * 100) : 0}%</span>
                 </div>
               </div>
             </div>
@@ -165,6 +166,7 @@ const ProjectDetails = () => {
       >
         <TabsList className={`${isMobile ? 'flex w-full overflow-x-auto' : ''}`}>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="rfis">RFIs</TabsTrigger>
           <TabsTrigger value="submittals">Submittals</TabsTrigger>
@@ -191,7 +193,7 @@ const ProjectDetails = () => {
               <Card>
                 <CardContent className="p-6">
                   <h3 className="text-lg font-medium mb-4">Project Description</h3>
-                  <p className="text-sm">{project.description}</p>
+                  <p className="text-sm">{project.description || 'No description available'}</p>
                 </CardContent>
               </Card>
               
@@ -247,6 +249,10 @@ const ProjectDetails = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+          
+          <TabsContent value="team">
+            <ProjectTeamTab projectId={project.id} />
           </TabsContent>
           
           <TabsContent value="documents">

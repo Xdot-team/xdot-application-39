@@ -176,6 +176,97 @@ export type Database = {
           },
         ]
       }
+      project_budget_items: {
+        Row: {
+          actual_amount: number | null
+          budgeted_amount: number
+          category: string
+          created_at: string
+          id: string
+          item_name: string
+          notes: string | null
+          project_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          actual_amount?: number | null
+          budgeted_amount: number
+          category: string
+          created_at?: string
+          id?: string
+          item_name: string
+          notes?: string | null
+          project_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actual_amount?: number | null
+          budgeted_amount?: number
+          category?: string
+          created_at?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+          project_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_budget_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_milestones: {
+        Row: {
+          completion_date: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string | null
+          project_id: string | null
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completion_date?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          project_id?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completion_date?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          project_id?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_notes: {
         Row: {
           author: string | null
@@ -211,47 +302,106 @@ export type Database = {
           },
         ]
       }
+      project_team_members: {
+        Row: {
+          added_at: string
+          id: string
+          permissions: string[] | null
+          project_id: string | null
+          role: string
+          user_email: string | null
+          user_name: string
+        }
+        Insert: {
+          added_at?: string
+          id?: string
+          permissions?: string[] | null
+          project_id?: string | null
+          role: string
+          user_email?: string | null
+          user_name: string
+        }
+        Update: {
+          added_at?: string
+          id?: string
+          permissions?: string[] | null
+          project_id?: string | null
+          role?: string
+          user_email?: string | null
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_team_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
+          budget_allocated: number | null
+          budget_spent: number | null
+          client_name: string | null
           completed_tasks: number | null
           contract_value: number | null
           created_at: string
+          delay_days: number | null
           description: string | null
           end_date: string | null
           id: string
           location: string | null
           name: string
+          progress_percentage: number | null
           project_id: string | null
+          project_manager: string | null
+          rfi_count: number | null
           start_date: string | null
           status: string | null
           total_tasks: number | null
           updated_at: string
         }
         Insert: {
+          budget_allocated?: number | null
+          budget_spent?: number | null
+          client_name?: string | null
           completed_tasks?: number | null
           contract_value?: number | null
           created_at?: string
+          delay_days?: number | null
           description?: string | null
           end_date?: string | null
           id?: string
           location?: string | null
           name: string
+          progress_percentage?: number | null
           project_id?: string | null
+          project_manager?: string | null
+          rfi_count?: number | null
           start_date?: string | null
           status?: string | null
           total_tasks?: number | null
           updated_at?: string
         }
         Update: {
+          budget_allocated?: number | null
+          budget_spent?: number | null
+          client_name?: string | null
           completed_tasks?: number | null
           contract_value?: number | null
           created_at?: string
+          delay_days?: number | null
           description?: string | null
           end_date?: string | null
           id?: string
           location?: string | null
           name?: string
+          progress_percentage?: number | null
           project_id?: string | null
+          project_manager?: string | null
+          rfi_count?: number | null
           start_date?: string | null
           status?: string | null
           total_tasks?: number | null
