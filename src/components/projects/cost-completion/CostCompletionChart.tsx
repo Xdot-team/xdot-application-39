@@ -8,98 +8,104 @@ import {
   CartesianGrid, 
   Tooltip, 
   Legend, 
-  ResponsiveContainer,
-  ReferenceLine
+  ResponsiveContainer 
 } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { CostToCompletion } from "@/types/projects";
+import { useProject } from "@/hooks/useProjects";
+import { useProjectBudgetItems } from "@/hooks/useProjectBudget";
 import { formatCurrency } from "@/lib/formatters";
-
-// Generate mock data for the cost curve
-const generateMockCostCurveData = (projectId: string, costData: CostToCompletion) => {
-  const { revisedBudget, actualCostToDate, forecastTotalCost, completedValue } = costData;
-  const completedPercent = completedValue / revisedBudget;
-  const data = [];
-  
-  // Past data points (actual)
-  for (let i = 0; i <= 10; i++) {
-    const progress = (i / 10) * completedPercent;
-    const idealCost = revisedBudget * progress;
-    const actualCost = actualCostToDate * (progress / completedPercent);
-    
-    if (progress <= completedPercent) {
-      data.push({
-        progress: Math.round(progress * 100),
-        idealCumulative: Math.round(idealCost),
-        actualCumulative: Math.round(actualCost),
-        isForecast: false,
-      });
-    }
-  }
-  
-  const lastActualPoint = data[data.length - 1];
-  
-  // Future data points (forecast)
-  for (let i = 1; i <= 10; i++) {
-    const progress = completedPercent + (i / 10) * (1 - completedPercent);
-    if (progress > 1) continue;
-    
-    const idealCost = revisedBudget * progress;
-    
-    // Calculate forecasted cost based on the efficiency so far
-    const remainingProgress = progress - completedPercent;
-    const totalRemainingProgress = 1 - completedPercent;
-    
-    const forecastedAdditionalCost = 
-      (forecastTotalCost - actualCostToDate) * (remainingProgress / totalRemainingProgress);
-      
-    const forecastCost = actualCostToDate + forecastedAdditionalCost;
-    
-    data.push({
-      progress: Math.round(progress * 100),
-      idealCumulative: Math.round(idealCost),
-      forecastCumulative: Math.round(forecastCost),
-      isForecast: true,
-    });
-  }
-  
-  return data;
-};
 
 interface CostCompletionChartProps {
   projectId: string;
 }
 
 const CostCompletionChart = ({ projectId }: CostCompletionChartProps) => {
-  const [costData, setCostData] = useState<CostToCompletion | null>(null);
+  const { data: project } = useProject(projectId);
+  const { data: budgetItems = [] } = useProjectBudgetItems(projectId);
   const [chartData, setChartData] = useState<any[]>([]);
   
   useEffect(() => {
-    // In a real app, this would fetch from an API
-    // Using the same data generation function as CostCompletionSummary
-    const mockCostData = generateMockCostData(projectId);
-    setCostData(mockCostData);
-    setChartData(generateMockCostCurveData(projectId, mockCostData));
-  }, [projectId]);
-  
-  if (!costData || chartData.length === 0) return <div>Loading chart data...</div>;
+    if (project) {
+      // Generate mock historical data for the chart
+      const startDate = project.start_date ? new Date(project.start_date) : new Date();
+      const endDate = project.end_date ? new Date(project.end_date) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+      const totalDuration = endDate.getTime() - startDate.getTime();
+      const currentDate = new Date();
+      
+      const budget = project.budget_allocated || project.contractValue || 0;
+      const currentProgress = project.progress_percentage || 0;
+      const budgetSpent = project.budget_spent || 0;
+      
+      // Generate monthly data points
+      const data = [];
+      const monthsTotal = Math.ceil(totalDuration / (30 * 24 * 60 * 60 * 1000));
+      
+      for (let i = 0; i <= monthsTotal; i++) {
+        const date = new Date(startDate.getTime() + (i * 30 * 24 * 60 * 60 * 1000));
+        const monthName = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        
+        const plannedProgress = Math.min((i / monthsTotal) * 100, 100);
+        const plannedCost = (plannedProgress / 100) * budget;
+        
+        let actualProgress = 0;
+        let actualCost = 0;
+        
+        if (date <= currentDate) {
+          // Use S-curve for realistic progress
+          const timeProgress = Math.min(i / monthsTotal, 1);
+          actualProgress = Math.min(
+            (3 * Math.pow(timeProgress, 2) - 2 * Math.pow(timeProgress, 3)) * currentProgress,
+            currentProgress
+          );
+          actualCost = (actualProgress / 100) * budget;
+          
+          // Add some variance for realism
+          if (i === Math.floor((currentDate.getTime() - startDate.getTime()) / (30 * 24 * 60 * 60 * 1000))) {
+            actualCost = budgetSpent;
+          }
+        }
+        
+        // Forecast future costs
+        let forecastCost = actualCost;
+        if (date > currentDate && currentProgress > 0) {
+          const remainingProgress = 100 - currentProgress;
+          const costEfficiency = budgetSpent / ((currentProgress / 100) * budget) || 1;
+          const futureMonths = monthsTotal - i;
+          const progressRate = remainingProgress / Math.max(futureMonths, 1);
+          const monthlyForecastProgress = Math.min(plannedProgress, currentProgress + (progressRate * (i - Math.floor((currentDate.getTime() - startDate.getTime()) / (30 * 24 * 60 * 60 * 1000)))));
+          forecastCost = budgetSpent + ((monthlyForecastProgress - currentProgress) / 100) * budget * costEfficiency;
+        }
+        
+        data.push({
+          month: monthName,
+          plannedCost: Math.round(plannedCost),
+          actualCost: date <= currentDate ? Math.round(actualCost) : null,
+          forecastCost: date > currentDate ? Math.round(forecastCost) : Math.round(actualCost),
+        });
+      }
+      
+      setChartData(data);
+    }
+  }, [project, budgetItems]);
   
   const chartConfig = {
-    ideal: {
-      label: "Budget Baseline",
-      color: "#6b7280", // gray-500
+    plannedCost: {
+      label: "Planned Cost",
+      color: "#3b82f6", // blue-500
     },
-    actual: {
+    actualCost: {
       label: "Actual Cost",
-      color: "#2563eb", // blue-600
+      color: "#10b981", // emerald-500
     },
-    forecast: {
-      label: "Forecasted Cost",
-      color: "#7c3aed", // violet-600
+    forecastCost: {
+      label: "Forecast Cost",
+      color: "#f59e0b", // amber-500
     },
   };
   
-  const currentProgress = Math.round((costData.completedValue / costData.revisedBudget) * 100);
+  if (!chartData.length) {
+    return <div>Loading chart data...</div>;
+  }
   
   return (
     <div className="h-[300px]">
@@ -110,46 +116,42 @@ const CostCompletionChart = ({ projectId }: CostCompletionChartProps) => {
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
-            dataKey="progress" 
-            tick={{ fontSize: 12 }} 
-            tickFormatter={(value) => `${value}%`}
+            dataKey="month" 
+            tick={{ fontSize: 12 }}
           />
           <YAxis 
-            tick={{ fontSize: 12 }} 
+            tick={{ fontSize: 12 }}
             tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
           />
-          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartTooltip 
+            formatter={(value: number, name: string) => [
+              formatCurrency(value), 
+              chartConfig[name as keyof typeof chartConfig]?.label || name
+            ]}
+            content={<ChartTooltipContent />}
+          />
           <Legend />
-          <ReferenceLine x={currentProgress} stroke="#d97706" strokeDasharray="3 3" label={{
-            value: 'Current',
-            position: 'top',
-            fill: '#d97706',
-            fontSize: 12
-          }} />
-          <Line
-            type="monotone"
-            dataKey="idealCumulative"
-            name="Budget Baseline"
-            stroke={chartConfig.ideal.color}
-            strokeWidth={2}
-            dot={false}
-          />
-          <Line
-            type="monotone"
-            dataKey="actualCumulative"
-            name="Actual Cost"
-            stroke={chartConfig.actual.color}
-            strokeWidth={2}
-            dot={{ r: 3 }}
-            activeDot={{ r: 5 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="forecastCumulative"
-            name="Forecasted Cost"
-            stroke={chartConfig.forecast.color}
+          <Line 
+            type="monotone" 
+            dataKey="plannedCost" 
+            stroke={chartConfig.plannedCost.color}
             strokeWidth={2}
             strokeDasharray="5 5"
+            dot={false}
+          />
+          <Line 
+            type="monotone" 
+            dataKey="actualCost" 
+            stroke={chartConfig.actualCost.color}
+            strokeWidth={2}
+            connectNulls={false}
+          />
+          <Line 
+            type="monotone" 
+            dataKey="forecastCost" 
+            stroke={chartConfig.forecastCost.color}
+            strokeWidth={2}
+            strokeDasharray="10 5"
             dot={false}
           />
         </LineChart>
@@ -158,10 +160,8 @@ const CostCompletionChart = ({ projectId }: CostCompletionChartProps) => {
   );
 };
 
-export default CostCompletionChart;
-
-// Helper function since it's used in multiple files
-function generateMockCostData(projectId: string): CostToCompletion {
+// Helper function to generate realistic cost data
+function generateMockCostData(projectId: string) {
   const originalBudget = Math.round((Math.random() * 5000000 + 2000000) / 10000) * 10000; // $2M to $7M
   const revisionFactor = Math.random() * 0.2 + 0.9; // 90% to 110% of original
   const revisedBudget = Math.round(originalBudget * revisionFactor / 10000) * 10000;
@@ -179,12 +179,6 @@ function generateMockCostData(projectId: string): CostToCompletion {
   const forecastTotalCost = actualCostToDate + estimatedCostToComplete;
   const costVariance = revisedBudget - forecastTotalCost;
   
-  const laborPercent = 0.45;
-  const materialPercent = 0.35;
-  const equipmentPercent = 0.15;
-  const subcontractorPercent = 0.03;
-  const otherPercent = 0.02;
-  
   return {
     id: `cost-${projectId}`,
     projectId,
@@ -198,13 +192,15 @@ function generateMockCostData(projectId: string): CostToCompletion {
     estimatedCostToComplete,
     forecastTotalCost,
     costVariance,
-    laborRemaining: Math.round(remainingValue * laborPercent / 10000) * 10000,
-    materialsRemaining: Math.round(remainingValue * materialPercent / 10000) * 10000,
-    equipmentRemaining: Math.round(remainingValue * equipmentPercent / 10000) * 10000,
-    subcontractorRemaining: Math.round(remainingValue * subcontractorPercent / 10000) * 10000,
-    otherRemaining: Math.round(remainingValue * otherPercent / 10000) * 10000,
+    laborRemaining: Math.round(remainingValue * 0.45 / 10000) * 10000,
+    materialsRemaining: Math.round(remainingValue * 0.35 / 10000) * 10000,
+    equipmentRemaining: Math.round(remainingValue * 0.15 / 10000) * 10000,
+    subcontractorRemaining: Math.round(remainingValue * 0.03 / 10000) * 10000,
+    otherRemaining: Math.round(remainingValue * 0.02 / 10000) * 10000,
     riskFactors: ["Weather delays", "Material price fluctuations", "Labor availability"],
     lastUpdated: new Date().toISOString(),
     updatedBy: "John Smith",
   };
 }
+
+export default CostCompletionChart;

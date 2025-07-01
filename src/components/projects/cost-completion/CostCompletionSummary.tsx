@@ -1,172 +1,179 @@
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
-import { CostToCompletion } from "@/types/projects";
-import { DollarSign, TrendingUp, TrendingDown } from "lucide-react";
-
-// Mock data generator
-const generateMockCostData = (projectId: string): CostToCompletion => {
-  const originalBudget = Math.round((Math.random() * 5000000 + 2000000) / 10000) * 10000; // $2M to $7M
-  const revisionFactor = Math.random() * 0.2 + 0.9; // 90% to 110% of original
-  const revisedBudget = Math.round(originalBudget * revisionFactor / 10000) * 10000;
-  
-  const progressPercent = Math.random() * 0.7 + 0.2; // 20% to 90% complete
-  const completedValue = Math.round(revisedBudget * progressPercent / 10000) * 10000;
-  const remainingValue = revisedBudget - completedValue;
-  
-  const costEfficiencyFactor = Math.random() * 0.3 + 0.85; // 85% to 115% efficiency
-  const actualCostToDate = Math.round(completedValue / costEfficiencyFactor / 10000) * 10000;
-  
-  const futureEfficiencyFactor = costEfficiencyFactor * (Math.random() * 0.1 + 0.95); // Slight variation
-  const estimatedCostToComplete = Math.round(remainingValue / futureEfficiencyFactor / 10000) * 10000;
-  
-  const forecastTotalCost = actualCostToDate + estimatedCostToComplete;
-  const costVariance = revisedBudget - forecastTotalCost;
-  
-  const laborPercent = 0.45;
-  const materialPercent = 0.35;
-  const equipmentPercent = 0.15;
-  const subcontractorPercent = 0.03;
-  const otherPercent = 0.02;
-  
-  return {
-    id: `cost-${projectId}`,
-    projectId,
-    estimatedDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days in future
-    remainingTasks: Math.round(30 * (1 - progressPercent)), // 0-30 tasks
-    completedValue,
-    remainingValue,
-    originalBudget,
-    revisedBudget,
-    actualCostToDate,
-    estimatedCostToComplete,
-    forecastTotalCost,
-    costVariance,
-    laborRemaining: Math.round(remainingValue * laborPercent / 10000) * 10000,
-    materialsRemaining: Math.round(remainingValue * materialPercent / 10000) * 10000,
-    equipmentRemaining: Math.round(remainingValue * equipmentPercent / 10000) * 10000,
-    subcontractorRemaining: Math.round(remainingValue * subcontractorPercent / 10000) * 10000,
-    otherRemaining: Math.round(remainingValue * otherPercent / 10000) * 10000,
-    riskFactors: ["Weather delays", "Material price fluctuations", "Labor availability"],
-    lastUpdated: new Date().toISOString(),
-    updatedBy: "John Smith",
-  };
-};
+import { useProject } from "@/hooks/useProjects";
+import { useProjectBudgetItems } from "@/hooks/useProjectBudget";
 
 interface CostCompletionSummaryProps {
   projectId: string;
 }
 
 const CostCompletionSummary = ({ projectId }: CostCompletionSummaryProps) => {
-  const [data, setData] = useState<CostToCompletion | null>(null);
+  const { data: project } = useProject(projectId);
+  const { data: budgetItems = [] } = useProjectBudgetItems(projectId);
   
+  const [costData, setCostData] = useState({
+    originalBudget: 0,
+    revisedBudget: 0,
+    actualCostToDate: 0,
+    estimatedCostToComplete: 0,
+    forecastTotalCost: 0,
+    costVariance: 0,
+    completedValue: 0,
+    remainingValue: 0,
+    progressPercentage: 0
+  });
+
   useEffect(() => {
-    // In a real app, this would fetch from an API
-    setData(generateMockCostData(projectId));
-  }, [projectId]);
-  
-  if (!data) return <div>Loading cost data...</div>;
-  
-  const completionPercent = Math.round((data.completedValue / data.revisedBudget) * 100);
-  const isUnderBudget = data.costVariance > 0;
-  const variancePercent = Math.abs(Math.round((data.costVariance / data.revisedBudget) * 100));
-  
+    if (project && budgetItems) {
+      const originalBudget = project.contractValue || 0;
+      const budgetAllocated = project.budget_allocated || originalBudget;
+      const budgetSpent = project.budget_spent || 0;
+      const progressPercentage = project.progress_percentage || 0;
+      
+      // Calculate totals from budget items
+      const totalBudgeted = budgetItems.reduce((sum, item) => sum + (item.budgeted_amount || 0), 0);
+      const totalActual = budgetItems.reduce((sum, item) => sum + (item.actual_amount || 0), 0);
+      
+      const completedValue = (budgetAllocated * progressPercentage) / 100;
+      const remainingValue = budgetAllocated - completedValue;
+      const estimatedCostToComplete = remainingValue * 1.05; // 5% buffer
+      const forecastTotalCost = (totalActual || budgetSpent) + estimatedCostToComplete;
+      const costVariance = budgetAllocated - forecastTotalCost;
+
+      setCostData({
+        originalBudget,
+        revisedBudget: budgetAllocated,
+        actualCostToDate: totalActual || budgetSpent,
+        estimatedCostToComplete,
+        forecastTotalCost,
+        costVariance,
+        completedValue,
+        remainingValue,
+        progressPercentage
+      });
+    }
+  }, [project, budgetItems]);
+
+  const getVarianceStatus = () => {
+    if (costData.costVariance > 0) {
+      return { icon: CheckCircle, color: "text-green-600", label: "Under Budget" };
+    } else if (costData.costVariance < -50000) {
+      return { icon: AlertTriangle, color: "text-red-600", label: "Over Budget" };
+    } else {
+      return { icon: TrendingUp, color: "text-orange-600", label: "At Risk" };
+    }
+  };
+
+  const varianceStatus = getVarianceStatus();
+  const VarianceIcon = varianceStatus.icon;
+
   return (
-    <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="bg-white shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Budget</p>
-                <p className="text-2xl font-bold">{formatCurrency(data.revisedBudget)}</p>
-                {data.revisedBudget !== data.originalBudget && (
-                  <p className="text-xs text-muted-foreground">
-                    Original: {formatCurrency(data.originalBudget)}
-                  </p>
-                )}
-              </div>
-              <div className="rounded-full bg-blue-100 p-3">
-                <DollarSign className="h-5 w-5 text-blue-600" />
-              </div>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Original vs Revised Budget */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">Budget Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-xs text-muted-foreground">Original:</span>
+              <span className="text-sm font-medium">{formatCurrency(costData.originalBudget)}</span>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-white shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Forecast at Completion</p>
-                <p className="text-2xl font-bold">{formatCurrency(data.forecastTotalCost)}</p>
-                <p className="text-xs text-muted-foreground">
-                  {isUnderBudget ? "Under budget by " : "Over budget by "}
-                  {formatCurrency(Math.abs(data.costVariance))}
-                </p>
-              </div>
-              <div className={`rounded-full ${isUnderBudget ? 'bg-green-100' : 'bg-red-100'} p-3`}>
-                {isUnderBudget ? (
-                  <TrendingDown className="h-5 w-5 text-green-600" />
-                ) : (
-                  <TrendingUp className="h-5 w-5 text-red-600" />
-                )}
-              </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-muted-foreground">Revised:</span>
+              <span className="text-sm font-medium">{formatCurrency(costData.revisedBudget)}</span>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-white shadow-sm">
-          <CardContent className="p-6">
+            <div className="flex justify-between">
+              <span className="text-xs text-muted-foreground">Variance:</span>
+              <span className={`text-sm font-medium ${
+                costData.revisedBudget >= costData.originalBudget ? 'text-red-600' : 'text-green-600'
+              }`}>
+                {formatCurrency(costData.revisedBudget - costData.originalBudget)}
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Actual Cost vs Forecast */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">Cost Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-xs text-muted-foreground">Spent to Date:</span>
+              <span className="text-sm font-medium">{formatCurrency(costData.actualCostToDate)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-muted-foreground">Est. to Complete:</span>
+              <span className="text-sm font-medium">{formatCurrency(costData.estimatedCostToComplete)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-muted-foreground">Forecast Total:</span>
+              <span className="text-sm font-medium">{formatCurrency(costData.forecastTotalCost)}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Cost Variance */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <VarianceIcon className={`h-4 w-4 ${varianceStatus.color}`} />
+            Cost Variance
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <div className="text-2xl font-bold">
+              {formatCurrency(Math.abs(costData.costVariance))}
+            </div>
+            <Badge className={costData.costVariance >= 0 ? 'bg-green-500' : 'bg-red-500'}>
+              {varianceStatus.label}
+            </Badge>
+            <div className="text-xs text-muted-foreground">
+              {((Math.abs(costData.costVariance) / costData.revisedBudget) * 100).toFixed(1)}% variance
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Progress vs Budget */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">Progress vs Budget</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
             <div>
-              <div className="flex justify-between mb-2">
-                <p className="text-sm font-medium text-muted-foreground">Project Completion</p>
-                <p className="text-sm font-medium">{completionPercent}%</p>
+              <div className="flex justify-between text-xs mb-1">
+                <span>Physical Progress</span>
+                <span>{costData.progressPercentage}%</span>
               </div>
-              <Progress value={completionPercent} className="h-2" />
-              <div className="mt-4 flex justify-between text-xs text-muted-foreground">
-                <div>Spent: {formatCurrency(data.actualCostToDate)}</div>
-                <div>Remaining: {formatCurrency(data.estimatedCostToComplete)}</div>
+              <Progress value={costData.progressPercentage} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span>Budget Spent</span>
+                <span>{((costData.actualCostToDate / costData.revisedBudget) * 100).toFixed(1)}%</span>
               </div>
+              <Progress 
+                value={(costData.actualCostToDate / costData.revisedBudget) * 100} 
+                className="h-2" 
+              />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-5">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">Labor Remaining</p>
-          <p className="text-lg font-semibold">{formatCurrency(data.laborRemaining)}</p>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">Materials Remaining</p>
-          <p className="text-lg font-semibold">{formatCurrency(data.materialsRemaining)}</p>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">Equipment Remaining</p>
-          <p className="text-lg font-semibold">{formatCurrency(data.equipmentRemaining)}</p>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">Subcontractor Remaining</p>
-          <p className="text-lg font-semibold">{formatCurrency(data.subcontractorRemaining)}</p>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">Other Remaining</p>
-          <p className="text-lg font-semibold">{formatCurrency(data.otherRemaining)}</p>
-        </div>
-      </div>
-      
-      <div>
-        <p className="text-sm font-medium mb-2">Risk Factors</p>
-        <div className="flex flex-wrap gap-2">
-          {data.riskFactors?.map((risk, index) => (
-            <div key={index} className="bg-amber-100 text-amber-800 rounded-full px-3 py-1 text-xs">
-              {risk}
-            </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
