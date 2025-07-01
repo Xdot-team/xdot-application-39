@@ -1,7 +1,6 @@
 
 import { useNavigate } from 'react-router-dom';
 import { requireAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
 import { useProjects } from '@/hooks/useProjects';
 import ProjectHeader from '@/components/projects/ProjectHeader';
 import ProjectStatusOverview from '@/components/projects/ProjectStatusOverview';
@@ -23,7 +22,16 @@ const Projects = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-600">Error loading projects: {error.message}</div>
+        <div className="text-red-600">
+          <h2 className="text-xl font-semibold mb-2">Error loading projects</h2>
+          <p className="text-sm">{error.message}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }

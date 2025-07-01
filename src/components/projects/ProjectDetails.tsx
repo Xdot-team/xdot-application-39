@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, CalendarDays, Users, MapPin, DollarSign, Bell } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useProject } from '@/hooks/useProjects';
 import AIABillingTab from './aia-billing/AIABillingTab';
 import ChangeOrdersTab from './change-orders/ChangeOrdersTab';
 import ProjectNotesTab from './notes/ProjectNotesTab';
@@ -14,29 +16,28 @@ import ProgressScheduleTab from './progress-schedule/ProgressScheduleTab';
 import CostCompletionTab from './cost-completion/CostCompletionTab';
 import UtilityMeetingsTab from './utility-meetings/UtilityMeetingsTab';
 import NotificationsTab from './notifications/NotificationsTab';
-import { Project } from '@/types/projects';
-import { generateMockProjects } from '@/data/mockProjects';
+import DocumentsTab from './documents/DocumentsTab';
+import RFIsTab from './rfis/RFIsTab';
+import SubmittalsTab from './submittals/SubmittalsTab';
 import { formatCurrency } from '@/lib/formatters';
 
 const ProjectDetails = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const [project, setProject] = useState<Project | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const isMobile = useIsMobile();
   
-  useEffect(() => {
-    // Fetch project details
-    if (projectId) {
-      const projects = generateMockProjects();
-      const foundProject = projects.find(p => p.id === projectId);
-      if (foundProject) {
-        setProject(foundProject);
-      }
-    }
-  }, [projectId]);
+  const { data: project, isLoading, error } = useProject(projectId || '');
 
-  if (!project) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse">Loading project...</div>
+      </div>
+    );
+  }
+
+  if (error || !project) {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold">Project not found</h2>
@@ -164,11 +165,11 @@ const ProjectDetails = () => {
       >
         <TabsList className={`${isMobile ? 'flex w-full overflow-x-auto' : ''}`}>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="rfis">RFIs</TabsTrigger>
+          <TabsTrigger value="submittals">Submittals</TabsTrigger>
+          <TabsTrigger value="changeOrders">Change Orders</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
-          <TabsTrigger value="scopeWip">Scope WIP</TabsTrigger>
-          <TabsTrigger value="progressSchedule">Progress Schedule</TabsTrigger>
-          <TabsTrigger value="costCompletion">Cost to Completion</TabsTrigger>
-          <TabsTrigger value="utilityMeetings">Utility Meetings</TabsTrigger>
           <TabsTrigger value="notifications">
             Notifications
             {notificationCount > 0 && (
@@ -178,11 +179,10 @@ const ProjectDetails = () => {
             )}
           </TabsTrigger>
           <TabsTrigger value="aiaBilling">AIA Billing</TabsTrigger>
-          <TabsTrigger value="changeOrders">Change Orders</TabsTrigger>
-          <TabsTrigger value="submittals">Submittals</TabsTrigger>
-          <TabsTrigger value="rfis">RFIs</TabsTrigger>
-          <TabsTrigger value="schedule">Schedule</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="scopeWip">Scope WIP</TabsTrigger>
+          <TabsTrigger value="progressSchedule">Progress Schedule</TabsTrigger>
+          <TabsTrigger value="costCompletion">Cost to Completion</TabsTrigger>
+          <TabsTrigger value="utilityMeetings">Utility Meetings</TabsTrigger>
         </TabsList>
         
         <div className="mt-6">
@@ -249,8 +249,32 @@ const ProjectDetails = () => {
             </div>
           </TabsContent>
           
+          <TabsContent value="documents">
+            <DocumentsTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="rfis">
+            <RFIsTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="submittals">
+            <SubmittalsTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="changeOrders">
+            <ChangeOrdersTab projectId={project.id} />
+          </TabsContent>
+          
           <TabsContent value="notes">
             <ProjectNotesTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="notifications">
+            <NotificationsTab projectId={project.id} />
+          </TabsContent>
+          
+          <TabsContent value="aiaBilling">
+            <AIABillingTab projectId={project.id} />
           </TabsContent>
           
           <TabsContent value="scopeWip">
@@ -267,54 +291,6 @@ const ProjectDetails = () => {
           
           <TabsContent value="utilityMeetings">
             <UtilityMeetingsTab projectId={project.id} />
-          </TabsContent>
-          
-          <TabsContent value="notifications">
-            <NotificationsTab projectId={project.id} />
-          </TabsContent>
-          
-          <TabsContent value="aiaBilling">
-            <AIABillingTab projectId={project.id} />
-          </TabsContent>
-          
-          <TabsContent value="changeOrders">
-            <ChangeOrdersTab projectId={project.id} />
-          </TabsContent>
-          
-          <TabsContent value="submittals">
-            <div className="text-center py-12">
-              <h2 className="text-lg font-medium">Submittals Module</h2>
-              <p className="text-muted-foreground mt-1">
-                View and manage project submittals
-              </p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="rfis">
-            <div className="text-center py-12">
-              <h2 className="text-lg font-medium">RFIs Module</h2>
-              <p className="text-muted-foreground mt-1">
-                View and manage Request for Information documents
-              </p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="schedule">
-            <div className="text-center py-12">
-              <h2 className="text-lg font-medium">Project Schedule</h2>
-              <p className="text-muted-foreground mt-1">
-                View and manage the project schedule and timeline
-              </p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="documents">
-            <div className="text-center py-12">
-              <h2 className="text-lg font-medium">Project Documents</h2>
-              <p className="text-muted-foreground mt-1">
-                Access and manage all project related documents
-              </p>
-            </div>
           </TabsContent>
         </div>
       </Tabs>
