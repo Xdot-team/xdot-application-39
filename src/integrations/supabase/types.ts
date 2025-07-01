@@ -94,6 +94,7 @@ export type Database = {
       documents: {
         Row: {
           category: string | null
+          description: string | null
           file_name: string
           file_size: number
           file_url: string
@@ -106,6 +107,7 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          description?: string | null
           file_name: string
           file_size: number
           file_url: string
@@ -118,6 +120,7 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          description?: string | null
           file_name?: string
           file_size?: number
           file_url?: string
