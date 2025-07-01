@@ -1,5 +1,5 @@
-
 import { supabase } from '@/integrations/supabase/client';
+import { transformDatabaseProject } from '@/utils/projectTransforms';
 
 // Project services
 export const projectService = {
@@ -11,7 +11,9 @@ export const projectService = {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      
+      // Transform database results to match Project interface
+      return (data || []).map(transformDatabaseProject);
     } catch (error) {
       console.error('Error fetching projects:', error);
       return [];
@@ -27,7 +29,7 @@ export const projectService = {
         .single();
       
       if (error) throw error;
-      return data;
+      return data ? transformDatabaseProject(data) : null;
     } catch (error) {
       console.error('Error fetching project:', error);
       return null;
