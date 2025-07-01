@@ -62,44 +62,79 @@ export const documentService = {
 
   async upload(file: File, projectId: string, metadata: any = {}): Promise<Document> {
     try {
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `projects/${projectId}/${fileName}`;
+      // Validate file
+      if (!file || file.size === 0) {
+        throw new Error('Invalid file selected');
+      }
+
+      // Check file size (max 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        throw new Error('File size must be less than 50MB');
+      }
+
+      // Generate unique filename with timestamp
+      const timestamp = Date.now();
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const fileName = `${timestamp}_${sanitizedName}`;
+      const filePath = `projects/${projectId}/documents/${fileName}`;
+
+      console.log('Uploading file:', { fileName, filePath, size: file.size });
 
       // Upload file to storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('project-documents')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
+          contentType: file.type
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
 
       // Get public URL
       const { data: urlData } = supabase.storage
         .from('project-documents')
         .getPublicUrl(filePath);
 
+      if (!urlData.publicUrl) {
+        throw new Error('Failed to get file URL');
+      }
+
       // Insert document metadata
+      const documentData = {
+        project_id: projectId,
+        name: metadata.name || file.name,
+        file_name: file.name,
+        file_url: urlData.publicUrl,
+        file_size: file.size,
+        category: metadata.category || 'document',
+        tags: metadata.tags || [],
+        version: metadata.version || '1.0',
+        description: metadata.description || ''
+      };
+
+      console.log('Inserting document metadata:', documentData);
+
       const { data: docData, error: docError } = await supabase
         .from('documents')
-        .insert({
-          project_id: projectId,
-          name: metadata.name || file.name,
-          file_name: file.name,
-          file_url: urlData.publicUrl,
-          file_size: file.size,
-          category: metadata.category || 'document',
-          tags: metadata.tags || [],
-          version: metadata.version || '1.0',
-          description: metadata.description || ''
-        })
+        .insert(documentData)
         .select()
         .single();
 
-      if (docError) throw docError;
+      if (docError) {
+        console.error('Database error:', docError);
+        // Clean up uploaded file if database insert fails
+        await supabase.storage
+          .from('project-documents')
+          .remove([filePath]);
+        throw new Error(`Failed to save document: ${docError.message}`);
+      }
+
+      console.log('Document uploaded successfully:', docData);
       return docData;
     } catch (error) {
       console.error('Error uploading document:', error);
@@ -109,10 +144,15 @@ export const documentService = {
 
   async createVersion(documentId: string, file: File, version: string, notes: string = ''): Promise<DocumentVersion> {
     try {
+      // Validate inputs
+      if (!file || !version.trim()) {
+        throw new Error('File and version are required');
+      }
+
       // Get original document
       const { data: originalDoc, error: fetchError } = await supabase
         .from('documents')
-        .select('project_id, name')
+        .select('project_id, name, file_name')
         .eq('id', documentId)
         .single();
 
@@ -120,14 +160,18 @@ export const documentService = {
       if (!originalDoc) throw new Error('Document not found');
 
       // Generate unique filename for new version
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_v${version}_${originalDoc.name}.${fileExt}`;
+      const timestamp = Date.now();
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const baseName = originalDoc.name.replace(/\.[^/.]+$/, "");
+      const fileName = `${timestamp}_${baseName}_v${version}.${fileExt}`;
       const filePath = `projects/${originalDoc.project_id}/versions/${fileName}`;
 
       // Upload new version to storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('project-documents')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          contentType: file.type
+        });
 
       if (uploadError) throw uploadError;
 
@@ -151,7 +195,7 @@ export const documentService = {
 
       if (versionError) throw versionError;
 
-      // Update main document version
+      // Update main document version and file reference
       await supabase
         .from('documents')
         .update({ 
@@ -213,16 +257,22 @@ export const documentService = {
       if (fetchError) throw fetchError;
       if (!doc) throw new Error('Document not found');
 
-      // Extract file path from URL
-      const urlParts = doc.file_url.split('/');
-      const bucketIndex = urlParts.findIndex(part => part === 'project-documents');
-      if (bucketIndex !== -1 && bucketIndex < urlParts.length - 1) {
-        const filePath = urlParts.slice(bucketIndex + 1).join('/');
+      // Extract file path from URL for deletion
+      const url = new URL(doc.file_url);
+      const pathParts = url.pathname.split('/');
+      const bucketIndex = pathParts.findIndex(part => part === 'project-documents');
+      
+      if (bucketIndex !== -1 && bucketIndex < pathParts.length - 1) {
+        const filePath = pathParts.slice(bucketIndex + 1).join('/');
         
         // Delete from storage
-        await supabase.storage
+        const { error: storageError } = await supabase.storage
           .from('project-documents')
           .remove([filePath]);
+          
+        if (storageError) {
+          console.warn('Failed to delete file from storage:', storageError);
+        }
       }
 
       // Delete document versions first
@@ -247,11 +297,16 @@ export const documentService = {
 
   async searchDocuments(projectId: string, query: string): Promise<Document[]> {
     try {
+      if (!query.trim()) {
+        return this.getByProjectId(projectId);
+      }
+
+      const searchTerm = `%${query.trim()}%`;
       const { data, error } = await supabase
         .from('documents')
         .select('*')
         .eq('project_id', projectId)
-        .or(`name.ilike.%${query}%,description.ilike.%${query}%,file_name.ilike.%${query}%`)
+        .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},file_name.ilike.${searchTerm}`)
         .order('uploaded_at', { ascending: false });
       
       if (error) throw error;
@@ -276,6 +331,46 @@ export const documentService = {
     } catch (error) {
       console.error('Error fetching documents by category:', error);
       return [];
+    }
+  },
+
+  async getAllDocuments(): Promise<Document[]> {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select(`
+          *,
+          projects!inner(name)
+        `)
+        .order('uploaded_at', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching all documents:', error);
+      return [];
+    }
+  },
+
+  // Enhanced download method with proper error handling
+  async downloadDocument(fileUrl: string, fileName: string): Promise<void> {
+    try {
+      // Create download link
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = fileName;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      console.log('Download initiated for:', fileName);
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      throw new Error('Failed to download document');
     }
   }
 };
