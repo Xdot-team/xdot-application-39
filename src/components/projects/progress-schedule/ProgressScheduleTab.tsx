@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProgressScheduleChart } from "./ProgressScheduleChart";
+import ProgressScheduleChart from "./ProgressScheduleChart";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProgressScheduleTabProps {
@@ -44,18 +44,10 @@ const ProgressScheduleTab = ({ projectId }: ProgressScheduleTabProps) => {
               <TabsTrigger value="cost-breakdown">Cost Breakdown</TabsTrigger>
             </TabsList>
             <TabsContent value="planned-vs-actual" className="pt-4">
-              <ProgressScheduleChart 
-                projectId={projectId} 
-                timeframe={timeframe}
-                chartType="planned-vs-actual"
-              />
+              <ProgressScheduleChart projectId={projectId} />
             </TabsContent>
             <TabsContent value="cost-breakdown" className="pt-4">
-              <ProgressScheduleChart 
-                projectId={projectId} 
-                timeframe={timeframe}
-                chartType="cost-breakdown"
-              />
+              <ProgressScheduleChart projectId={projectId} />
             </TabsContent>
           </Tabs>
         </CardContent>

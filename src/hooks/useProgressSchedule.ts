@@ -21,14 +21,14 @@ export const useProgressScheduleData = (projectId: string) => {
     queryFn: async () => {
       if (!project) return [];
       
-      const startDate = project.start_date ? new Date(project.start_date) : new Date();
-      const endDate = project.end_date ? new Date(project.end_date) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+      const startDate = project.startDate ? new Date(project.startDate) : new Date();
+      const endDate = project.endDate ? new Date(project.endDate) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
       const currentDate = new Date();
       
       const totalDuration = endDate.getTime() - startDate.getTime();
-      const budget = project.budget_allocated || project.contractValue || 0;
-      const currentProgress = project.progress_percentage || 0;
-      const budgetSpent = project.budget_spent || 0;
+      const budget = project.budgetAllocated || project.contractValue || 0;
+      const currentProgress = project.progressPercentage || 0;
+      const budgetSpent = project.budgetSpent || 0;
       
       // Generate weekly data points
       const data: ProgressScheduleData[] = [];

@@ -16,6 +16,9 @@ export interface Project {
   totalTasks: number;
   rfiCount: number;
   delayDays: number;
+  budgetAllocated?: number;
+  budgetSpent?: number;
+  progressPercentage?: number;
 }
 
 export interface RFI {

@@ -18,7 +18,10 @@ export const transformDatabaseProject = (dbProject: any): Project => {
     completedTasks: dbProject.completed_tasks || 0,
     totalTasks: dbProject.total_tasks || 0,
     rfiCount: dbProject.rfi_count || 0,
-    delayDays: dbProject.delay_days || 0
+    delayDays: dbProject.delay_days || 0,
+    budgetAllocated: dbProject.budget_allocated,
+    budgetSpent: dbProject.budget_spent || 0,
+    progressPercentage: dbProject.progress_percentage || 0
   };
 };
 

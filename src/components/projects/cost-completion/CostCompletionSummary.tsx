@@ -31,9 +31,9 @@ const CostCompletionSummary = ({ projectId }: CostCompletionSummaryProps) => {
   useEffect(() => {
     if (project && budgetItems) {
       const originalBudget = project.contractValue || 0;
-      const budgetAllocated = project.budget_allocated || originalBudget;
-      const budgetSpent = project.budget_spent || 0;
-      const progressPercentage = project.progress_percentage || 0;
+      const budgetAllocated = project.budgetAllocated || originalBudget;
+      const budgetSpent = project.budgetSpent || 0;
+      const progressPercentage = project.progressPercentage || 0;
       
       // Calculate totals from budget items
       const totalBudgeted = budgetItems.reduce((sum, item) => sum + (item.budgeted_amount || 0), 0);
