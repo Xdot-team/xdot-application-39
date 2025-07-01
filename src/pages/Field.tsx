@@ -1,692 +1,331 @@
-import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
-import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
-import { FileText, Search, MapPin, CheckSquare, ClipboardCheck, Truck, Clock, Zap, Users } from 'lucide-react';
-import { PunchlistItem, WorkOrder, UtilityAdjustment } from '@/types/field';
-import { FieldMap } from '@/components/field/FieldMap';
+
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { EnhancedPunchlistManager } from '@/components/field/EnhancedPunchlistManager';
+import { InteractiveFieldMap } from '@/components/field/InteractiveFieldMap';
 import { DispatchManager } from '@/components/field/DispatchManager';
 import { SiteWalkthrough } from '@/components/field/SiteWalkthrough';
 import { SubcontractorManagement } from '@/components/field/SubcontractorManagement';
-
-// Mock data 
-const mockPunchlistItems: PunchlistItem[] = [
-  {
-    id: "PL-2001",
-    project: "GA-400 Repaving",
-    location: "Station 14+50",
-    description: "Edge of pavement showing raveling",
-    assignedTo: "Paving Crew A",
-    dueDate: "2025-05-20",
-    status: 'open',
-    severity: 'minor'
-  },
-  {
-    id: "PL-2002",
-    project: "GA-400 Repaving",
-    location: "Station 23+75",
-    description: "Drainage inlet not at proper elevation",
-    assignedTo: "Drainage Crew",
-    dueDate: "2025-05-19",
-    status: 'in-progress',
-    severity: 'major'
-  },
-  {
-    id: "PL-2003",
-    project: "I-85 Bridge Repair",
-    location: "Abutment B",
-    description: "Concrete spalling not fully removed",
-    assignedTo: "Bridge Crew B",
-    dueDate: "2025-05-18",
-    status: 'closed',
-    severity: 'major'
-  },
-  {
-    id: "PL-2004",
-    project: "I-85 Bridge Repair",
-    location: "Expansion Joint #3",
-    description: "Joint material improperly installed",
-    assignedTo: "Bridge Crew A",
-    dueDate: "2025-05-17",
-    status: 'open',
-    severity: 'critical'
-  },
-  {
-    id: "PL-2005",
-    project: "Peachtree Street Improvements",
-    location: "Intersection with 10th St",
-    description: "ADA ramp slope exceeds 8.33%",
-    assignedTo: "Concrete Crew",
-    dueDate: "2025-05-18",
-    status: 'open',
-    severity: 'critical'
-  },
-  {
-    id: "PL-2006",
-    project: "Peachtree Street Improvements",
-    location: "Mid-block crossing",
-    description: "Tactile warning strip not aligned properly",
-    assignedTo: "Concrete Crew",
-    dueDate: "2025-05-19",
-    status: 'in-progress',
-    severity: 'minor'
-  },
-  {
-    id: "PL-2007",
-    project: "Gwinnett County Sidewalk Project",
-    location: "Station 5+25",
-    description: "Sidewalk width less than 5 feet",
-    assignedTo: "Concrete Crew B",
-    dueDate: "2025-05-22",
-    status: 'open',
-    severity: 'major'
-  },
-  {
-    id: "PL-2008",
-    project: "Gwinnett County Sidewalk Project",
-    location: "Station 10+50",
-    description: "Tree root damage to new sidewalk",
-    assignedTo: "Landscape Crew",
-    dueDate: "2025-05-21",
-    status: 'in-progress',
-    severity: 'minor'
-  },
-  {
-    id: "PL-2009",
-    project: "Augusta Highway Extension",
-    location: "Station 42+00",
-    description: "Guardrail height incorrect",
-    assignedTo: "Guardrail Crew",
-    dueDate: "2025-05-17",
-    status: 'closed',
-    severity: 'major'
-  },
-  {
-    id: "PL-2010",
-    project: "Augusta Highway Extension",
-    location: "Culvert #4",
-    description: "Erosion control measures insufficient",
-    assignedTo: "Erosion Control Team",
-    dueDate: "2025-05-16",
-    status: 'closed',
-    severity: 'critical'
-  }
-];
-
-const mockWorkOrders: WorkOrder[] = [
-  {
-    id: "WO-3001",
-    project: "GA-400 Repaving",
-    description: "Mill and overlay section from Station 10+00 to 20+00",
-    assignedTo: "Paving Crew A",
-    priority: 'high',
-    dueDate: "2025-05-18",
-    status: 'in-progress'
-  },
-  {
-    id: "WO-3002",
-    project: "I-85 Bridge Repair",
-    description: "Replace expansion joints at north abutment",
-    assignedTo: "Bridge Crew A",
-    priority: 'medium',
-    dueDate: "2025-05-20",
-    status: 'pending'
-  },
-  {
-    id: "WO-3003",
-    project: "Peachtree Street Improvements",
-    description: "Install new traffic signal at 10th Street intersection",
-    assignedTo: "Traffic Signal Crew",
-    priority: 'high',
-    dueDate: "2025-05-25",
-    status: 'pending'
-  },
-  {
-    id: "WO-3004",
-    project: "Gwinnett County Sidewalk Project",
-    description: "Pour concrete for sidewalk section 3",
-    assignedTo: "Concrete Crew B",
-    priority: 'medium',
-    dueDate: "2025-05-19",
-    status: 'completed'
-  },
-  {
-    id: "WO-3005",
-    project: "Augusta Highway Extension",
-    description: "Install drainage structures from Station 40+00 to 50+00",
-    assignedTo: "Drainage Crew",
-    priority: 'low',
-    dueDate: "2025-05-30",
-    status: 'in-progress'
-  }
-];
-
-const mockUtilityAdjustments: UtilityAdjustment[] = [
-  {
-    id: "UA-4001",
-    project: "GA-400 Repaving",
-    utility: "water",
-    location: "Station 25+00",
-    scheduledDate: "2025-05-18",
-    contactName: "Michael Johnson",
-    contactPhone: "404-555-1234",
-    notes: "Water main lowering required for drainage installation",
-    status: "scheduled"
-  },
-  {
-    id: "UA-4002",
-    project: "Peachtree Street Improvements",
-    utility: "electric",
-    location: "Intersection with Ponce de Leon",
-    scheduledDate: "2025-05-22",
-    contactName: "Sarah Williams",
-    contactPhone: "404-555-5678",
-    notes: "Power pole relocation needed for sidewalk widening",
-    status: "in-progress"
-  },
-  {
-    id: "UA-4003",
-    project: "Gwinnett County Sidewalk Project",
-    utility: "gas",
-    location: "Station 12+50",
-    scheduledDate: "2025-05-25",
-    contactName: "Robert Davis",
-    contactPhone: "770-555-9876",
-    notes: "Gas line depth verification needed before excavation",
-    status: "scheduled"
-  },
-  {
-    id: "UA-4004",
-    project: "Augusta Highway Extension",
-    utility: "telecom",
-    location: "Station 30+25",
-    scheduledDate: "2025-05-20",
-    contactName: "Jennifer Smith",
-    contactPhone: "706-555-4321",
-    notes: "Fiber optic line protection during culvert installation",
-    status: "delayed"
-  },
-  {
-    id: "UA-4005",
-    project: "I-85 Bridge Repair",
-    utility: "sewer",
-    location: "South approach",
-    scheduledDate: "2025-05-19",
-    contactName: "Thomas Brown",
-    contactPhone: "404-555-8765",
-    notes: "Temporary bypass pumping during manhole adjustment",
-    status: "completed"
-  }
-];
+import { FieldDataCollectionDialog } from '@/components/field/FieldDataCollectionDialog';
+import { 
+  usePunchlistItems, 
+  useWorkOrders, 
+  useFieldWorkers, 
+  useSubcontractors,
+  useUtilityAdjustments,
+  useEquipmentTracking,
+  useDispatchAssignments
+} from '@/hooks/useFieldOperations';
+import { 
+  MapPin, 
+  AlertTriangle, 
+  Wrench, 
+  Users, 
+  Building, 
+  Calendar,
+  Truck,
+  ClipboardList,
+  Activity,
+  TrendingUp
+} from 'lucide-react';
 
 const Field = () => {
-  const [punchlistItems, setPunchlistItems] = useState<PunchlistItem[]>(mockPunchlistItems);
-  const [workOrders, setWorkOrders] = useState<WorkOrder[]>(mockWorkOrders);
-  const [utilityAdjustments, setUtilityAdjustments] = useState<UtilityAdjustment[]>(mockUtilityAdjustments);
-  const [searchTerm, setSearchTerm] = useState("");
-  const { authState } = useAuth();
+  const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
   
-  // Filter data based on search term
-  const filteredPunchlistItems = punchlistItems.filter(item => 
-    item.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  const filteredWorkOrders = workOrders.filter(order => 
-    order.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.assignedTo.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Get all field data
+  const { punchlistItems, isLoading: punchlistLoading } = usePunchlistItems(selectedProjectId);
+  const { workOrders, isLoading: workOrdersLoading } = useWorkOrders(selectedProjectId);
+  const { fieldWorkers, activeWorkers } = useFieldWorkers();
+  const { subcontractors, activeSubcontractors } = useSubcontractors();
+  const { utilityAdjustments } = useUtilityAdjustments(selectedProjectId);
+  const { equipment } = useEquipmentTracking(selectedProjectId);
+  const { assignments } = useDispatchAssignments(selectedProjectId);
 
-  const filteredUtilityAdjustments = utilityAdjustments.filter(adjustment => 
-    adjustment.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    adjustment.utility.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    adjustment.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    adjustment.contactName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  // Get counts for statistics
-  const openPunchlistItems = punchlistItems.filter(item => item.status === 'open').length;
-  const pendingWorkOrders = workOrders.filter(order => order.status === 'pending').length;
-  const scheduledUtilityAdjustments = utilityAdjustments.filter(adj => adj.status === 'scheduled').length;
-  
-  // Action handlers
-  const handleAddPunchlistItem = () => {
-    toast.info("Punchlist management will be available once Supabase integration is set up.");
-  };
-  
-  const handleCreateWorkOrder = () => {
-    toast.info("Work order creation will be available once Supabase integration is set up.");
+  // Calculate statistics
+  const stats = {
+    totalPunchlistItems: punchlistItems.length,
+    openPunchlistItems: punchlistItems.filter((item: any) => item.status === 'open').length,
+    criticalIssues: punchlistItems.filter((item: any) => item.severity === 'critical').length,
+    activeWorkOrders: workOrders.filter((order: any) => order.status === 'in-progress').length,
+    totalWorkOrders: workOrders.length,
+    activeWorkers: activeWorkers.length,
+    totalWorkers: fieldWorkers.length,
+    activeSubcontractors: activeSubcontractors.length,
+    equipmentInUse: equipment.filter((eq: any) => eq.status === 'in-use').length,
+    totalEquipment: equipment.length,
+    pendingUtilityWork: utilityAdjustments.filter((ua: any) => ua.status === 'scheduled').length,
+    activeAssignments: assignments.filter((a: any) => a.status === 'in-progress').length
   };
 
-  const handleScheduleUtilityAdjustment = () => {
-    toast.info("Utility adjustment scheduling will be available once Supabase integration is set up.");
-  };
-  
-  // Status badge renderer
-  const renderStatusBadge = (status: string) => {
-    let badgeClasses = "";
-    
-    switch(status) {
-      case 'open':
-      case 'pending':
-      case 'scheduled':
-        badgeClasses = "bg-yellow-100 text-yellow-800";
-        break;
-      case 'in-progress':
-        badgeClasses = "bg-blue-100 text-blue-800";
-        break;
-      case 'closed':
-      case 'completed':
-        badgeClasses = "bg-green-100 text-green-800";
-        break;
-      case 'needs-review':
-      case 'delayed':
-        badgeClasses = "bg-red-100 text-red-800";
-        break;
-      default:
-        badgeClasses = "bg-gray-100 text-gray-800";
-    }
-    
-    return (
-      <div className={cn(
-        "w-fit rounded-full px-2 py-1 text-xs font-medium",
-        badgeClasses
-      )}>
-        {status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-      </div>
-    );
-  };
-  
-  // Priority badge renderer
-  const renderPriorityBadge = (priority: 'low' | 'medium' | 'high') => {
-    let badgeClasses = "";
-    
-    switch(priority) {
-      case 'low':
-        badgeClasses = "bg-blue-100 text-blue-800";
-        break;
-      case 'medium':
-        badgeClasses = "bg-yellow-100 text-yellow-800";
-        break;
-      case 'high':
-        badgeClasses = "bg-red-100 text-red-800";
-        break;
-      default:
-        badgeClasses = "bg-gray-100 text-gray-800";
-    }
-    
-    return (
-      <div className={cn(
-        "w-fit rounded-full px-2 py-1 text-xs font-medium",
-        badgeClasses
-      )}>
-        {priority.charAt(0).toUpperCase() + priority.slice(1)}
-      </div>
-    );
-  };
-  
-  // Utility type badge renderer
-  const renderUtilityBadge = (utility: string) => {
-    let badgeClasses = "";
-    
-    switch(utility) {
-      case 'water':
-        badgeClasses = "bg-blue-100 text-blue-800";
-        break;
-      case 'gas':
-        badgeClasses = "bg-yellow-100 text-yellow-800";
-        break;
-      case 'electric':
-        badgeClasses = "bg-amber-100 text-amber-800";
-        break;
-      case 'telecom':
-        badgeClasses = "bg-purple-100 text-purple-800";
-        break;
-      case 'sewer':
-        badgeClasses = "bg-green-100 text-green-800";
-        break;
-      default:
-        badgeClasses = "bg-gray-100 text-gray-800";
-    }
-    
-    return (
-      <div className={cn(
-        "w-fit rounded-full px-2 py-1 text-xs font-medium",
-        badgeClasses
-      )}>
-        {utility.charAt(0).toUpperCase() + utility.slice(1)}
-      </div>
-    );
-  };
-  
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Field</h1>
-          <p className="text-muted-foreground">Manage site walkthroughs, punchlists, utility adjustments, and field operations</p>
-        </div>
-      </div>
-      
-      {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardDescription>Open Punchlist Items</CardDescription>
-              <CardTitle className="text-2xl">{openPunchlistItems}</CardTitle>
-            </div>
-            <CheckSquare className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Across all active projects</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardDescription>Pending Work Orders</CardDescription>
-              <CardTitle className="text-2xl">{pendingWorkOrders}</CardTitle>
-            </div>
-            <ClipboardCheck className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Ready for assignment</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardDescription>Scheduled Utilities</CardDescription>
-              <CardTitle className="text-2xl">{scheduledUtilityAdjustments}</CardTitle>
-            </div>
-            <Zap className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Upcoming utility adjustments</p>
-          </CardContent>
-        </Card>
-      </div>
+  const isLoading = punchlistLoading || workOrdersLoading;
 
-      {/* Field Map */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>On-site Tracking</CardTitle>
-          <CardDescription>Real-time location of workers and equipment</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80 rounded-md overflow-hidden border">
-            <FieldMap />
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Loading field data...</p>
           </div>
-        </CardContent>
-      </Card>
-      
-      {/* Tabs for different tools */}
-      <Tabs defaultValue="site-walkthrough" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="site-walkthrough">Site Walkthrough</TabsTrigger>
-          <TabsTrigger value="punchlist">Punchlist</TabsTrigger>
-          <TabsTrigger value="work-orders">Work Orders</TabsTrigger>
-          <TabsTrigger value="utility-adjustments">Utility Adjustments</TabsTrigger>
-          <TabsTrigger value="subcontractors">Subcontractors</TabsTrigger>
-          <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
-        </TabsList>
-        
-        {/* Site Walkthrough Tab */}
-        <TabsContent value="site-walkthrough">
-          <SiteWalkthrough />
-        </TabsContent>
-        
-        {/* Punchlist Tab */}
-        <TabsContent value="punchlist">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Punchlist Items</CardTitle>
-                <CardDescription>Track defects and corrections needed</CardDescription>
-              </div>
-              <Button onClick={handleAddPunchlistItem}>
-                <CheckSquare className="mr-2 h-4 w-4" />
-                Add Item
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search punchlist items..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              {/* Punchlist Table */}
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Assigned To</TableHead>
-                      <TableHead>Due Date</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPunchlistItems.length > 0 ? (
-                      filteredPunchlistItems.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>{item.id}</TableCell>
-                          <TableCell>{item.project}</TableCell>
-                          <TableCell>{item.location}</TableCell>
-                          <TableCell className="max-w-xs truncate">{item.description}</TableCell>
-                          <TableCell>{item.assignedTo}</TableCell>
-                          <TableCell>{item.dueDate}</TableCell>
-                          <TableCell>{renderStatusBadge(item.status)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No punchlist items found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        {/* Work Orders Tab */}
-        <TabsContent value="work-orders">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Work Orders</CardTitle>
-                <CardDescription>Manage and assign tasks to field crews</CardDescription>
-              </div>
-              <Button onClick={handleCreateWorkOrder}>
-                <FileText className="mr-2 h-4 w-4" />
-                Create Work Order
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search work orders..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              {/* Work Orders Table */}
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Assigned To</TableHead>
-                      <TableHead>Priority</TableHead>
-                      <TableHead>Due Date</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredWorkOrders.length > 0 ? (
-                      filteredWorkOrders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell>{order.id}</TableCell>
-                          <TableCell>{order.project}</TableCell>
-                          <TableCell className="max-w-xs truncate">{order.description}</TableCell>
-                          <TableCell>{order.assignedTo}</TableCell>
-                          <TableCell>{renderPriorityBadge(order.priority)}</TableCell>
-                          <TableCell>{order.dueDate}</TableCell>
-                          <TableCell>{renderStatusBadge(order.status)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No work orders found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        </div>
+      </MainLayout>
+    );
+  }
 
-        {/* Utility Adjustments Tab */}
-        <TabsContent value="utility-adjustments">
+  return (
+    <MainLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Field Operations</h1>
+            <p className="text-muted-foreground">
+              Manage field activities, track progress, and coordinate teams
+            </p>
+          </div>
+          <FieldDataCollectionDialog />
+        </div>
+
+        {/* Overview Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Utility Adjustments</CardTitle>
-                <CardDescription>Schedule and track utility relocations and adjustments</CardDescription>
-              </div>
-              <Button onClick={handleScheduleUtilityAdjustment}>
-                <Zap className="mr-2 h-4 w-4" />
-                Schedule Adjustment
-              </Button>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Issues</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search utility adjustments..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              {/* Utility Adjustments Table */}
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Utility</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Scheduled Date</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredUtilityAdjustments.length > 0 ? (
-                      filteredUtilityAdjustments.map((adjustment) => (
-                        <TableRow key={adjustment.id}>
-                          <TableCell>{adjustment.id}</TableCell>
-                          <TableCell>{adjustment.project}</TableCell>
-                          <TableCell>{renderUtilityBadge(adjustment.utility)}</TableCell>
-                          <TableCell>{adjustment.location}</TableCell>
-                          <TableCell>{adjustment.scheduledDate}</TableCell>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{adjustment.contactName}</p>
-                              <p className="text-xs text-muted-foreground">{adjustment.contactPhone}</p>
-                            </div>
-                          </TableCell>
-                          <TableCell>{renderStatusBadge(adjustment.status)}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4">
-                          No utility adjustments found matching your search.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-            <CardFooter className="border-t px-6 py-4 flex justify-between items-center">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredUtilityAdjustments.length} of {utilityAdjustments.length} utility adjustments
+              <div className="text-2xl font-bold">{stats.openPunchlistItems}</div>
+              <p className="text-xs text-muted-foreground">
+                {stats.criticalIssues} critical
               </p>
-              <p className="text-xs text-muted-foreground italic">
-                Construct for Centuries
-              </p>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        {/* Subcontractors Tab */}
-        <TabsContent value="subcontractors">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Subcontractors</CardTitle>
-                <CardDescription>Manage subcontractors and their contracts</CardDescription>
+              <div className="flex items-center gap-1 mt-2">
+                <Badge variant={stats.criticalIssues > 0 ? "destructive" : "secondary"}>
+                  {stats.totalPunchlistItems} total
+                </Badge>
               </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <SubcontractorManagement />
             </CardContent>
           </Card>
-        </TabsContent>
 
-        {/* Dispatch Tab */}
-        <TabsContent value="dispatch">
-          <DispatchManager />
-        </TabsContent>
-      </Tabs>
-      
-      <div className="text-center text-xs text-muted-foreground mt-8">
-        <p>For full functionality including location tracking, dispatch management, and offline support, Supabase integration is required.</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Work Orders</CardTitle>
+              <Wrench className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.activeWorkOrders}</div>
+              <p className="text-xs text-muted-foreground">
+                in progress
+              </p>
+              <div className="flex items-center gap-1 mt-2">
+                <Badge variant="outline">
+                  {stats.totalWorkOrders} total
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Field Workers</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.activeWorkers}</div>
+              <p className="text-xs text-muted-foreground">
+                currently active
+              </p>
+              <div className="flex items-center gap-1 mt-2">
+                <Badge variant="outline">
+                  {stats.totalWorkers} total
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Equipment</CardTitle>
+              <Truck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.equipmentInUse}</div>
+              <p className="text-xs text-muted-foreground">
+                currently in use
+              </p>
+              <div className="flex items-center gap-1 mt-2">
+                <Badge variant="outline">
+                  {stats.totalEquipment} total
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <Activity className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Live Tracking</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {stats.activeAssignments} active assignments
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Productivity</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {Math.round((stats.activeWorkOrders / Math.max(stats.totalWorkOrders, 1)) * 100)}% completion rate
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                  <Calendar className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Upcoming</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {stats.pendingUtilityWork} utility adjustments
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="map" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="map" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Map
+            </TabsTrigger>
+            <TabsTrigger value="punchlist" className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              Punchlist
+            </TabsTrigger>
+            <TabsTrigger value="dispatch" className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              Dispatch
+            </TabsTrigger>
+            <TabsTrigger value="walkthrough" className="flex items-center gap-2">
+              <ClipboardList className="h-4 w-4" />
+              Walkthrough
+            </TabsTrigger>
+            <TabsTrigger value="subcontractors" className="flex items-center gap-2">
+              <Building className="h-4 w-4" />
+              Subcontractors
+            </TabsTrigger>
+            <TabsTrigger value="workers" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Workers
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="map" className="space-y-4">
+            <InteractiveFieldMap projectId={selectedProjectId} />
+          </TabsContent>
+
+          <TabsContent value="punchlist" className="space-y-4">
+            <EnhancedPunchlistManager projectId={selectedProjectId} />
+          </TabsContent>
+
+          <TabsContent value="dispatch" className="space-y-4">
+            <DispatchManager />
+          </TabsContent>
+
+          <TabsContent value="walkthrough" className="space-y-4">
+            <SiteWalkthrough />
+          </TabsContent>
+
+          <TabsContent value="subcontractors" className="space-y-4">
+            <SubcontractorManagement />
+          </TabsContent>
+
+          <TabsContent value="workers" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {fieldWorkers.map((worker: any) => (
+                <Card key={worker.id}>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-lg">{worker.name}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{worker.role}</p>
+                      </div>
+                      <Badge variant={worker.status === 'active' ? 'default' : 'secondary'}>
+                        {worker.status}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span>Employee ID:</span>
+                        <span className="font-mono">{worker.employee_id}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span>Specialties:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {worker.specialty?.slice(0, 2).map((spec: string, index: number) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {spec}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      {worker.contact_phone && (
+                        <div className="flex justify-between items-center text-sm">
+                          <span>Phone:</span>
+                          <span>{worker.contact_phone}</span>
+                        </div>
+                      )}
+                      {worker.current_location && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <MapPin className="h-3 w-3" />
+                          <span className="text-muted-foreground">Location tracked</span>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            {fieldWorkers.length === 0 && (
+              <div className="text-center py-8">
+                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium">No field workers found</h3>
+                <p className="text-muted-foreground">
+                  Field workers will appear here once they're added to the system
+                </p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
