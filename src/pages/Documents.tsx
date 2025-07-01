@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Search, FolderOpen, FileText, Upload, Download, Clock, Star, Book, Eye, AlertCircle } from "lucide-react";
 import { LibraryView } from "@/components/documents/LibraryView";
+import { DocumentUploadDialog } from "@/components/documents/DocumentUploadDialog";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { documentService } from "@/services/documentService";
@@ -18,7 +19,7 @@ const Documents = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch all documents and projects
-  const { data: allDocuments = [], isLoading: documentsLoading, error: documentsError } = useQuery({
+  const { data: allDocuments = [], isLoading: documentsLoading, error: documentsError, refetch: refetchDocuments } = useQuery({
     queryKey: ['all-documents'],
     queryFn: () => documentService.getAllDocuments(),
   });
@@ -94,6 +95,10 @@ const Documents = () => {
     window.open(fileUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const handleUploadComplete = () => {
+    refetchDocuments();
+  };
+
   if (documentsLoading || projectsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -136,6 +141,7 @@ const Documents = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <DocumentUploadDialog onUploadComplete={handleUploadComplete} />
         </div>
       </div>
 
