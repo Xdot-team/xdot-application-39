@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { requireAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
-import { generateMockProjects } from '@/data/mockProjects';
+import { useProjects } from '@/hooks/useProjects';
 import ProjectHeader from '@/components/projects/ProjectHeader';
 import ProjectStatusOverview from '@/components/projects/ProjectStatusOverview';
 import ProjectTabsContainer from '@/components/projects/ProjectTabsContainer';
@@ -10,14 +10,30 @@ import ProjectsGrid from '@/components/projects/ProjectsGrid';
 
 const Projects = () => {
   const navigate = useNavigate();
-  const projects = generateMockProjects();
+  const { data: projects = [], isLoading, error } = useProjects();
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse">Loading projects...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-600">Error loading projects: {error.message}</div>
+      </div>
+    );
+  }
   
   const activeProjects = projects.filter(p => p.status === 'active');
   const completedProjects = projects.filter(p => p.status === 'completed');
   const upcomingProjects = projects.filter(p => p.status === 'upcoming');
   
   // Use the first project ID as a sample for the ProjectTabsContainer
-  const sampleProjectId = activeProjects.length > 0 ? activeProjects[0].id : 'sample-project-1';
+  const sampleProjectId = activeProjects.length > 0 ? activeProjects[0].id : (projects.length > 0 ? projects[0].id : 'sample-project-1');
   
   return (
     <div className="space-y-6">
@@ -37,9 +53,17 @@ const Projects = () => {
       />
       
       {/* Project Dashboard Section - No heading */}
-      <div className="mt-6">
-        <ProjectTabsContainer projectId={sampleProjectId} />
-      </div>
+      {projects.length > 0 && (
+        <div className="mt-6">
+          <ProjectTabsContainer projectId={sampleProjectId} />
+        </div>
+      )}
+
+      {projects.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No projects found. Create your first project to get started.</p>
+        </div>
+      )}
     </div>
   );
 };
