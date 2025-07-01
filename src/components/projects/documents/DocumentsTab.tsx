@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useDocuments, useUploadDocument, useDeleteDocument } from '@/hooks/useDocuments';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -99,6 +98,15 @@ const DocumentsTab = ({ projectId }: DocumentsTabProps) => {
         toast.error('Failed to delete document');
       }
     }
+  };
+
+  const handleDownload = (fileUrl: string, fileName: string) => {
+    const link = window.document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileName;
+    window.document.body.appendChild(link);
+    link.click();
+    window.document.body.removeChild(link);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -288,12 +296,7 @@ const DocumentsTab = ({ projectId }: DocumentsTabProps) => {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => {
-                      const link = document.createElement('a');
-                      link.href = document.file_url;
-                      link.download = document.file_name;
-                      link.click();
-                    }}
+                    onClick={() => handleDownload(document.file_url, document.file_name)}
                   >
                     <Download className="h-3 w-3" />
                   </Button>
