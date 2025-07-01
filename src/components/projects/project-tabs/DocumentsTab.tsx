@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Upload, Download, Trash2, FileVersion, Plus } from "lucide-react";
+import { FileText, Upload, Download, Trash2, FileStack, Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { documentService } from '@/services/database';
 import { toast } from '@/components/ui/sonner';
@@ -260,7 +260,7 @@ const DocumentsTab = ({ projectId }: DocumentsTabProps) => {
                         setIsVersionOpen(true);
                       }}
                     >
-                      <FileVersion className="h-4 w-4" />
+                      <FileStack className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"

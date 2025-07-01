@@ -110,7 +110,7 @@ const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
           </TabsContent>
           
           <TabsContent value="documents">
-            <DocumentsTab />
+            <DocumentsTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="recentUpdates">
