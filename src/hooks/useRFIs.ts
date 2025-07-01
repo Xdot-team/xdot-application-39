@@ -16,7 +16,7 @@ export const useCreateRFI = () => {
   
   return useMutation({
     mutationFn: rfiService.create,
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       if (data && data.project_id) {
         queryClient.invalidateQueries({ queryKey: ['rfis', data.project_id] });
       }
@@ -34,7 +34,7 @@ export const useUpdateRFI = () => {
   return useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: any }) => 
       rfiService.update(id, updates),
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       if (data && data.project_id) {
         queryClient.invalidateQueries({ queryKey: ['rfis', data.project_id] });
       }

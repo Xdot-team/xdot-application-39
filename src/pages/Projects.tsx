@@ -28,15 +28,12 @@ const Projects = () => {
     );
   }
   
-  // Cast projects to any to work around type issues
-  const projectList = projects as any[];
-  
-  const activeProjects = projectList.filter((p: any) => p.status === 'active');
-  const completedProjects = projectList.filter((p: any) => p.status === 'completed');
-  const upcomingProjects = projectList.filter((p: any) => p.status === 'upcoming');
+  const activeProjects = projects.filter((p) => p.status === 'active');
+  const completedProjects = projects.filter((p) => p.status === 'completed');
+  const upcomingProjects = projects.filter((p) => p.status === 'upcoming');
   
   // Use the first project ID as a sample for the ProjectTabsContainer
-  const sampleProjectId = activeProjects.length > 0 ? activeProjects[0].id : (projectList.length > 0 ? projectList[0].id : 'sample-project-1');
+  const sampleProjectId = activeProjects.length > 0 ? activeProjects[0].id : (projects.length > 0 ? projects[0].id : 'sample-project-1');
   
   return (
     <div className="space-y-6">
@@ -56,13 +53,13 @@ const Projects = () => {
       />
       
       {/* Project Dashboard Section - No heading */}
-      {projectList.length > 0 && (
+      {projects.length > 0 && (
         <div className="mt-6">
           <ProjectTabsContainer projectId={sampleProjectId} />
         </div>
       )}
 
-      {projectList.length === 0 && (
+      {projects.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">No projects found. Create your first project to get started.</p>
         </div>

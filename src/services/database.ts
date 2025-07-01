@@ -6,7 +6,7 @@ export const projectService = {
   async getAll() {
     try {
       const { data, error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -21,7 +21,7 @@ export const projectService = {
   async getById(id: string) {
     try {
       const { data, error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .select('*')
         .eq('id', id)
         .single();
@@ -37,12 +37,12 @@ export const projectService = {
   async create(project: any) {
     try {
       const { data, error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .insert({
           ...project,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
-        } as any)
+        })
         .select()
         .single();
       
@@ -57,11 +57,11 @@ export const projectService = {
   async update(id: string, updates: any) {
     try {
       const { data, error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .update({
           ...updates,
           updated_at: new Date().toISOString()
-        } as any)
+        })
         .eq('id', id)
         .select()
         .single();
@@ -77,7 +77,7 @@ export const projectService = {
   async delete(id: string) {
     try {
       const { error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .delete()
         .eq('id', id);
       
@@ -95,7 +95,7 @@ export const documentService = {
   async getByProjectId(projectId: string) {
     try {
       const { data, error } = await supabase
-        .from('documents' as any)
+        .from('documents')
         .select('*')
         .eq('project_id', projectId)
         .order('uploaded_at', { ascending: false });
@@ -129,7 +129,7 @@ export const documentService = {
 
       // Insert document metadata
       const { data: docData, error: docError } = await supabase
-        .from('documents' as any)
+        .from('documents')
         .insert({
           project_id: projectId,
           name: metadata.name || file.name,
@@ -139,7 +139,7 @@ export const documentService = {
           category: metadata.category || 'document',
           tags: metadata.tags || [],
           version: metadata.version || '1.0'
-        } as any)
+        })
         .select()
         .single();
 
@@ -156,7 +156,7 @@ export const documentService = {
     try {
       // Get original document
       const { data: originalDoc, error: fetchError } = await supabase
-        .from('documents' as any)
+        .from('documents')
         .select('project_id')
         .eq('id', documentId)
         .single();
@@ -182,14 +182,14 @@ export const documentService = {
 
       // Insert version record
       const { data: versionData, error: versionError } = await supabase
-        .from('document_versions' as any)
+        .from('document_versions')
         .insert({
           document_id: documentId,
           version: version,
           file_url: urlData.publicUrl,
           file_size: file.size,
           notes: notes
-        } as any)
+        })
         .select()
         .single();
 
@@ -197,12 +197,12 @@ export const documentService = {
 
       // Update main document version
       await supabase
-        .from('documents' as any)
+        .from('documents')
         .update({ 
           version: version,
           file_url: urlData.publicUrl,
           file_size: file.size
-        } as any)
+        })
         .eq('id', documentId);
 
       return versionData;
@@ -215,7 +215,7 @@ export const documentService = {
   async getVersions(documentId: string) {
     try {
       const { data, error } = await supabase
-        .from('document_versions' as any)
+        .from('document_versions')
         .select('*')
         .eq('document_id', documentId)
         .order('uploaded_at', { ascending: false });
@@ -232,12 +232,13 @@ export const documentService = {
     try {
       // Get document info first to delete from storage
       const { data: doc, error: fetchError } = await supabase
-        .from('documents' as any)
+        .from('documents')
         .select('file_url')
         .eq('id', id)
         .single();
 
       if (fetchError) throw fetchError;
+      if (!doc) throw new Error('Document not found');
 
       // Extract file path from URL
       const urlParts = doc.file_url.split('/');
@@ -250,7 +251,7 @@ export const documentService = {
 
       // Delete document record
       const { error } = await supabase
-        .from('documents' as any)
+        .from('documents')
         .delete()
         .eq('id', id);
       
@@ -268,7 +269,7 @@ export const rfiService = {
   async getByProjectId(projectId: string) {
     try {
       const { data, error } = await supabase
-        .from('rfis' as any)
+        .from('rfis')
         .select('*')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false });
@@ -284,8 +285,8 @@ export const rfiService = {
   async create(rfi: any) {
     try {
       const { data, error } = await supabase
-        .from('rfis' as any)
-        .insert(rfi as any)
+        .from('rfis')
+        .insert(rfi)
         .select()
         .single();
       
@@ -300,8 +301,8 @@ export const rfiService = {
   async update(id: string, updates: any) {
     try {
       const { data, error } = await supabase
-        .from('rfis' as any)
-        .update(updates as any)
+        .from('rfis')
+        .update(updates)
         .eq('id', id)
         .select()
         .single();
@@ -320,7 +321,7 @@ export const submittalService = {
   async getByProjectId(projectId: string) {
     try {
       const { data, error } = await supabase
-        .from('submittals' as any)
+        .from('submittals')
         .select('*')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false });
@@ -336,8 +337,8 @@ export const submittalService = {
   async create(submittal: any) {
     try {
       const { data, error } = await supabase
-        .from('submittals' as any)
-        .insert(submittal as any)
+        .from('submittals')
+        .insert(submittal)
         .select()
         .single();
       
@@ -352,8 +353,8 @@ export const submittalService = {
   async update(id: string, updates: any) {
     try {
       const { data, error } = await supabase
-        .from('submittals' as any)
-        .update(updates as any)
+        .from('submittals')
+        .update(updates)
         .eq('id', id)
         .select()
         .single();
