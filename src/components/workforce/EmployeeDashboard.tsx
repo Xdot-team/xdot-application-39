@@ -12,14 +12,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Plus, Filter, FileText } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Search, Plus, Filter, FileText, Edit, Trash2 } from "lucide-react";
 import { useEmployeeProfiles } from "@/hooks/useWorkforceManagement";
 import { formatDate } from "@/lib/formatters";
+import { EmployeeForm } from "./EmployeeForm";
+import { EmployeeProfile } from "@/types/employee";
+import { toast } from "@/hooks/use-toast";
 
 export function EmployeeDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfile | undefined>();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeProfile | undefined>();
   const isMobile = useIsMobile();
-  const { employees, loading, addEmployee, updateEmployee, deleteEmployee } = useEmployeeProfiles();
+  const { employees, loading, deleteEmployee } = useEmployeeProfiles();
 
   const filteredEmployees = employees.filter(
     (employee) =>
@@ -44,6 +52,52 @@ export function EmployeeDashboard() {
     }
   };
 
+  const handleAddEmployee = () => {
+    setSelectedEmployee(undefined);
+    setIsFormOpen(true);
+  };
+
+  const handleEditEmployee = (employee: EmployeeProfile) => {
+    setSelectedEmployee(employee);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteClick = (employee: EmployeeProfile) => {
+    setEmployeeToDelete(employee);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (employeeToDelete) {
+      try {
+        await deleteEmployee(employeeToDelete.id);
+        toast({
+          title: "Success",
+          description: "Employee deleted successfully",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to delete employee",
+          variant: "destructive",
+        });
+      }
+    }
+    setDeleteConfirmOpen(false);
+    setEmployeeToDelete(undefined);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading employees...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -61,7 +115,7 @@ export function EmployeeDashboard() {
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={handleAddEmployee}>
             <Plus className="h-4 w-4 mr-2" />
             Add Employee
           </Button>
@@ -119,10 +173,26 @@ export function EmployeeDashboard() {
                 </div>
               </div>
 
-              <Button variant="outline" size="sm" className="w-full">
-                <FileText className="h-4 w-4 mr-2" />
-                View Details
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => handleEditEmployee(employee)}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => handleDeleteClick(employee)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
             </div>
           ))}
         </div>
@@ -176,10 +246,24 @@ export function EmployeeDashboard() {
                   </TableCell>
                   <TableCell>{employee.skills?.length || 0}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Details
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleEditEmployee(employee)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteClick(employee)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -187,6 +271,34 @@ export function EmployeeDashboard() {
           </Table>
         </div>
       )}
+
+      {/* Employee Form Dialog */}
+      <EmployeeForm
+        employee={selectedEmployee}
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {employeeToDelete?.first_name} {employeeToDelete?.last_name}? 
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3 mt-6">
+            <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>
+              Delete Employee
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
