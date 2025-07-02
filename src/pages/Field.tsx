@@ -220,7 +220,7 @@ const Field = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="map" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="flex flex-wrap w-full">
             <TabsTrigger value="map" className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
               Map
