@@ -210,25 +210,25 @@ const MobileFleetView = ({ vehicles }: MobileFleetViewProps) => {
                     <div className="mt-2 pt-2 border-t text-sm">
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <div className="text-xs text-muted-foreground">Location</div>
-                          <div className="text-xs">{vehicle.currentProject || 'Unknown'}</div>
+                          <div className="text-xs text-muted-foreground">Project</div>
+                          <div className="text-xs">{vehicle.current_project_id || 'Unassigned'}</div>
                         </div>
                         <div>
-                          <div className="text-xs text-muted-foreground">Assigned To</div>
-                          <div className="text-xs">{vehicle.assignedTo || 'Unassigned'}</div>
+                          <div className="text-xs text-muted-foreground">Driver</div>
+                          <div className="text-xs">{vehicle.assigned_driver_id || 'Unassigned'}</div>
                         </div>
                         <div>
-                          <div className="text-xs text-muted-foreground">Last Maintenance</div>
-                          <div className="text-xs">{vehicle.lastMaintenance || 'N/A'}</div>
+                          <div className="text-xs text-muted-foreground">Registration</div>
+                          <div className="text-xs">{vehicle.registration_expiry || 'N/A'}</div>
                         </div>
                         <div>
-                          <div className="text-xs text-muted-foreground">Next Maintenance</div>
+                          <div className="text-xs text-muted-foreground">Inspection</div>
                           <div className={`text-xs ${
-                            vehicle.nextMaintenance && new Date(vehicle.nextMaintenance) < new Date() 
+                            vehicle.inspection_expiry && new Date(vehicle.inspection_expiry) < new Date() 
                               ? 'text-red-500 font-medium' 
                               : ''
                           }`}>
-                            {vehicle.nextMaintenance || 'Not scheduled'}
+                            {vehicle.inspection_expiry || 'Not scheduled'}
                           </div>
                         </div>
                       </div>

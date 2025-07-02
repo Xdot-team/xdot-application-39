@@ -25,6 +25,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { Vehicle, Tool, Material } from '@/types/field';
+import { FleetVehicle } from '@/types/fleet';
 import { AssetsMap } from '@/components/assets/AssetsMap';
 import { AssetDetails } from '@/components/assets/AssetDetails';
 import { MaintenanceSchedule } from '@/components/assets/MaintenanceSchedule';
@@ -668,7 +669,7 @@ const Assets = () => {
               </CardHeader>
               <CardContent>
                 <div className="mx-auto max-w-md border rounded-lg p-4 bg-gray-50 dark:bg-gray-900 shadow-sm">
-                  <MobileFleetView vehicles={mockVehicles} />
+                  <MobileFleetView vehicles={mockVehicles as unknown as FleetVehicle[]} />
                 </div>
               </CardContent>
             </Card>
@@ -1019,7 +1020,7 @@ const Assets = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <MaintenanceSchedule vehicles={mockVehicles} tools={mockTools} />
+                <MaintenanceSchedule vehicles={mockVehicles as unknown as FleetVehicle[]} tools={mockTools} />
               </CardContent>
             </Card>
           </TabsContent>
