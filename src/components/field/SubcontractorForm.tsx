@@ -14,20 +14,31 @@ import { Plus, X, Upload } from 'lucide-react';
 interface Subcontractor {
   id?: string;
   company_name: string;
-  contact_name: string;
-  email: string;
-  phone: string;
+  contact_person: string;
+  contact_email: string;
+  contact_phone: string;
   address?: string;
-  specialties: string[];
+  trade_specialty: string;
   license_number?: string;
+  license_expiry?: string;
+  insurance_certificate?: string;
   insurance_expiry: string;
   bond_amount?: number;
-  rating: number;
+  bond_expiry?: string;
+  safety_rating?: number;
+  quality_rating?: number;
+  schedule_rating?: number;
+  overall_rating?: number;
   status: string;
+  prequalified?: boolean;
+  prequalification_expiry?: string;
+  contract_value?: number;
+  work_completed_value?: number;
+  current_projects?: string[];
+  certifications?: string[];
+  key_personnel?: any;
+  equipment_owned?: string[];
   notes?: string;
-  documents?: string[];
-  emergency_contact?: string;
-  emergency_phone?: string;
 }
 
 interface SubcontractorFormProps {
@@ -41,20 +52,20 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Subcontractor>({
     company_name: '',
-    contact_name: '',
-    email: '',
-    phone: '',
+    contact_person: '',
+    contact_email: '',
+    contact_phone: '',
     address: '',
-    specialties: [],
+    trade_specialty: '',
     license_number: '',
     insurance_expiry: '',
     bond_amount: 0,
-    rating: 5,
+    overall_rating: 5,
     status: 'active',
     notes: '',
-    documents: [],
-    emergency_contact: '',
-    emergency_phone: ''
+    certifications: [],
+    current_projects: [],
+    equipment_owned: []
   });
 
   const [newSpecialty, setNewSpecialty] = useState('');
@@ -65,20 +76,20 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
     } else {
       setFormData({
         company_name: '',
-        contact_name: '',
-        email: '',
-        phone: '',
+        contact_person: '',
+        contact_email: '',
+        contact_phone: '',
         address: '',
-        specialties: [],
+        trade_specialty: '',
         license_number: '',
         insurance_expiry: '',
         bond_amount: 0,
-        rating: 5,
+        overall_rating: 5,
         status: 'active',
         notes: '',
-        documents: [],
-        emergency_contact: '',
-        emergency_phone: ''
+        certifications: [],
+        current_projects: [],
+        equipment_owned: []
       });
     }
   }, [subcontractor, open]);
@@ -105,19 +116,19 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
   ];
 
   const addSpecialty = (specialty: string) => {
-    if (specialty && !formData.specialties.includes(specialty)) {
+    if (specialty && formData.trade_specialty !== specialty) {
       setFormData(prev => ({
         ...prev,
-        specialties: [...prev.specialties, specialty]
+        trade_specialty: specialty
       }));
       setNewSpecialty('');
     }
   };
 
-  const removeSpecialty = (specialty: string) => {
+  const removeSpecialty = () => {
     setFormData(prev => ({
       ...prev,
-      specialties: prev.specialties.filter(s => s !== specialty)
+      trade_specialty: ''
     }));
   };
 
@@ -139,7 +150,7 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
 
       setFormData(prev => ({
         ...prev,
-        documents: [...(prev.documents || []), publicUrl]
+        certifications: [...(prev.certifications || []), publicUrl]
       }));
 
       toast.success('Document uploaded successfully');
@@ -157,7 +168,7 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
       const subcontractorData = {
         ...formData,
         bond_amount: formData.bond_amount || 0,
-        rating: formData.rating || 5
+        overall_rating: formData.overall_rating || 5
       };
 
       if (subcontractor?.id) {
@@ -215,30 +226,30 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contact_name">Primary Contact *</Label>
+                  <Label htmlFor="contact_person">Primary Contact *</Label>
                   <Input
-                    id="contact_name"
-                    value={formData.contact_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, contact_name: e.target.value }))}
+                    id="contact_person"
+                    value={formData.contact_person}
+                    onChange={(e) => setFormData(prev => ({ ...prev, contact_person: e.target.value }))}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="contact_email">Email *</Label>
                   <Input
-                    id="email"
+                    id="contact_email"
                     type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    value={formData.contact_email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, contact_email: e.target.value }))}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone *</Label>
+                  <Label htmlFor="contact_phone">Phone *</Label>
                   <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    id="contact_phone"
+                    value={formData.contact_phone}
+                    onChange={(e) => setFormData(prev => ({ ...prev, contact_phone: e.target.value }))}
                     required
                   />
                 </div>
@@ -278,25 +289,25 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
                   <Button
                     type="button"
                     onClick={() => addSpecialty(newSpecialty)}
-                    disabled={!newSpecialty || formData.specialties.includes(newSpecialty)}
+                    disabled={!newSpecialty || formData.trade_specialty === newSpecialty}
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {formData.specialties.map((specialty) => (
-                    <Badge key={specialty} variant="secondary" className="gap-2">
-                      {specialty}
+                  {formData.trade_specialty && (
+                    <Badge variant="secondary" className="gap-2">
+                      {formData.trade_specialty}
                       <button
                         type="button"
-                        onClick={() => removeSpecialty(specialty)}
+                        onClick={() => removeSpecialty()}
                         className="hover:text-destructive"
                       >
                         <X className="h-3 w-3" />
                       </button>
                     </Badge>
-                  ))}
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -356,32 +367,6 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
             </CardContent>
           </Card>
 
-          {/* Emergency Contact */}
-          <Card>
-            <CardContent className="pt-6 space-y-4">
-              <h3 className="font-medium text-lg">Emergency Contact</h3>
-              
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="emergency_contact">Emergency Contact Name</Label>
-                  <Input
-                    id="emergency_contact"
-                    value={formData.emergency_contact || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, emergency_contact: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="emergency_phone">Emergency Phone</Label>
-                  <Input
-                    id="emergency_phone"
-                    value={formData.emergency_phone || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, emergency_phone: e.target.value }))}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Performance & Documents */}
           <Card>
             <CardContent className="pt-6 space-y-4">
@@ -389,10 +374,10 @@ export function SubcontractorForm({ open, onOpenChange, subcontractor, onSave }:
               
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="rating">Performance Rating (1-5)</Label>
+                  <Label htmlFor="overall_rating">Performance Rating (1-5)</Label>
                   <Select
-                    value={formData.rating.toString()}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, rating: parseInt(value) }))}
+                    value={formData.overall_rating?.toString() || '5'}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, overall_rating: parseInt(value) }))}
                   >
                     <SelectTrigger>
                       <SelectValue />
