@@ -33,6 +33,9 @@ import { DispatchManager } from '@/components/assets/DispatchManager';
 import FleetDashboard from '@/components/assets/FleetDashboard';
 import MobileFleetView from '@/components/assets/MobileFleetView';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { SubcontractorManagement } from '@/components/subcontractors/SubcontractorManagement';
+import { VehicleForm } from '@/components/assets/VehicleForm';
+import { ToolsManagement } from '@/components/assets/ToolsManagement';
 
 const mockVehicles: Vehicle[] = [
   {
@@ -635,6 +638,10 @@ const Assets = () => {
                 <CalendarClock className="h-4 w-4" />
                 <span>Maintenance</span>
               </TabsTrigger>
+              <TabsTrigger value="subcontractors" className="flex items-center gap-1">
+                <Truck className="h-4 w-4" />
+                <span>Subcontractors</span>
+              </TabsTrigger>
             </TabsList>
 
             <div className="flex items-center gap-2">
@@ -1023,6 +1030,10 @@ const Assets = () => {
                 <MaintenanceSchedule vehicles={mockVehicles as unknown as FleetVehicle[]} tools={mockTools} />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="subcontractors" className="space-y-4">
+            <SubcontractorManagement />
           </TabsContent>
         </Tabs>
       )}

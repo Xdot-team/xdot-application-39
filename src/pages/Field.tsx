@@ -7,7 +7,7 @@ import { EnhancedPunchlistManager } from '@/components/field/EnhancedPunchlistMa
 import { InteractiveFieldMap } from '@/components/field/InteractiveFieldMap';
 import { DispatchManager } from '@/components/field/DispatchManager';
 import { SiteWalkthrough } from '@/components/field/SiteWalkthrough';
-import { SubcontractorManagement } from '@/components/field/SubcontractorManagement';
+import { SubcontractorManagement } from '@/components/subcontractors/SubcontractorManagement';
 import { FieldDataCollectionDialog } from '@/components/field/FieldDataCollectionDialog';
 import { 
   usePunchlistItems, 
