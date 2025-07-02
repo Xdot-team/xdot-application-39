@@ -64,20 +64,17 @@ const Field = () => {
 
   if (isLoading) {
     return (
-      <MainLayout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>Loading field data...</p>
-          </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading field data...</p>
         </div>
-      </MainLayout>
+      </div>
     );
   }
 
   return (
-    <MainLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
@@ -327,8 +324,7 @@ const Field = () => {
             )}
           </TabsContent>
         </Tabs>
-      </div>
-    </MainLayout>
+    </div>
   );
 };
 
