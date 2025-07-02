@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from '@/components/ui/page-header';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import FleetDashboard from '@/components/assets/FleetDashboard';
 import { DispatchManager } from '@/components/assets/DispatchManager';
 import { MaintenanceSchedule } from '@/components/assets/MaintenanceSchedule';
@@ -11,6 +14,7 @@ import { LocationMap } from '@/components/assets/LocationMap';
 import { SubcontractorManagement } from '@/components/subcontractors/SubcontractorManagement';
 import { VehicleForm } from '@/components/assets/VehicleForm';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useFleetVehicles } from '@/hooks/useFleetManagement';
 import { 
   BarChart, 
   Truck, 
@@ -20,7 +24,8 @@ import {
   Activity, 
   MapPin, 
   Settings, 
-  Building2 
+  Building2,
+  Plus
 } from 'lucide-react';
 
 export default function Assets() {
@@ -124,15 +129,76 @@ export default function Assets() {
 
 function VehicleManagement() {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const { vehicles, loading, refetch } = useFleetVehicles();
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Vehicle Management</h2>
-      <p>Comprehensive vehicle tracking and management system</p>
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold">Vehicle Management</h2>
+          <p className="text-muted-foreground">Comprehensive vehicle tracking and management system</p>
+        </div>
+        <Button onClick={() => setIsFormOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Vehicle
+        </Button>
+      </div>
+
+      {/* Vehicle List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Fleet Vehicles</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-muted-foreground">Loading vehicles...</div>
+            </div>
+          ) : vehicles.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Truck className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">No vehicles found</h3>
+              <p className="text-muted-foreground mb-4">Get started by adding your first vehicle to the fleet.</p>
+              <Button onClick={() => setIsFormOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Vehicle
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {vehicles.map((vehicle) => (
+                <Card key={vehicle.id} className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium">{vehicle.vehicle_number}</h4>
+                    <Badge variant={vehicle.status === 'available' ? 'secondary' : vehicle.status === 'in_use' ? 'default' : 'destructive'}>
+                      {vehicle.status.replace('_', ' ')}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {vehicle.year} {vehicle.make} {vehicle.model}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Type: {vehicle.vehicle_type.replace('_', ' ')}
+                  </p>
+                  {vehicle.current_mileage && (
+                    <p className="text-sm text-muted-foreground">
+                      Mileage: {vehicle.current_mileage.toLocaleString()}
+                    </p>
+                  )}
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <VehicleForm 
         open={isFormOpen} 
         onOpenChange={setIsFormOpen} 
-        onSave={() => {}} 
+        onSave={() => {
+          refetch();
+          setIsFormOpen(false);
+        }} 
       />
     </div>
   );

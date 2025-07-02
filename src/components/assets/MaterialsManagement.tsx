@@ -1,20 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { MaterialForm } from "./MaterialForm";
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from "@/hooks/use-toast";
 import { Search, Plus, Package, AlertTriangle, CheckCircle, Clock } from "lucide-react";
-
-const mockMaterials = [
-  { id: "MAT-001", name: "Asphalt Mix Type B", category: "Asphalt", quantity: 250, unit: "tons", location: "North Yard", status: "in-stock" },
-  { id: "MAT-002", name: "Crushed Stone #57", category: "Aggregate", quantity: 500, unit: "tons", location: "South Yard", status: "in-stock" },
-  { id: "MAT-003", name: "Portland Cement", category: "Concrete", quantity: 80, unit: "pallets", location: "West Warehouse", status: "low-stock" },
-  { id: "MAT-004", name: "Steel Rebar #4", category: "Steel", quantity: 5000, unit: "feet", location: "Main Warehouse", status: "in-stock" },
-];
 
 export function MaterialsManagement() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [materials, setMaterials] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const fetchMaterials = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('material_inventory')
+        .select('*')
+        .order('material_name');
+
+      if (error) throw error;
+      setMaterials(data || []);
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch materials",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMaterials();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -46,7 +70,7 @@ export function MaterialsManagement() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button>
+        <Button onClick={() => setIsFormOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Material
         </Button>
@@ -113,36 +137,74 @@ export function MaterialsManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockMaterials.map((material) => (
-                <TableRow key={material.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{material.name}</p>
-                      <p className="text-sm text-muted-foreground">{material.id}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{material.category}</TableCell>
-                  <TableCell>{material.quantity} {material.unit}</TableCell>
-                  <TableCell>{material.location}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(material.status)}
-                      <Badge variant={getStatusColor(material.status) as any}>
-                        {material.status.replace("-", " ")}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm">
-                      Details
-                    </Button>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8">
+                    Loading materials...
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : materials.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8">
+                    <div className="flex flex-col items-center gap-2">
+                      <Package className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-muted-foreground">No materials found</p>
+                      <Button onClick={() => setIsFormOpen(true)} size="sm">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add First Material
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                materials
+                  .filter(material => 
+                    material.material_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    material.category.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((material) => {
+                    const status = material.quantity_on_hand <= (material.minimum_stock || 0) ? 'low-stock' : 'in-stock';
+                    return (
+                      <TableRow key={material.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{material.material_name}</p>
+                            <p className="text-sm text-muted-foreground">{material.material_code || material.id}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell>{material.category}</TableCell>
+                        <TableCell>{material.quantity_on_hand} {material.unit}</TableCell>
+                        <TableCell>{material.location_on_site || 'Not specified'}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(status)}
+                            <Badge variant={getStatusColor(status) as any}>
+                              {status.replace("-", " ")}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="outline" size="sm">
+                            Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      <MaterialForm 
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        onSave={() => {
+          fetchMaterials();
+          setIsFormOpen(false);
+        }}
+      />
     </div>
   );
 }
