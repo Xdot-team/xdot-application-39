@@ -1,41 +1,37 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { mockEmployees, mockSubcontractors, mockTimeCards } from '@/data/mockWorkforceData';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { EmployeeProfile, TimeCard, Subcontractor } from '@/types/workforce';
+import { useEmployeeProfiles, useWorkforceMetrics } from '@/hooks/useWorkforceManagement';
 
-// Workforce metrics data generation
-const generateWorkforceMetrics = () => {
+// Generate mock metrics for display while we load real data
+const generateWorkforceMetrics = (employees: any[]) => {
   const projects = ['Atlanta Highway Expansion', 'Marietta Bridge Repair', 'Decatur Office Complex', 'Downtown Revitalization', 'Suburban Mall Construction'];
   
-  return mockEmployees.map(employee => ({
+  return employees.map(employee => ({
     id: employee.id,
-    name: `${employee.firstName} ${employee.lastName}`,
-    role: employee.role,
+    name: `${employee.first_name} ${employee.last_name}`,
+    role: employee.job_title,
     department: employee.department,
     hoursWorked: Math.floor(Math.random() * 40) + 20,
     productivity: (Math.random() * 30 + 70).toFixed(1),
     projectId: `proj-00${Math.floor(Math.random() * 5) + 1}`,
     projectName: projects[Math.floor(Math.random() * projects.length)],
-    certificationCount: employee.certifications.length,
+    certificationCount: employee.skills?.length || 0,
     activeTaskCount: Math.floor(Math.random() * 5) + 1,
-    availability: Math.random() > 0.2 ? 'available' : 'unavailable',
+    availability: employee.status === 'active' ? 'available' : 'unavailable',
   }));
 };
 
-const workforceMetrics = generateWorkforceMetrics();
-
-// Chart data preparation
-const projectHoursData = () => {
+// Chart data preparation functions that accept data
+const projectHoursData = (workforceMetrics: any[]) => {
   const projects: Record<string, number> = {};
   
   workforceMetrics.forEach(metric => {
@@ -52,7 +48,7 @@ const projectHoursData = () => {
   }));
 };
 
-const roleDistributionData = () => {
+const roleDistributionData = (workforceMetrics: any[]) => {
   const roles: Record<string, number> = {};
   
   workforceMetrics.forEach(metric => {
@@ -87,6 +83,13 @@ export const WorkforceDashboard: React.FC = () => {
   const [filterProject, setFilterProject] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const isMobile = useIsMobile();
+  
+  // Use real database hooks
+  const { employees, loading: employeesLoading } = useEmployeeProfiles();
+  const { metrics, loading: metricsLoading } = useWorkforceMetrics();
+  
+  // Generate display metrics from real employee data
+  const workforceMetrics = employees.length > 0 ? generateWorkforceMetrics(employees) : [];
   
   // Filter employees based on selected filters and search term
   const filteredEmployees = workforceMetrics.filter(employee => {
@@ -157,16 +160,16 @@ export const WorkforceDashboard: React.FC = () => {
             <CardDescription>Active employees and contractors</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{mockEmployees.length + mockSubcontractors.length}</div>
+            <div className="text-3xl font-bold">{metrics?.totalEmployees || 0}</div>
             <div className="text-xs text-muted-foreground mt-1">
-              {mockEmployees.length} employees, {mockSubcontractors.length} subcontractors
+              {metrics?.activeEmployees || 0} employees active
             </div>
             <div className="mt-4 flex gap-3">
               <Badge className="bg-blue-500">
-                {mockEmployees.filter(e => e.status === 'active').length} Active
+                {metrics?.activeEmployees || 0} Active
               </Badge>
               <Badge variant="outline">
-                {mockEmployees.filter(e => e.status !== 'active').length} Inactive
+                {(metrics?.totalEmployees || 0) - (metrics?.activeEmployees || 0)} Inactive
               </Badge>
             </div>
           </CardContent>
@@ -234,7 +237,7 @@ export const WorkforceDashboard: React.FC = () => {
               </CardHeader>
               <CardContent className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={projectHoursData()} layout={isMobile ? "vertical" : "horizontal"}>
+                  <BarChart data={projectHoursData(workforceMetrics)} layout={isMobile ? "vertical" : "horizontal"}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey={isMobile ? "hours" : "name"} type={isMobile ? "number" : "category"} />
                     <YAxis dataKey={isMobile ? "name" : "hours"} type={isMobile ? "category" : "number"} />
@@ -274,7 +277,7 @@ export const WorkforceDashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
-                          data={roleDistributionData()}
+                          data={roleDistributionData(workforceMetrics)}
                           cx="50%"
                           cy="50%"
                           labelLine={false}
@@ -282,7 +285,7 @@ export const WorkforceDashboard: React.FC = () => {
                           fill="#8884d8"
                           dataKey="value"
                         >
-                          {roleDistributionData().map((entry, index) => (
+                          {roleDistributionData(workforceMetrics).map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
@@ -292,7 +295,7 @@ export const WorkforceDashboard: React.FC = () => {
                   </div>
                   <div className="flex flex-col justify-center">
                     <div className="grid gap-2">
-                      {roleDistributionData().map((entry, index) => (
+                      {roleDistributionData(workforceMetrics).map((entry, index) => (
                         <div key={`legend-${index}`} className="flex items-center gap-2">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
                           <div className="text-sm">{entry.name}</div>
@@ -355,45 +358,14 @@ export const WorkforceDashboard: React.FC = () => {
         <TabsContent value="contractors">
           <Card>
             <CardHeader>
-              <CardTitle>Subcontractor Details</CardTitle>
+              <CardTitle>Workforce Overview</CardTitle>
               <CardDescription>
-                {mockSubcontractors.length} subcontractors currently engaged
+                Additional workforce management features coming soon
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Company</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead className="hidden md:table-cell">Specialties</TableHead>
-                      <TableHead className="text-right">Projects</TableHead>
-                      <TableHead className="text-right">Rating</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockSubcontractors.map((sub) => (
-                      <TableRow key={sub.id}>
-                        <TableCell className="font-medium">{sub.companyName}</TableCell>
-                        <TableCell>{sub.contactName}</TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          {sub.specialties.slice(0, 2).join(", ")}
-                          {sub.specialties.length > 2 && "..."}
-                        </TableCell>
-                        <TableCell className="text-right">{sub.currentProjects.length}</TableCell>
-                        <TableCell className="text-right">
-                          <Badge className={
-                            sub.performance.rating >= 4.5 ? 'bg-green-500' : 
-                            sub.performance.rating >= 4.0 ? 'bg-blue-500' : 'bg-yellow-500'
-                          }>
-                            {sub.performance.rating}/5
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Subcontractor management features will be available in a future update.</p>
               </div>
             </CardContent>
           </Card>

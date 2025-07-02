@@ -21,33 +21,33 @@ import {
   Clock, 
   ChartBar 
 } from "lucide-react";
-import { Vehicle } from "@/types/field";
+import { useFleetVehicles, useFleetMetrics } from "@/hooks/useFleetManagement";
 import FleetMap from "./FleetMap";
 import FleetMetrics from "./FleetMetrics";
 import { MaintenanceSchedule } from "./MaintenanceSchedule";
 import FleetAlerts from "./FleetAlerts";
 
-interface FleetDashboardProps {
-  vehicles: Vehicle[];
-}
-
-const FleetDashboard = ({ vehicles }: FleetDashboardProps) => {
+const FleetDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [locationFilter, setLocationFilter] = useState<string>("all");
+  
+  // Use real database hooks
+  const { vehicles, loading: vehiclesLoading } = useFleetVehicles();
+  const { metrics, loading: metricsLoading } = useFleetMetrics();
 
   // Filter vehicles based on selected filters
   const filteredVehicles = vehicles.filter(vehicle => {
     const statusMatch = statusFilter === "all" || vehicle.status === statusFilter;
     const locationMatch = locationFilter === "all" || 
-      (vehicle.currentProject && vehicle.currentProject.includes(locationFilter));
+      (vehicle.current_project_id && vehicle.current_project_id.includes(locationFilter));
     
     return statusMatch && locationMatch;
   });
 
   // Count vehicles by status
   const vehiclesByStatus = {
-    inUse: vehicles.filter(v => v.status === 'in-use').length,
+    inUse: vehicles.filter(v => v.status === 'in_use').length,
     available: vehicles.filter(v => v.status === 'available').length,
     maintenance: vehicles.filter(v => v.status === 'maintenance').length,
     offline: vehicles.filter(v => v.status === 'offline').length
@@ -56,11 +56,12 @@ const FleetDashboard = ({ vehicles }: FleetDashboardProps) => {
   // Find vehicles with overdue maintenance
   const currentDate = new Date();
   const overdueVehicles = vehicles.filter(v => 
-    v.nextMaintenance && new Date(v.nextMaintenance) < currentDate
+    v.registration_expiry && new Date(v.registration_expiry) < currentDate ||
+    v.inspection_expiry && new Date(v.inspection_expiry) < currentDate
   );
 
-  // Calculate fleet utilization (simplified for sample data)
-  const utilizationRate = ((vehiclesByStatus.inUse / vehicles.length) * 100).toFixed(1);
+  // Calculate fleet utilization using metrics
+  const utilizationRate = metrics?.utilizationRate?.toFixed(1) || "0";
 
   return (
     <div className="space-y-4">
@@ -128,8 +129,8 @@ const FleetDashboard = ({ vehicles }: FleetDashboardProps) => {
                   <Clock className="h-4 w-4 mr-2" />
                   <span className="text-sm">Next: {
                     vehicles
-                      .filter(v => v.nextMaintenance)
-                      .sort((a, b) => new Date(a.nextMaintenance!).getTime() - new Date(b.nextMaintenance!).getTime())[0]?.nextMaintenance || 'None scheduled'
+                      .filter(v => v.registration_expiry)
+                      .sort((a, b) => new Date(a.registration_expiry!).getTime() - new Date(b.registration_expiry!).getTime())[0]?.registration_expiry || 'None scheduled'
                   }</span>
                 </div>
               </div>
@@ -263,34 +264,34 @@ const FleetDashboard = ({ vehicles }: FleetDashboardProps) => {
                     {filteredVehicles.map((vehicle) => (
                       <tr key={vehicle.id} className="border-b">
                         <td className="p-2">
-                          <div className="font-medium">{vehicle.name}</div>
-                          <div className="text-xs text-muted-foreground">{vehicle.id}</div>
+                          <div className="font-medium">{vehicle.make} {vehicle.model}</div>
+                          <div className="text-xs text-muted-foreground">{vehicle.vehicle_number}</div>
                         </td>
-                        <td className="p-2">{vehicle.type}</td>
+                        <td className="p-2">{vehicle.vehicle_type}</td>
                         <td className="p-2">
                           <div className="flex items-center">
                             <div className={`h-2 w-2 rounded-full mr-2 ${
-                              vehicle.status === 'in-use' ? 'bg-blue-500' :
+                              vehicle.status === 'in_use' ? 'bg-blue-500' :
                               vehicle.status === 'available' ? 'bg-green-500' :
                               vehicle.status === 'maintenance' ? 'bg-amber-500' :
                               'bg-red-500'
                             }`} />
-                            <span className="capitalize">{vehicle.status.replace('-', ' ')}</span>
+                            <span className="capitalize">{vehicle.status.replace('_', ' ')}</span>
                           </div>
                         </td>
-                        <td className="p-2">{vehicle.currentProject || 'Not assigned'}</td>
+                        <td className="p-2">{vehicle.current_project_id || 'Not assigned'}</td>
                         <td className="p-2">
-                          {vehicle.currentLocation?.timestamp ? 
-                            new Date(vehicle.currentLocation.timestamp).toLocaleString() : 
+                          {vehicle.last_gps_update ? 
+                            new Date(vehicle.last_gps_update).toLocaleString() : 
                             'Unknown'}
                         </td>
                         <td className="p-2">
                           <span className={
-                            vehicle.nextMaintenance && new Date(vehicle.nextMaintenance) < new Date() 
+                            vehicle.registration_expiry && new Date(vehicle.registration_expiry) < new Date() 
                               ? 'text-red-500 font-medium' 
                               : ''
                           }>
-                            {vehicle.nextMaintenance || 'Not scheduled'}
+                            {vehicle.registration_expiry || 'Not scheduled'}
                           </span>
                         </td>
                         <td className="p-2">

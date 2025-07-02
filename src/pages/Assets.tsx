@@ -655,7 +655,7 @@ const Assets = () => {
           </div>
 
           <TabsContent value="fleet" className="space-y-4">
-            <FleetDashboard vehicles={mockVehicles} />
+            <FleetDashboard />
           </TabsContent>
 
           <TabsContent value="mobile" className="space-y-4">

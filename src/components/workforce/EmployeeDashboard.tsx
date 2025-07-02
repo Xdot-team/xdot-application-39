@@ -13,21 +13,20 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Plus, Filter, FileText } from "lucide-react";
-import { mockEmployees } from "@/data/mockWorkforceData";
-import { EmployeeProfile } from "@/types/workforce";
+import { useEmployeeProfiles } from "@/hooks/useWorkforceManagement";
 import { formatDate } from "@/lib/formatters";
 
 export function EmployeeDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
-  const [employees, setEmployees] = useState<EmployeeProfile[]>(mockEmployees);
+  const { employees, loading, addEmployee, updateEmployee, deleteEmployee } = useEmployeeProfiles();
 
   const filteredEmployees = employees.filter(
     (employee) =>
-      employee.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.employeeId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.employee_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.job_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       employee.department.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -79,20 +78,20 @@ export function EmployeeDashboard() {
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
                   <Avatar>
-                    {employee.profileImage ? (
-                      <AvatarImage src={employee.profileImage} />
+                    {employee.profile_photo ? (
+                      <AvatarImage src={employee.profile_photo} />
                     ) : null}
                     <AvatarFallback>
-                      {employee.firstName.charAt(0)}
-                      {employee.lastName.charAt(0)}
+                      {employee.first_name.charAt(0)}
+                      {employee.last_name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium">
-                      {employee.firstName} {employee.lastName}
+                      {employee.first_name} {employee.last_name}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {employee.role.replace("_", " ")}
+                      {employee.job_title.replace("_", " ")}
                     </p>
                   </div>
                 </div>
@@ -104,7 +103,7 @@ export function EmployeeDashboard() {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
                   <p className="text-muted-foreground">Employee ID</p>
-                  <p>{employee.employeeId}</p>
+                  <p>{employee.employee_id}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Department</p>
@@ -112,11 +111,11 @@ export function EmployeeDashboard() {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Hire Date</p>
-                  <p>{formatDate(employee.hireDate)}</p>
+                  <p>{formatDate(employee.hire_date)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Certifications</p>
-                  <p>{employee.certifications.length}</p>
+                  <p className="text-muted-foreground">Skills</p>
+                  <p>{employee.skills?.length || 0}</p>
                 </div>
               </div>
 
@@ -148,17 +147,17 @@ export function EmployeeDashboard() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar>
-                        {employee.profileImage ? (
-                          <AvatarImage src={employee.profileImage} />
+                        {employee.profile_photo ? (
+                          <AvatarImage src={employee.profile_photo} />
                         ) : null}
                         <AvatarFallback>
-                          {employee.firstName.charAt(0)}
-                          {employee.lastName.charAt(0)}
+                          {employee.first_name.charAt(0)}
+                          {employee.last_name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-medium">
-                          {employee.firstName} {employee.lastName}
+                          {employee.first_name} {employee.last_name}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {employee.email}
@@ -166,16 +165,16 @@ export function EmployeeDashboard() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{employee.employeeId}</TableCell>
+                  <TableCell>{employee.employee_id}</TableCell>
                   <TableCell>{employee.department}</TableCell>
-                  <TableCell>{employee.role.replace("_", " ")}</TableCell>
-                  <TableCell>{formatDate(employee.hireDate)}</TableCell>
+                  <TableCell>{employee.job_title.replace("_", " ")}</TableCell>
+                  <TableCell>{formatDate(employee.hire_date)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusColor(employee.status) as any}>
                       {employee.status.replace("_", " ")}
                     </Badge>
                   </TableCell>
-                  <TableCell>{employee.certifications.length}</TableCell>
+                  <TableCell>{employee.skills?.length || 0}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm">
                       <FileText className="h-4 w-4 mr-2" />

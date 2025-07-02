@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { Vehicle } from "@/types/field";
+import { FleetVehicle } from "@/types/fleet";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { 
   PieChart, 
@@ -19,7 +19,7 @@ import {
 } from 'recharts';
 
 interface FleetMetricsProps {
-  vehicles: Vehicle[];
+  vehicles: FleetVehicle[];
 }
 
 const FleetMetrics = ({ vehicles }: FleetMetricsProps) => {
@@ -28,7 +28,7 @@ const FleetMetrics = ({ vehicles }: FleetMetricsProps) => {
     const types: Record<string, number> = {};
     
     vehicles.forEach(vehicle => {
-      types[vehicle.type] = (types[vehicle.type] || 0) + 1;
+      types[vehicle.vehicle_type] = (types[vehicle.vehicle_type] || 0) + 1;
     });
     
     return Object.entries(types).map(([name, value]) => ({ name, value }));
@@ -36,11 +36,11 @@ const FleetMetrics = ({ vehicles }: FleetMetricsProps) => {
   
   // Generate mock utilization data by vehicle type
   const utilizationByTypeData = useMemo(() => {
-    const types: Set<string> = new Set(vehicles.map(v => v.type));
+    const types: Set<string> = new Set(vehicles.map(v => v.vehicle_type));
     
     return Array.from(types).map(type => {
-      const typeVehicles = vehicles.filter(v => v.type === type);
-      const inUseCount = typeVehicles.filter(v => v.status === 'in-use').length;
+      const typeVehicles = vehicles.filter(v => v.vehicle_type === type);
+      const inUseCount = typeVehicles.filter(v => v.status === 'in_use').length;
       const utilizationRate = (inUseCount / typeVehicles.length) * 100;
       
       return {
@@ -185,7 +185,7 @@ const FleetMetrics = ({ vehicles }: FleetMetricsProps) => {
                 <div className="text-sm text-muted-foreground">Total Vehicles</div>
               </div>
               <div className="bg-muted rounded-lg p-4">
-                <div className="text-2xl font-bold">{vehicles.filter(v => v.status === 'in-use').length}</div>
+                <div className="text-2xl font-bold">{vehicles.filter(v => v.status === 'in_use').length}</div>
                 <div className="text-sm text-muted-foreground">Currently Active</div>
               </div>
               <div className="bg-muted rounded-lg p-4">
@@ -194,9 +194,9 @@ const FleetMetrics = ({ vehicles }: FleetMetricsProps) => {
               </div>
               <div className="bg-muted rounded-lg p-4">
                 <div className="text-2xl font-bold">
-                  {vehicles.filter(v => v.nextMaintenance && new Date(v.nextMaintenance) < new Date()).length}
+                  {vehicles.filter(v => v.registration_expiry && new Date(v.registration_expiry) < new Date()).length}
                 </div>
-                <div className="text-sm text-muted-foreground">Maintenance Overdue</div>
+                <div className="text-sm text-muted-foreground">Registration Overdue</div>
               </div>
             </div>
             

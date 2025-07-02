@@ -12,19 +12,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Search, Filter, Plus, CalendarCheck, CheckCircle, XCircle } from "lucide-react";
-import { mockTimeCards } from "@/data/mockWorkforceData";
-import { TimeCard } from "@/types/workforce";
+import { useTimeClock } from "@/hooks/useWorkforceManagement";
 import { formatDate } from "@/lib/formatters";
 
 export function TimeCardManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
-  const [timeCards, setTimeCards] = useState<TimeCard[]>(mockTimeCards);
+  const { timeRecords, loading, clockIn, clockOut } = useTimeClock();
 
-  const filteredTimeCards = timeCards.filter(
+  const filteredTimeCards = timeRecords.filter(
     (timeCard) =>
-      timeCard.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (timeCard.projectName && timeCard.projectName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      timeCard.employee_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       timeCard.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -87,9 +85,9 @@ export function TimeCardManagement() {
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-medium">{timeCard.employeeName}</p>
+                  <p className="font-medium">Employee: {timeCard.employee_id}</p>
                   <p className="text-sm text-muted-foreground">
-                    {formatDate(timeCard.date)}
+                    {formatDate(timeCard.clock_in)}
                   </p>
                 </div>
                 <Badge variant={getStatusColor(timeCard.status) as any}>
@@ -99,20 +97,20 @@ export function TimeCardManagement() {
 
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Project</p>
-                  <p>{timeCard.projectName || "N/A"}</p>
+                  <p className="text-muted-foreground">Clock In</p>
+                  <p>{new Date(timeCard.clock_in).toLocaleTimeString()}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Hours</p>
-                  <p>{timeCard.hoursWorked + timeCard.overtimeHours}</p>
+                  <p className="text-muted-foreground">Clock Out</p>
+                  <p>{timeCard.clock_out ? new Date(timeCard.clock_out).toLocaleTimeString() : "N/A"}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Regular</p>
-                  <p>{timeCard.hoursWorked}</p>
+                  <p className="text-muted-foreground">Total Hours</p>
+                  <p>{timeCard.total_hours || 0}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Overtime</p>
-                  <p>{timeCard.overtimeHours}</p>
+                  <p className="text-muted-foreground">Status</p>
+                  <p>{timeCard.status}</p>
                 </div>
               </div>
 
@@ -152,11 +150,11 @@ export function TimeCardManagement() {
             <TableBody>
               {filteredTimeCards.map((timeCard) => (
                 <TableRow key={timeCard.id}>
-                  <TableCell>{timeCard.employeeName}</TableCell>
-                  <TableCell>{formatDate(timeCard.date)}</TableCell>
-                  <TableCell>{timeCard.projectName || "N/A"}</TableCell>
-                  <TableCell>{timeCard.hoursWorked}</TableCell>
-                  <TableCell>{timeCard.overtimeHours}</TableCell>
+                  <TableCell>{timeCard.employee_id}</TableCell>
+                  <TableCell>{formatDate(timeCard.clock_in)}</TableCell>
+                  <TableCell>{timeCard.project_id || "N/A"}</TableCell>
+                  <TableCell>{timeCard.regular_hours || 0}</TableCell>
+                  <TableCell>{timeCard.overtime_hours || 0}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {getStatusIcon(timeCard.status)}
@@ -165,13 +163,13 @@ export function TimeCardManagement() {
                       </Badge>
                     </div>
                   </TableCell>
-                  <TableCell>{timeCard.submittedAt ? formatDate(timeCard.submittedAt) : "N/A"}</TableCell>
+                  <TableCell>{timeCard.created_at ? formatDate(timeCard.created_at) : "N/A"}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm">
                         View
                       </Button>
-                      {timeCard.status === "submitted" && (
+                      {timeCard.status === "pending" && (
                         <>
                           <Button size="sm" variant="default">
                             Approve
