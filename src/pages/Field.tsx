@@ -219,29 +219,29 @@ const Field = () => {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="map" className="space-y-4">
-          <TabsList className="flex flex-wrap w-full">
-            <TabsTrigger value="map" className="flex items-center gap-2">
+        <Tabs defaultValue="map" className="space-y-6">
+          <TabsList className="flex flex-wrap gap-1 bg-transparent p-0 h-auto">
+            <TabsTrigger value="map" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <MapPin className="h-4 w-4" />
               Map
             </TabsTrigger>
-            <TabsTrigger value="punchlist" className="flex items-center gap-2">
+            <TabsTrigger value="punchlist" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <AlertTriangle className="h-4 w-4" />
               Punchlist
             </TabsTrigger>
-            <TabsTrigger value="dispatch" className="flex items-center gap-2">
+            <TabsTrigger value="dispatch" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Activity className="h-4 w-4" />
               Dispatch
             </TabsTrigger>
-            <TabsTrigger value="walkthrough" className="flex items-center gap-2">
+            <TabsTrigger value="walkthrough" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <ClipboardList className="h-4 w-4" />
               Walkthrough
             </TabsTrigger>
-            <TabsTrigger value="subcontractors" className="flex items-center gap-2">
+            <TabsTrigger value="subcontractors" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Building className="h-4 w-4" />
               Subcontractors
             </TabsTrigger>
-            <TabsTrigger value="workers" className="flex items-center gap-2">
+            <TabsTrigger value="workers" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
               Workers
             </TabsTrigger>
