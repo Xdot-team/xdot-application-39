@@ -308,6 +308,385 @@ export type Database = {
           },
         ]
       }
+      employee_payroll_records: {
+        Row: {
+          created_at: string
+          employee_id: string
+          federal_tax: number
+          gross_pay: number
+          holiday_hours: number
+          id: string
+          medicare: number
+          net_pay: number
+          notes: string | null
+          other_deductions: number
+          overtime_hours: number
+          pay_date: string | null
+          pay_period_end: string
+          pay_period_start: string
+          regular_hours: number
+          sick_hours: number
+          social_security: number
+          state_tax: number
+          status: string
+          vacation_hours: number
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          federal_tax?: number
+          gross_pay?: number
+          holiday_hours?: number
+          id?: string
+          medicare?: number
+          net_pay?: number
+          notes?: string | null
+          other_deductions?: number
+          overtime_hours?: number
+          pay_date?: string | null
+          pay_period_end: string
+          pay_period_start: string
+          regular_hours?: number
+          sick_hours?: number
+          social_security?: number
+          state_tax?: number
+          status?: string
+          vacation_hours?: number
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          federal_tax?: number
+          gross_pay?: number
+          holiday_hours?: number
+          id?: string
+          medicare?: number
+          net_pay?: number
+          notes?: string | null
+          other_deductions?: number
+          overtime_hours?: number
+          pay_date?: string | null
+          pay_period_end?: string
+          pay_period_start?: string
+          regular_hours?: number
+          sick_hours?: number
+          social_security?: number
+          state_tax?: number
+          status?: string
+          vacation_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_payroll_records_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_performance_reviews: {
+        Row: {
+          areas_for_improvement: string | null
+          created_at: string
+          employee_comments: string | null
+          employee_id: string
+          goals_for_next_period: string | null
+          goals_met: number | null
+          id: string
+          overall_rating: number | null
+          punctuality: number | null
+          quality_of_work: number | null
+          review_date: string
+          review_period_end: string
+          review_period_start: string
+          reviewer_id: string
+          safety_compliance: number | null
+          status: string
+          strengths: string | null
+          teamwork: number | null
+        }
+        Insert: {
+          areas_for_improvement?: string | null
+          created_at?: string
+          employee_comments?: string | null
+          employee_id: string
+          goals_for_next_period?: string | null
+          goals_met?: number | null
+          id?: string
+          overall_rating?: number | null
+          punctuality?: number | null
+          quality_of_work?: number | null
+          review_date?: string
+          review_period_end: string
+          review_period_start: string
+          reviewer_id: string
+          safety_compliance?: number | null
+          status?: string
+          strengths?: string | null
+          teamwork?: number | null
+        }
+        Update: {
+          areas_for_improvement?: string | null
+          created_at?: string
+          employee_comments?: string | null
+          employee_id?: string
+          goals_for_next_period?: string | null
+          goals_met?: number | null
+          id?: string
+          overall_rating?: number | null
+          punctuality?: number | null
+          quality_of_work?: number | null
+          review_date?: string
+          review_period_end?: string
+          review_period_start?: string
+          reviewer_id?: string
+          safety_compliance?: number | null
+          status?: string
+          strengths?: string | null
+          teamwork?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_performance_reviews_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_performance_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_profiles: {
+        Row: {
+          address: string | null
+          certifications: Json | null
+          created_at: string
+          department: string
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          employee_id: string
+          first_name: string
+          hire_date: string
+          id: string
+          job_title: string
+          last_name: string
+          notes: string | null
+          pay_rate: number
+          pay_type: string
+          phone: string | null
+          profile_photo: string | null
+          skills: string[] | null
+          status: string
+          supervisor_id: string | null
+          termination_date: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          certifications?: Json | null
+          created_at?: string
+          department: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          employee_id: string
+          first_name: string
+          hire_date: string
+          id?: string
+          job_title: string
+          last_name: string
+          notes?: string | null
+          pay_rate: number
+          pay_type?: string
+          phone?: string | null
+          profile_photo?: string | null
+          skills?: string[] | null
+          status?: string
+          supervisor_id?: string | null
+          termination_date?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          certifications?: Json | null
+          created_at?: string
+          department?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          employee_id?: string
+          first_name?: string
+          hire_date?: string
+          id?: string
+          job_title?: string
+          last_name?: string
+          notes?: string | null
+          pay_rate?: number
+          pay_type?: string
+          phone?: string | null
+          profile_photo?: string | null
+          skills?: string[] | null
+          status?: string
+          supervisor_id?: string | null
+          termination_date?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_profiles_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_schedules: {
+        Row: {
+          created_at: string
+          created_by: string
+          employee_id: string
+          id: string
+          location: string | null
+          notes: string | null
+          project_id: string | null
+          role_for_day: string | null
+          schedule_date: string
+          shift_end: string
+          shift_start: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          employee_id: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          project_id?: string | null
+          role_for_day?: string | null
+          schedule_date: string
+          shift_end: string
+          shift_start: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          employee_id?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          project_id?: string | null
+          role_for_day?: string | null
+          schedule_date?: string
+          shift_end?: string
+          shift_start?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_schedules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_schedules_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_schedules_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_training_records: {
+        Row: {
+          attachments: string[] | null
+          certification_number: string | null
+          completion_date: string | null
+          cost: number | null
+          created_at: string
+          employee_id: string
+          expiry_date: string | null
+          id: string
+          instructor: string | null
+          location: string | null
+          notes: string | null
+          score: number | null
+          start_date: string
+          status: string
+          training_name: string
+          training_provider: string | null
+          training_type: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          certification_number?: string | null
+          completion_date?: string | null
+          cost?: number | null
+          created_at?: string
+          employee_id: string
+          expiry_date?: string | null
+          id?: string
+          instructor?: string | null
+          location?: string | null
+          notes?: string | null
+          score?: number | null
+          start_date: string
+          status?: string
+          training_name: string
+          training_provider?: string | null
+          training_type: string
+        }
+        Update: {
+          attachments?: string[] | null
+          certification_number?: string | null
+          completion_date?: string | null
+          cost?: number | null
+          created_at?: string
+          employee_id?: string
+          expiry_date?: string | null
+          id?: string
+          instructor?: string | null
+          location?: string | null
+          notes?: string | null
+          score?: number | null
+          start_date?: string
+          status?: string
+          training_name?: string
+          training_provider?: string | null
+          training_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_training_records_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       environmental_conditions: {
         Row: {
           air_quality_index: number | null
@@ -807,6 +1186,393 @@ export type Database = {
             columns: ["current_site_id"]
             isOneToOne: false
             referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_fuel_records: {
+        Row: {
+          cost_per_gallon: number
+          created_at: string
+          driver_id: string | null
+          fuel_date: string
+          fuel_station: string | null
+          gallons_purchased: number
+          id: string
+          notes: string | null
+          odometer_reading: number
+          receipt_photo: string | null
+          total_cost: number
+          vehicle_id: string
+        }
+        Insert: {
+          cost_per_gallon: number
+          created_at?: string
+          driver_id?: string | null
+          fuel_date?: string
+          fuel_station?: string | null
+          gallons_purchased: number
+          id?: string
+          notes?: string | null
+          odometer_reading: number
+          receipt_photo?: string | null
+          total_cost: number
+          vehicle_id: string
+        }
+        Update: {
+          cost_per_gallon?: number
+          created_at?: string
+          driver_id?: string | null
+          fuel_date?: string
+          fuel_station?: string | null
+          gallons_purchased?: number
+          id?: string
+          notes?: string | null
+          odometer_reading?: number
+          receipt_photo?: string | null
+          total_cost?: number
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_fuel_records_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "field_workers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_fuel_records_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_inspections: {
+        Row: {
+          checklist_items: Json
+          corrective_actions: string | null
+          created_at: string
+          defects_found: string[] | null
+          engine_hours: number | null
+          id: string
+          inspection_date: string
+          inspection_type: string
+          inspector_id: string
+          mileage: number | null
+          next_inspection_due: string | null
+          notes: string | null
+          overall_condition: string
+          pass_fail: string
+          photos: string[] | null
+          vehicle_id: string
+        }
+        Insert: {
+          checklist_items: Json
+          corrective_actions?: string | null
+          created_at?: string
+          defects_found?: string[] | null
+          engine_hours?: number | null
+          id?: string
+          inspection_date?: string
+          inspection_type: string
+          inspector_id: string
+          mileage?: number | null
+          next_inspection_due?: string | null
+          notes?: string | null
+          overall_condition: string
+          pass_fail: string
+          photos?: string[] | null
+          vehicle_id: string
+        }
+        Update: {
+          checklist_items?: Json
+          corrective_actions?: string | null
+          created_at?: string
+          defects_found?: string[] | null
+          engine_hours?: number | null
+          id?: string
+          inspection_date?: string
+          inspection_type?: string
+          inspector_id?: string
+          mileage?: number | null
+          next_inspection_due?: string | null
+          notes?: string | null
+          overall_condition?: string
+          pass_fail?: string
+          photos?: string[] | null
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_inspections_inspector_id_fkey"
+            columns: ["inspector_id"]
+            isOneToOne: false
+            referencedRelation: "field_workers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_inspections_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_maintenance_records: {
+        Row: {
+          attachments: string[] | null
+          cost: number | null
+          created_at: string
+          description: string
+          engine_hours_at_service: number | null
+          id: string
+          invoice_number: string | null
+          maintenance_type: string
+          mileage_at_service: number | null
+          next_service_date: string | null
+          next_service_mileage: number | null
+          notes: string | null
+          parts_replaced: string[] | null
+          performed_by: string
+          service_date: string
+          shop_name: string | null
+          vehicle_id: string
+          warranty_expires: string | null
+        }
+        Insert: {
+          attachments?: string[] | null
+          cost?: number | null
+          created_at?: string
+          description: string
+          engine_hours_at_service?: number | null
+          id?: string
+          invoice_number?: string | null
+          maintenance_type: string
+          mileage_at_service?: number | null
+          next_service_date?: string | null
+          next_service_mileage?: number | null
+          notes?: string | null
+          parts_replaced?: string[] | null
+          performed_by: string
+          service_date: string
+          shop_name?: string | null
+          vehicle_id: string
+          warranty_expires?: string | null
+        }
+        Update: {
+          attachments?: string[] | null
+          cost?: number | null
+          created_at?: string
+          description?: string
+          engine_hours_at_service?: number | null
+          id?: string
+          invoice_number?: string | null
+          maintenance_type?: string
+          mileage_at_service?: number | null
+          next_service_date?: string | null
+          next_service_mileage?: number | null
+          notes?: string | null
+          parts_replaced?: string[] | null
+          performed_by?: string
+          service_date?: string
+          shop_name?: string | null
+          vehicle_id?: string
+          warranty_expires?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_maintenance_records_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_trip_logs: {
+        Row: {
+          created_at: string
+          driver_id: string
+          end_location: unknown | null
+          end_mileage: number | null
+          fuel_used: number | null
+          id: string
+          project_id: string | null
+          purpose: string
+          route_data: Json | null
+          start_location: unknown | null
+          start_mileage: number
+          total_miles: number | null
+          trip_end: string | null
+          trip_start: string
+          vehicle_id: string
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          end_location?: unknown | null
+          end_mileage?: number | null
+          fuel_used?: number | null
+          id?: string
+          project_id?: string | null
+          purpose: string
+          route_data?: Json | null
+          start_location?: unknown | null
+          start_mileage: number
+          total_miles?: number | null
+          trip_end?: string | null
+          trip_start: string
+          vehicle_id: string
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          end_location?: unknown | null
+          end_mileage?: number | null
+          fuel_used?: number | null
+          id?: string
+          project_id?: string | null
+          purpose?: string
+          route_data?: Json | null
+          start_location?: unknown | null
+          start_mileage?: number
+          total_miles?: number | null
+          trip_end?: string | null
+          trip_start?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_trip_logs_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "field_workers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_trip_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_trip_logs_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_vehicles: {
+        Row: {
+          assigned_driver_id: string | null
+          created_at: string
+          current_engine_hours: number | null
+          current_fuel_level: number | null
+          current_location: unknown | null
+          current_mileage: number | null
+          current_project_id: string | null
+          fuel_capacity: number | null
+          fuel_type: string | null
+          gps_device_id: string | null
+          home_yard_location: string | null
+          id: string
+          inspection_expiry: string | null
+          insurance_expiry: string | null
+          insurance_policy_number: string | null
+          last_gps_update: string | null
+          license_plate: string | null
+          make: string
+          model: string
+          purchase_cost: number | null
+          purchase_date: string | null
+          registration_expiry: string | null
+          status: string
+          updated_at: string
+          vehicle_number: string
+          vehicle_type: string
+          vin: string | null
+          year: number
+        }
+        Insert: {
+          assigned_driver_id?: string | null
+          created_at?: string
+          current_engine_hours?: number | null
+          current_fuel_level?: number | null
+          current_location?: unknown | null
+          current_mileage?: number | null
+          current_project_id?: string | null
+          fuel_capacity?: number | null
+          fuel_type?: string | null
+          gps_device_id?: string | null
+          home_yard_location?: string | null
+          id?: string
+          inspection_expiry?: string | null
+          insurance_expiry?: string | null
+          insurance_policy_number?: string | null
+          last_gps_update?: string | null
+          license_plate?: string | null
+          make: string
+          model: string
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          registration_expiry?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_number: string
+          vehicle_type: string
+          vin?: string | null
+          year: number
+        }
+        Update: {
+          assigned_driver_id?: string | null
+          created_at?: string
+          current_engine_hours?: number | null
+          current_fuel_level?: number | null
+          current_location?: unknown | null
+          current_mileage?: number | null
+          current_project_id?: string | null
+          fuel_capacity?: number | null
+          fuel_type?: string | null
+          gps_device_id?: string | null
+          home_yard_location?: string | null
+          id?: string
+          inspection_expiry?: string | null
+          insurance_expiry?: string | null
+          insurance_policy_number?: string | null
+          last_gps_update?: string | null
+          license_plate?: string | null
+          make?: string
+          model?: string
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          registration_expiry?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_number?: string
+          vehicle_type?: string
+          vin?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_vehicles_assigned_driver_id_fkey"
+            columns: ["assigned_driver_id"]
+            isOneToOne: false
+            referencedRelation: "field_workers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_vehicles_current_project_id_fkey"
+            columns: ["current_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -1791,6 +2557,97 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "submittals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_clock_records: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          break_end: string | null
+          break_start: string | null
+          clock_in: string
+          clock_in_photo: string | null
+          clock_out: string | null
+          clock_out_photo: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          location: unknown | null
+          lunch_end: string | null
+          lunch_start: string | null
+          notes: string | null
+          overtime_hours: number | null
+          project_id: string | null
+          regular_hours: number | null
+          status: string
+          total_hours: number | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          break_end?: string | null
+          break_start?: string | null
+          clock_in: string
+          clock_in_photo?: string | null
+          clock_out?: string | null
+          clock_out_photo?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          location?: unknown | null
+          lunch_end?: string | null
+          lunch_start?: string | null
+          notes?: string | null
+          overtime_hours?: number | null
+          project_id?: string | null
+          regular_hours?: number | null
+          status?: string
+          total_hours?: number | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          break_end?: string | null
+          break_start?: string | null
+          clock_in?: string
+          clock_in_photo?: string | null
+          clock_out?: string | null
+          clock_out_photo?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          location?: unknown | null
+          lunch_end?: string | null
+          lunch_start?: string | null
+          notes?: string | null
+          overtime_hours?: number | null
+          project_id?: string | null
+          regular_hours?: number | null
+          status?: string
+          total_hours?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_clock_records_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_clock_records_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_clock_records_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
