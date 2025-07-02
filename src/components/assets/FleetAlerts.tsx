@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { Vehicle } from "@/types/field";
+import { FleetVehicle } from "@/types/fleet";
 import { 
   AlertTriangle, 
   Clock, 
@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 interface FleetAlertsProps {
-  vehicles: Vehicle[];
+  vehicles: FleetVehicle[];
 }
 
 const FleetAlerts = ({ vehicles }: FleetAlertsProps) => {
@@ -24,7 +24,7 @@ const FleetAlerts = ({ vehicles }: FleetAlertsProps) => {
   // Find overdue maintenance vehicles
   const overdueMaintenanceVehicles = useMemo(() => {
     return vehicles.filter(vehicle => 
-      vehicle.nextMaintenance && new Date(vehicle.nextMaintenance) < currentDate
+      vehicle.registration_expiry && new Date(vehicle.registration_expiry) < currentDate
     );
   }, [vehicles, currentDate]);
   
@@ -64,9 +64,9 @@ const FleetAlerts = ({ vehicles }: FleetAlertsProps) => {
     oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
     
     return vehicles.filter(vehicle => 
-      vehicle.nextMaintenance && 
-      new Date(vehicle.nextMaintenance) > currentDate &&
-      new Date(vehicle.nextMaintenance) < oneWeekFromNow
+      vehicle.inspection_expiry && 
+      new Date(vehicle.inspection_expiry) > currentDate &&
+      new Date(vehicle.inspection_expiry) < oneWeekFromNow
     );
   }, [vehicles, currentDate]);
   
@@ -173,7 +173,7 @@ const FleetAlerts = ({ vehicles }: FleetAlertsProps) => {
                         <h3 className="font-medium">
                           {alert.type === 'location' 
                             ? alert.vehicleName
-                            : alert.vehicle.name
+                            : `${alert.vehicle.make} ${alert.vehicle.model}`
                           }
                         </h3>
                         <span className="text-xs text-muted-foreground">
@@ -183,10 +183,10 @@ const FleetAlerts = ({ vehicles }: FleetAlertsProps) => {
                       
                       <p className="text-sm mt-0.5">
                         {alert.type === 'maintenance-overdue' && (
-                          <>Maintenance overdue since <span className="font-medium">{alert.vehicle.nextMaintenance}</span></>
+                          <>Registration overdue since <span className="font-medium">{alert.vehicle.registration_expiry}</span></>
                         )}
                         {alert.type === 'maintenance-upcoming' && (
-                          <>Scheduled maintenance on <span className="font-medium">{alert.vehicle.nextMaintenance}</span></>
+                          <>Scheduled inspection on <span className="font-medium">{alert.vehicle.inspection_expiry}</span></>
                         )}
                         {alert.type === 'low-utilization' && (
                           <>Low utilization rate. Vehicle has been <span className="font-medium">available</span> for 7+ days</>

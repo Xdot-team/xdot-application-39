@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Wrench, FileText, ArrowUpDown, ChevronDown } from 'lucide-react';
-import { Vehicle, Tool } from '@/types/field';
+import { FleetVehicle } from '@/types/fleet';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,8 +16,8 @@ import {
 import { toast } from "sonner";
 
 interface MaintenanceScheduleProps {
-  vehicles: Vehicle[];
-  tools: Tool[];
+  vehicles: FleetVehicle[];
+  tools: any[];
 }
 
 type MaintenanceItem = {
@@ -37,16 +37,16 @@ export const MaintenanceSchedule = ({ vehicles, tools }: MaintenanceScheduleProp
     
     // Add vehicle maintenance
     vehicles.forEach(vehicle => {
-      if (vehicle.nextMaintenance) {
-        const maintenanceDate = new Date(vehicle.nextMaintenance);
+      if (vehicle.registration_expiry) {
+        const maintenanceDate = new Date(vehicle.registration_expiry);
         const today = new Date();
         
         items.push({
           id: `maint-v-${vehicle.id}`,
           assetId: vehicle.id,
-          assetName: vehicle.name,
+          assetName: `${vehicle.make} ${vehicle.model}`,
           assetType: 'vehicle',
-          date: vehicle.nextMaintenance,
+          date: vehicle.registration_expiry,
           assetDetails: `${vehicle.make} ${vehicle.model} (${vehicle.year})`,
           status: maintenanceDate < today ? 'overdue' : 'scheduled'
         });
@@ -72,17 +72,20 @@ export const MaintenanceSchedule = ({ vehicles, tools }: MaintenanceScheduleProp
     });
     
     // Add a few completed maintenance items for demonstration
-    items.push(
-      {
+    if (vehicles.length > 0) {
+      items.push({
         id: 'maint-v-past1',
         assetId: vehicles[0].id,
-        assetName: vehicles[0].name,
+        assetName: `${vehicles[0].make} ${vehicles[0].model}`,
         assetType: 'vehicle',
         date: '2025-04-15',
         assetDetails: `${vehicles[0].make} ${vehicles[0].model} (Oil Change)`,
         status: 'completed'
-      },
-      {
+      });
+    }
+    
+    if (tools.length > 0) {
+      items.push({
         id: 'maint-t-past1',
         assetId: tools[0].id,
         assetName: tools[0].name,
@@ -90,8 +93,8 @@ export const MaintenanceSchedule = ({ vehicles, tools }: MaintenanceScheduleProp
         date: '2025-05-02',
         assetDetails: `${tools[0].brand} (Blade replacement)`,
         status: 'completed'
-      }
-    );
+      });
+    }
     
     // Sort by date (overdue first, then by date)
     return items.sort((a, b) => {

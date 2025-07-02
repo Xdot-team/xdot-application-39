@@ -14,16 +14,16 @@ import {
   FileText,
   Smartphone
 } from "lucide-react";
-import { Vehicle } from "@/types/field";
+import { FleetVehicle } from "@/types/fleet";
 import FleetMap from "./FleetMap";
 
 interface MobileFleetViewProps {
-  vehicles: Vehicle[];
+  vehicles: FleetVehicle[];
 }
 
 const MobileFleetView = ({ vehicles }: MobileFleetViewProps) => {
   const [activeView, setActiveView] = useState<'map' | 'list' | 'requests'>('map');
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<FleetVehicle | null>(null);
   const [offlineRequests, setOfflineRequests] = useState<any[]>([
     { id: 'REQ-001', type: 'Tool', name: 'Concrete Saw', status: 'pending', timestamp: '2025-05-17T14:30:00Z' },
     { id: 'REQ-002', type: 'Material', name: 'Portland Cement', quantity: '5 bags', status: 'syncing', timestamp: '2025-05-17T15:45:00Z' }
@@ -32,7 +32,7 @@ const MobileFleetView = ({ vehicles }: MobileFleetViewProps) => {
   // Find vehicles with maintenance issues
   const vehiclesNeedingAttention = vehicles.filter(v => 
     v.status === 'maintenance' || 
-    (v.nextMaintenance && new Date(v.nextMaintenance) < new Date())
+    (v.registration_expiry && new Date(v.registration_expiry) < new Date())
   );
   
   // Request form state
@@ -147,8 +147,8 @@ const MobileFleetView = ({ vehicles }: MobileFleetViewProps) => {
                     <CardContent className="p-3">
                       <div className="flex justify-between">
                         <div>
-                          <div className="font-medium">{vehicle.name}</div>
-                          <div className="text-xs text-muted-foreground">{vehicle.type}</div>
+                          <div className="font-medium">{vehicle.make} {vehicle.model}</div>
+                          <div className="text-xs text-muted-foreground">{vehicle.vehicle_type}</div>
                         </div>
                         <div className="flex items-center">
                           <Badge className={vehicle.status === 'maintenance' ? 'bg-amber-500' : 'bg-red-500'}>
@@ -192,8 +192,8 @@ const MobileFleetView = ({ vehicles }: MobileFleetViewProps) => {
                 <CardContent className="p-3">
                   <div className="flex justify-between">
                     <div>
-                      <div className="font-medium">{vehicle.name}</div>
-                      <div className="text-xs text-muted-foreground">{vehicle.type}</div>
+                      <div className="font-medium">{vehicle.make} {vehicle.model}</div>
+                      <div className="text-xs text-muted-foreground">{vehicle.vehicle_type}</div>
                     </div>
                     <div className="flex items-center">
                       <div className={`h-2 w-2 rounded-full mr-1.5 ${
