@@ -308,6 +308,77 @@ export type Database = {
           },
         ]
       }
+      employee_health_records: {
+        Row: {
+          attachments: string[] | null
+          certification_number: string | null
+          compliance_status: string | null
+          confidential_notes: string | null
+          created_at: string
+          employee_id: string | null
+          expiry_date: string | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          id: string
+          provider_contact: string | null
+          provider_name: string | null
+          record_date: string
+          record_type: string
+          restrictions: string | null
+          status: string
+          test_results: Json | null
+          updated_at: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          certification_number?: string | null
+          compliance_status?: string | null
+          confidential_notes?: string | null
+          created_at?: string
+          employee_id?: string | null
+          expiry_date?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          provider_contact?: string | null
+          provider_name?: string | null
+          record_date: string
+          record_type: string
+          restrictions?: string | null
+          status?: string
+          test_results?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          attachments?: string[] | null
+          certification_number?: string | null
+          compliance_status?: string | null
+          confidential_notes?: string | null
+          created_at?: string
+          employee_id?: string | null
+          expiry_date?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          provider_contact?: string | null
+          provider_name?: string | null
+          record_date?: string
+          record_type?: string
+          restrictions?: string | null
+          status?: string
+          test_results?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_health_records_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_payroll_records: {
         Row: {
           created_at: string
@@ -1711,6 +1782,272 @@ export type Database = {
           },
         ]
       }
+      onboarding_steps: {
+        Row: {
+          actual_duration_hours: number | null
+          assigned_to: string | null
+          attachments: string[] | null
+          completed_date: string | null
+          completion_notes: string | null
+          created_at: string
+          due_date: string | null
+          estimated_duration_hours: number | null
+          id: string
+          required_documents: string[] | null
+          status: string
+          step_description: string | null
+          step_number: number
+          step_title: string
+          step_type: string
+          updated_at: string
+          workflow_id: string | null
+        }
+        Insert: {
+          actual_duration_hours?: number | null
+          assigned_to?: string | null
+          attachments?: string[] | null
+          completed_date?: string | null
+          completion_notes?: string | null
+          created_at?: string
+          due_date?: string | null
+          estimated_duration_hours?: number | null
+          id?: string
+          required_documents?: string[] | null
+          status?: string
+          step_description?: string | null
+          step_number: number
+          step_title: string
+          step_type: string
+          updated_at?: string
+          workflow_id?: string | null
+        }
+        Update: {
+          actual_duration_hours?: number | null
+          assigned_to?: string | null
+          attachments?: string[] | null
+          completed_date?: string | null
+          completion_notes?: string | null
+          created_at?: string
+          due_date?: string | null
+          estimated_duration_hours?: number | null
+          id?: string
+          required_documents?: string[] | null
+          status?: string
+          step_description?: string | null
+          step_number?: number
+          step_title?: string
+          step_type?: string
+          updated_at?: string
+          workflow_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_steps_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_workflows: {
+        Row: {
+          actual_completion_date: string | null
+          assigned_buddy_id: string | null
+          assigned_hr_rep: string | null
+          completion_percentage: number | null
+          created_at: string
+          current_step: number
+          employee_id: string | null
+          expected_completion_date: string | null
+          id: string
+          notes: string | null
+          started_date: string | null
+          status: string
+          total_steps: number
+          updated_at: string
+          workflow_template: string
+        }
+        Insert: {
+          actual_completion_date?: string | null
+          assigned_buddy_id?: string | null
+          assigned_hr_rep?: string | null
+          completion_percentage?: number | null
+          created_at?: string
+          current_step?: number
+          employee_id?: string | null
+          expected_completion_date?: string | null
+          id?: string
+          notes?: string | null
+          started_date?: string | null
+          status?: string
+          total_steps: number
+          updated_at?: string
+          workflow_template: string
+        }
+        Update: {
+          actual_completion_date?: string | null
+          assigned_buddy_id?: string | null
+          assigned_hr_rep?: string | null
+          completion_percentage?: number | null
+          created_at?: string
+          current_step?: number
+          employee_id?: string | null
+          expected_completion_date?: string | null
+          id?: string
+          notes?: string | null
+          started_date?: string | null
+          status?: string
+          total_steps?: number
+          updated_at?: string
+          workflow_template?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_workflows_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_calculations: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          calculation_date: string
+          created_at: string
+          double_time_hours: number | null
+          employee_id: string | null
+          federal_tax: number | null
+          gross_pay: number | null
+          holiday_hours: number | null
+          holiday_rate: number | null
+          id: string
+          medicare: number | null
+          net_pay: number | null
+          other_deductions: number | null
+          overtime_hours: number | null
+          overtime_rate: number | null
+          pay_period_end: string
+          pay_period_start: string
+          regular_hours: number | null
+          regular_rate: number
+          sick_hours: number | null
+          social_security: number | null
+          state_tax: number | null
+          status: string
+          updated_at: string
+          vacation_hours: number | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          calculation_date?: string
+          created_at?: string
+          double_time_hours?: number | null
+          employee_id?: string | null
+          federal_tax?: number | null
+          gross_pay?: number | null
+          holiday_hours?: number | null
+          holiday_rate?: number | null
+          id?: string
+          medicare?: number | null
+          net_pay?: number | null
+          other_deductions?: number | null
+          overtime_hours?: number | null
+          overtime_rate?: number | null
+          pay_period_end: string
+          pay_period_start: string
+          regular_hours?: number | null
+          regular_rate: number
+          sick_hours?: number | null
+          social_security?: number | null
+          state_tax?: number | null
+          status?: string
+          updated_at?: string
+          vacation_hours?: number | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          calculation_date?: string
+          created_at?: string
+          double_time_hours?: number | null
+          employee_id?: string | null
+          federal_tax?: number | null
+          gross_pay?: number | null
+          holiday_hours?: number | null
+          holiday_rate?: number | null
+          id?: string
+          medicare?: number | null
+          net_pay?: number | null
+          other_deductions?: number | null
+          overtime_hours?: number | null
+          overtime_rate?: number | null
+          pay_period_end?: string
+          pay_period_start?: string
+          regular_hours?: number | null
+          regular_rate?: number
+          sick_hours?: number | null
+          social_security?: number | null
+          state_tax?: number | null
+          status?: string
+          updated_at?: string
+          vacation_hours?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_calculations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photo_annotations: {
+        Row: {
+          annotation_data: Json
+          annotation_type: string
+          coordinates: Json | null
+          created_at: string
+          created_by: string
+          id: string
+          photo_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          annotation_data?: Json
+          annotation_type: string
+          coordinates?: Json | null
+          created_at?: string
+          created_by: string
+          id?: string
+          photo_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          annotation_data?: Json
+          annotation_type?: string
+          coordinates?: Json | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          photo_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photo_annotations_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "field_photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_budget_items: {
         Row: {
           actual_amount: number | null
@@ -2196,6 +2533,56 @@ export type Database = {
           },
         ]
       }
+      route_optimizations: {
+        Row: {
+          actual_fuel_saved_gallons: number | null
+          actual_time_saved_minutes: number | null
+          created_at: string
+          estimated_fuel_saved_gallons: number | null
+          estimated_time_saved_minutes: number | null
+          id: string
+          optimization_algorithm: string | null
+          optimized_route: Json | null
+          original_route: Json | null
+          trip_date: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          actual_fuel_saved_gallons?: number | null
+          actual_time_saved_minutes?: number | null
+          created_at?: string
+          estimated_fuel_saved_gallons?: number | null
+          estimated_time_saved_minutes?: number | null
+          id?: string
+          optimization_algorithm?: string | null
+          optimized_route?: Json | null
+          original_route?: Json | null
+          trip_date: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          actual_fuel_saved_gallons?: number | null
+          actual_time_saved_minutes?: number | null
+          created_at?: string
+          estimated_fuel_saved_gallons?: number | null
+          estimated_time_saved_minutes?: number | null
+          id?: string
+          optimization_algorithm?: string | null
+          optimized_route?: Json | null
+          original_route?: Json | null
+          trip_date?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_optimizations_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       safety_incidents: {
         Row: {
           body_part_affected: string | null
@@ -2443,16 +2830,21 @@ export type Database = {
           equipment_owned: string[] | null
           id: string
           insurance_certificate: string | null
+          insurance_documents: string[] | null
           insurance_expiry: string | null
           key_personnel: Json | null
+          last_project_date: string | null
           license_expiry: string | null
           license_number: string | null
           notes: string | null
           overall_rating: number | null
           prequalification_expiry: string | null
+          prequalification_score: number | null
           prequalified: boolean | null
+          project_history: string[] | null
           quality_rating: number | null
           safety_rating: number | null
+          safety_record: Json | null
           schedule_rating: number | null
           status: string | null
           trade_specialty: string
@@ -2474,16 +2866,21 @@ export type Database = {
           equipment_owned?: string[] | null
           id?: string
           insurance_certificate?: string | null
+          insurance_documents?: string[] | null
           insurance_expiry?: string | null
           key_personnel?: Json | null
+          last_project_date?: string | null
           license_expiry?: string | null
           license_number?: string | null
           notes?: string | null
           overall_rating?: number | null
           prequalification_expiry?: string | null
+          prequalification_score?: number | null
           prequalified?: boolean | null
+          project_history?: string[] | null
           quality_rating?: number | null
           safety_rating?: number | null
+          safety_record?: Json | null
           schedule_rating?: number | null
           status?: string | null
           trade_specialty: string
@@ -2505,16 +2902,21 @@ export type Database = {
           equipment_owned?: string[] | null
           id?: string
           insurance_certificate?: string | null
+          insurance_documents?: string[] | null
           insurance_expiry?: string | null
           key_personnel?: Json | null
+          last_project_date?: string | null
           license_expiry?: string | null
           license_number?: string | null
           notes?: string | null
           overall_rating?: number | null
           prequalification_expiry?: string | null
+          prequalification_score?: number | null
           prequalified?: boolean | null
+          project_history?: string[] | null
           quality_rating?: number | null
           safety_rating?: number | null
+          safety_record?: Json | null
           schedule_rating?: number | null
           status?: string | null
           trade_specialty?: string
@@ -2765,6 +3167,146 @@ export type Database = {
           },
         ]
       }
+      tool_checkouts: {
+        Row: {
+          actual_return_date: string | null
+          checkout_condition: string | null
+          checkout_date: string
+          checkout_notes: string | null
+          created_at: string
+          expected_return_date: string | null
+          id: string
+          project_id: string | null
+          return_condition: string | null
+          return_notes: string | null
+          status: string
+          tool_id: string | null
+          updated_at: string
+          worker_id: string | null
+          worker_name: string
+        }
+        Insert: {
+          actual_return_date?: string | null
+          checkout_condition?: string | null
+          checkout_date?: string
+          checkout_notes?: string | null
+          created_at?: string
+          expected_return_date?: string | null
+          id?: string
+          project_id?: string | null
+          return_condition?: string | null
+          return_notes?: string | null
+          status?: string
+          tool_id?: string | null
+          updated_at?: string
+          worker_id?: string | null
+          worker_name: string
+        }
+        Update: {
+          actual_return_date?: string | null
+          checkout_condition?: string | null
+          checkout_date?: string
+          checkout_notes?: string | null
+          created_at?: string
+          expected_return_date?: string | null
+          id?: string
+          project_id?: string | null
+          return_condition?: string | null
+          return_notes?: string | null
+          status?: string
+          tool_id?: string | null
+          updated_at?: string
+          worker_id?: string | null
+          worker_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tool_checkouts_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "tools_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tools_inventory: {
+        Row: {
+          assigned_to_project_id: string | null
+          assigned_to_worker_id: string | null
+          attachments: string[] | null
+          barcode: string | null
+          brand: string | null
+          created_at: string
+          current_value: number | null
+          id: string
+          last_maintenance_date: string | null
+          location: string | null
+          maintenance_interval_days: number | null
+          model: string | null
+          next_maintenance_date: string | null
+          notes: string | null
+          purchase_cost: number | null
+          purchase_date: string | null
+          qr_code: string | null
+          serial_number: string | null
+          specifications: Json | null
+          status: string
+          tool_name: string
+          tool_type: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to_project_id?: string | null
+          assigned_to_worker_id?: string | null
+          attachments?: string[] | null
+          barcode?: string | null
+          brand?: string | null
+          created_at?: string
+          current_value?: number | null
+          id?: string
+          last_maintenance_date?: string | null
+          location?: string | null
+          maintenance_interval_days?: number | null
+          model?: string | null
+          next_maintenance_date?: string | null
+          notes?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          qr_code?: string | null
+          serial_number?: string | null
+          specifications?: Json | null
+          status?: string
+          tool_name: string
+          tool_type: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to_project_id?: string | null
+          assigned_to_worker_id?: string | null
+          attachments?: string[] | null
+          barcode?: string | null
+          brand?: string | null
+          created_at?: string
+          current_value?: number | null
+          id?: string
+          last_maintenance_date?: string | null
+          location?: string | null
+          maintenance_interval_days?: number | null
+          model?: string | null
+          next_maintenance_date?: string | null
+          notes?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          qr_code?: string | null
+          serial_number?: string | null
+          specifications?: Json | null
+          status?: string
+          tool_name?: string
+          tool_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       utility_adjustments: {
         Row: {
           actual_date: string | null
@@ -2878,6 +3420,59 @@ export type Database = {
             columns: ["site_id"]
             isOneToOne: false
             referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_forms: {
+        Row: {
+          created_at: string
+          form_data: Json
+          form_type: string
+          id: string
+          notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string
+          submitted_by: string
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          form_data?: Json
+          form_type: string
+          id?: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          form_data?: Json
+          form_type?: string
+          id?: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_forms_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
             referencedColumns: ["id"]
           },
         ]
@@ -3017,6 +3612,56 @@ export type Database = {
             columns: ["site_id"]
             isOneToOne: false
             referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worker_location_history: {
+        Row: {
+          accuracy_meters: number | null
+          activity_type: string | null
+          battery_level: number | null
+          created_at: string
+          device_id: string | null
+          id: string
+          location_point: unknown | null
+          project_id: string | null
+          site_id: string | null
+          timestamp: string
+          worker_id: string | null
+        }
+        Insert: {
+          accuracy_meters?: number | null
+          activity_type?: string | null
+          battery_level?: number | null
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          location_point?: unknown | null
+          project_id?: string | null
+          site_id?: string | null
+          timestamp?: string
+          worker_id?: string | null
+        }
+        Update: {
+          accuracy_meters?: number | null
+          activity_type?: string | null
+          battery_level?: number | null
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          location_point?: unknown | null
+          project_id?: string | null
+          site_id?: string | null
+          timestamp?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_location_history_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "field_workers"
             referencedColumns: ["id"]
           },
         ]
