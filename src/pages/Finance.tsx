@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/lib/formatters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFinance } from "@/hooks/useFinance";
+import type { ClientInvoice, VendorInvoice, PurchaseOrder, Transaction, BudgetCategory, ProjectWIP } from "@/types/finance";
 
 // Import finance components
 import { FinancialOverview } from "@/components/finance/FinancialOverview";
