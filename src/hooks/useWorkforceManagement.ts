@@ -110,6 +110,27 @@ export const useEmployeeProfiles = () => {
 
   useEffect(() => {
     fetchEmployees();
+
+    // Set up real-time subscription for employee profiles
+    const channel = supabase
+      .channel('employee-profiles-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'employee_profiles'
+        },
+        (payload) => {
+          console.log('Employee profile change:', payload);
+          fetchEmployees();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return {

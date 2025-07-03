@@ -110,6 +110,27 @@ export const useFleetVehicles = () => {
 
   useEffect(() => {
     fetchVehicles();
+
+    // Set up real-time subscription for fleet vehicles
+    const channel = supabase
+      .channel('fleet-vehicles-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'fleet_vehicles'
+        },
+        (payload) => {
+          console.log('Fleet vehicle change:', payload);
+          fetchVehicles();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return {

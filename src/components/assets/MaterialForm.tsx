@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
+import { useFormValidation, ValidationRules } from "@/hooks/useFormValidation";
 import { Package, Calendar, MapPin } from 'lucide-react';
 
 interface MaterialFormData {
