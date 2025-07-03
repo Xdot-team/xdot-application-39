@@ -10,54 +10,11 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { AlertTriangle, FileText, Plus } from "lucide-react";
-
-// Mock data that matches the existing schema structure
-const mockIncidents = [
-  {
-    id: "SI-2025-001",
-    incident_type: "near_miss",
-    severity: "medium",
-    location: "GA-400 Mile Marker 15",
-    incident_date: "2025-01-15T10:30:00Z",
-    status: "resolved",
-    description: "Worker nearly struck by moving equipment during paving operations",
-    reported_by: "John Smith"
-  },
-  {
-    id: "SI-2025-002", 
-    incident_type: "injury",
-    severity: "low",
-    location: "I-85 Bridge Site",
-    incident_date: "2025-01-20T14:15:00Z",
-    status: "closed",
-    description: "Minor cut on hand while handling steel reinforcement",
-    reported_by: "Sarah Johnson"
-  },
-  {
-    id: "SI-2025-003",
-    incident_type: "property_damage", 
-    severity: "medium",
-    location: "Peachtree Street Downtown",
-    incident_date: "2025-01-25T09:45:00Z",
-    status: "investigating",
-    description: "Construction equipment damaged parked vehicle",
-    reported_by: "Mike Davis"
-  },
-  {
-    id: "SI-2025-004",
-    incident_type: "environmental",
-    severity: "high", 
-    location: "Augusta Highway Extension",
-    incident_date: "2025-02-01T16:00:00Z",
-    status: "open",
-    description: "Fuel spill from equipment malfunction",
-    reported_by: "Emily Brown"
-  }
-];
+import { AlertTriangle, FileText, Plus, Loader2 } from "lucide-react";
+import { useSafetyIncidents } from "@/hooks/useSafetyData";
 
 export const IncidentDashboard = () => {
-  const incidents = mockIncidents;
+  const { incidents, loading } = useSafetyIncidents();
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -152,47 +109,60 @@ export const IncidentDashboard = () => {
           <CardDescription>Latest safety incidents reported across all projects</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Severity</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {incidents.map((incident) => (
-                <TableRow key={incident.id}>
-                  <TableCell className="font-mono text-sm">{incident.id}</TableCell>
-                  <TableCell className="capitalize">
-                    {incident.incident_type.replace('_', ' ')}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getSeverityColor(incident.severity)}>
-                      {incident.severity.charAt(0).toUpperCase() + incident.severity.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{incident.location}</TableCell>
-                  <TableCell>{new Date(incident.incident_date).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusColor(incident.status)}>
-                      {incident.status.charAt(0).toUpperCase() + incident.status.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="outline" size="sm">
-                      <FileText className="mr-2 h-4 w-4" />
-                      View
-                    </Button>
-                  </TableCell>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span className="ml-2">Loading incidents...</span>
+            </div>
+          ) : incidents.length === 0 ? (
+            <div className="text-center py-8">
+              <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No Incidents Reported</h3>
+              <p className="text-sm text-muted-foreground">No safety incidents have been reported yet.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Number</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Severity</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {incidents.map((incident) => (
+                  <TableRow key={incident.id}>
+                    <TableCell className="font-mono text-sm">{incident.incident_number}</TableCell>
+                    <TableCell className="capitalize">
+                      {incident.incident_type.replace('_', ' ')}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={getSeverityColor(incident.severity)}>
+                        {incident.severity.charAt(0).toUpperCase() + incident.severity.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{incident.location}</TableCell>
+                    <TableCell>{new Date(incident.incident_date).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusColor(incident.status)}>
+                        {incident.status.charAt(0).toUpperCase() + incident.status.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm">
+                        <FileText className="mr-2 h-4 w-4" />
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>
