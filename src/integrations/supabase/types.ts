@@ -9,6 +9,97 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      action_items: {
+        Row: {
+          assigned_to: string
+          comments: string | null
+          completed_date: string | null
+          created_at: string
+          description: string
+          due_date: string
+          id: string
+          meeting_id: string | null
+          priority: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to: string
+          comments?: string | null
+          completed_date?: string | null
+          created_at?: string
+          description: string
+          due_date: string
+          id?: string
+          meeting_id?: string | null
+          priority?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string
+          comments?: string | null
+          completed_date?: string | null
+          created_at?: string
+          description?: string
+          due_date?: string
+          id?: string
+          meeting_id?: string | null
+          priority?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_items_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "kickoff_meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agenda_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration: number | null
+          id: string
+          meeting_id: string | null
+          order_index: number
+          presenter: string | null
+          topic: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          meeting_id?: string | null
+          order_index?: number
+          presenter?: string | null
+          topic: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          meeting_id?: string | null
+          order_index?: number
+          presenter?: string | null
+          topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_items_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "kickoff_meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_prediction_logs: {
         Row: {
           confidence_score: number
@@ -45,6 +136,51 @@ export type Database = {
           status?: string
           updated_at?: string
           validation_notes?: string | null
+        }
+        Relationships: []
+      }
+      api_configurations: {
+        Row: {
+          api_key: string | null
+          configuration: Json | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          endpoint_url: string | null
+          id: string
+          last_tested: string | null
+          name: string
+          status: string
+          test_results: Json | null
+          updated_at: string
+        }
+        Insert: {
+          api_key?: string | null
+          configuration?: Json | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          endpoint_url?: string | null
+          id?: string
+          last_tested?: string | null
+          name: string
+          status?: string
+          test_results?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          api_key?: string | null
+          configuration?: Json | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          endpoint_url?: string | null
+          id?: string
+          last_tested?: string | null
+          name?: string
+          status?: string
+          test_results?: Json | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -851,6 +987,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      employee_appreciations: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          likes: number
+          message: string
+          public: boolean
+          recipient_id: string | null
+          recipient_name: string
+          sender_id: string | null
+          sender_name: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          likes?: number
+          message: string
+          public?: boolean
+          recipient_id?: string | null
+          recipient_name: string
+          sender_id?: string | null
+          sender_name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          likes?: number
+          message?: string
+          public?: boolean
+          recipient_id?: string | null
+          recipient_name?: string
+          sender_id?: string | null
+          sender_name?: string
+        }
+        Relationships: []
       }
       employee_health_records: {
         Row: {
@@ -2694,6 +2869,147 @@ export type Database = {
           },
         ]
       }
+      forum_posts: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          category: string
+          content: string
+          created_at: string
+          id: string
+          likes: string[] | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name: string
+          category?: string
+          content: string
+          created_at?: string
+          id?: string
+          likes?: string[] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          likes?: string[] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      forum_replies: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          content: string
+          created_at: string
+          id: string
+          likes: string[] | null
+          parent_id: string | null
+          post_id: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          author_name: string
+          content: string
+          created_at?: string
+          id?: string
+          likes?: string[] | null
+          parent_id?: string | null
+          post_id?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          content?: string
+          created_at?: string
+          id?: string
+          likes?: string[] | null
+          parent_id?: string | null
+          post_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_replies_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "forum_replies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_replies_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      front_desk_logs: {
+        Row: {
+          checked_in: boolean
+          checked_out: string | null
+          company: string | null
+          contact_person: string | null
+          created_at: string
+          delivery_company: string | null
+          id: string
+          logged_by_id: string | null
+          logged_by_name: string
+          notes: string | null
+          package_description: string | null
+          purpose: string | null
+          recipient_name: string | null
+          type: string
+          visitor_name: string | null
+        }
+        Insert: {
+          checked_in?: boolean
+          checked_out?: string | null
+          company?: string | null
+          contact_person?: string | null
+          created_at?: string
+          delivery_company?: string | null
+          id?: string
+          logged_by_id?: string | null
+          logged_by_name: string
+          notes?: string | null
+          package_description?: string | null
+          purpose?: string | null
+          recipient_name?: string | null
+          type: string
+          visitor_name?: string | null
+        }
+        Update: {
+          checked_in?: boolean
+          checked_out?: string | null
+          company?: string | null
+          contact_person?: string | null
+          created_at?: string
+          delivery_company?: string | null
+          id?: string
+          logged_by_id?: string | null
+          logged_by_name?: string
+          notes?: string | null
+          package_description?: string | null
+          purpose?: string | null
+          recipient_name?: string | null
+          type?: string
+          visitor_name?: string | null
+        }
+        Relationships: []
+      }
       hazard_reports: {
         Row: {
           actual_completion_date: string | null
@@ -2767,6 +3083,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      head_office_tasks: {
+        Row: {
+          assignee_id: string | null
+          assignee_name: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          due_date: string | null
+          id: string
+          notes: string | null
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          description: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       job_safety_analyses: {
         Row: {
@@ -2901,6 +3262,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kickoff_meetings: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_name: string
+          date: string
+          documents: string[] | null
+          id: string
+          location: string
+          minutes: string | null
+          project_id: string | null
+          project_name: string
+          status: string
+          time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_name: string
+          date: string
+          documents?: string[] | null
+          id?: string
+          location: string
+          minutes?: string | null
+          project_id?: string | null
+          project_name: string
+          status?: string
+          time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string
+          date?: string
+          documents?: string[] | null
+          id?: string
+          location?: string
+          minutes?: string | null
+          project_id?: string | null
+          project_name?: string
+          status?: string
+          time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       kpis: {
         Row: {
@@ -6041,6 +6453,42 @@ export type Database = {
           },
         ]
       }
+      system_settings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: string
+          updated_at: string
+          updated_by: string | null
+          updated_by_name: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+        }
+        Relationships: []
+      }
       takeoff_measurements: {
         Row: {
           coordinates: string | null
@@ -6676,6 +7124,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          department: string | null
+          display_name: string | null
+          email: string | null
+          id: string
+          last_login: string | null
+          phone: string | null
+          role: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          department?: string | null
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          last_login?: string | null
+          phone?: string | null
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          department?: string | null
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          last_login?: string | null
+          phone?: string | null
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       utility_adjustments: {
         Row: {

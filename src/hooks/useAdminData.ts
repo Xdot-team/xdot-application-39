@@ -207,70 +207,121 @@ export function useUserProfiles() {
   return { profiles, loading, fetchProfiles, createProfile, updateProfile };
 }
 
-// Hook for Forum Posts - Using mock data (database tables not ready)
+// Hook for Forum Posts - Using real database
 export function useForumPosts() {
   const [posts, setPosts] = useState<ForumPost[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  const fetchPosts = async () => {
+    try {
+      const { data: postsData, error: postsError } = await supabase
+        .from('forum_posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (postsError) throw postsError;
+
+      // Fetch replies for each post
+      const postsWithReplies = await Promise.all(
+        (postsData || []).map(async (post) => {
+          const { data: repliesData, error: repliesError } = await supabase
+            .from('forum_replies')
+            .select('*')
+            .eq('post_id', post.id)
+            .order('created_at', { ascending: true });
+
+          if (repliesError) {
+            console.error('Error fetching replies:', repliesError);
+            return { ...post, replies: [] };
+          }
+
+          return { ...post, replies: repliesData || [] };
+        })
+      );
+
+      setPosts(postsWithReplies);
+    } catch (error) {
+      console.error('Error fetching forum posts:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch forum posts",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Mock forum posts data
-    const mockPosts: ForumPost[] = [
-      {
-        id: '1',
-        title: 'Welcome to the Construction Forum',
-        content: 'This is a place to discuss project updates, share knowledge, and collaborate with the team.',
-        author_id: 'user1',
-        author_name: 'John Smith',
-        category: 'announcements',
-        tags: ['welcome', 'introduction'],
-        likes: ['user2', 'user3'],
-        created_at: new Date(Date.now() - 86400000).toISOString(),
-        updated_at: new Date(Date.now() - 86400000).toISOString(),
-        replies: []
-      }
-    ];
-    setPosts(mockPosts);
+    fetchPosts();
   }, []);
 
   const createPost = async (post: Omit<ForumPost, 'id' | 'created_at' | 'updated_at' | 'replies'>) => {
-    const newPost: ForumPost = {
-      ...post,
-      id: Date.now().toString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      replies: []
-    };
-    setPosts(prev => [newPost, ...prev]);
-    return newPost;
+    try {
+      const { data, error } = await supabase
+        .from('forum_posts')
+        .insert(post)
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchPosts();
+      return data;
+    } catch (error) {
+      console.error('Error creating post:', error);
+      throw error;
+    }
   };
 
   const updatePost = async (id: string, updates: Partial<ForumPost>) => {
-    setPosts(prev => prev.map(post => 
-      post.id === id ? { ...post, ...updates, updated_at: new Date().toISOString() } : post
-    ));
+    try {
+      const { error } = await supabase
+        .from('forum_posts')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchPosts();
+    } catch (error) {
+      console.error('Error updating post:', error);
+      throw error;
+    }
   };
 
   const deletePost = async (id: string) => {
-    setPosts(prev => prev.filter(post => post.id !== id));
+    try {
+      const { error } = await supabase
+        .from('forum_posts')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchPosts();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      throw error;
+    }
   };
 
   const createReply = async (reply: Omit<ForumReply, 'id' | 'created_at'>) => {
-    const newReply: ForumReply = {
-      ...reply,
-      id: Date.now().toString(),
-      created_at: new Date().toISOString()
-    };
-    
-    setPosts(prev => prev.map(post => 
-      post.id === reply.post_id 
-        ? { ...post, replies: [...(post.replies || []), newReply] }
-        : post
-    ));
-    return newReply;
+    try {
+      const { data, error } = await supabase
+        .from('forum_replies')
+        .insert(reply)
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchPosts();
+      return data;
+    } catch (error) {
+      console.error('Error creating reply:', error);
+      throw error;
+    }
   };
 
-  return { posts, loading, fetchPosts: () => {}, createPost, updatePost, deletePost, createReply };
+  return { posts, loading, fetchPosts, createPost, updatePost, deletePost, createReply };
 }
 
 // Hook for Head Office Tasks - Using real database
@@ -287,7 +338,7 @@ export function useHeadOfficeTasks() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setTasks(data || []);
+      setTasks((data || []) as HeadOfficeTask[]);
     } catch (error) {
       console.error('Error fetching tasks:', error);
       toast({
@@ -368,7 +419,7 @@ export function useFrontDeskLogs() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setLogs(data || []);
+      setLogs((data || []) as FrontDeskLog[]);
     } catch (error) {
       console.error('Error fetching front desk logs:', error);
       toast({
@@ -434,7 +485,7 @@ export function useEmployeeAppreciations() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setAppreciations(data || []);
+      setAppreciations((data || []) as EmployeeAppreciation[]);
     } catch (error) {
       console.error('Error fetching appreciations:', error);
       toast({
@@ -500,7 +551,7 @@ export function useSystemSettings() {
         .order('category', { ascending: true });
 
       if (error) throw error;
-      setSettings(data || []);
+      setSettings((data || []) as SystemSetting[]);
     } catch (error) {
       console.error('Error fetching settings:', error);
       toast({
@@ -666,14 +717,14 @@ export function useKickoffMeetings() {
 
           return {
             ...meeting,
-            attendees: attendeesRes.data || [],
+            attendees: (attendeesRes.data || []) as unknown as MeetingAttendee[],
             agenda_items: agendaRes.data || [],
             action_items: actionsRes.data || []
           };
         })
       );
 
-      setMeetings(meetingsWithDetails);
+      setMeetings(meetingsWithDetails as KickoffMeeting[]);
     } catch (error) {
       console.error('Error fetching kickoff meetings:', error);
       toast({
@@ -737,7 +788,7 @@ export function useKickoffMeetings() {
     }
   };
 
-  const addAttendee = async (attendee: Omit<MeetingAttendee, 'id' | 'created_at'>) => {
+  const addAttendee = async (attendee: any) => {
     try {
       const { error } = await supabase
         .from('meeting_attendees')
@@ -806,7 +857,7 @@ export function useApiConfigurations() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setConfigurations(data || []);
+      setConfigurations((data || []) as ApiConfiguration[]);
     } catch (error) {
       console.error('Error fetching API configurations:', error);
       toast({
