@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Users, FileText, Clipboard, CheckCircle, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { mockKickoffMeetings } from '@/data/mockAdminData';
+import { useKickoffMeetings, KickoffMeeting } from '@/hooks/useAdminData';
 import { format } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -16,12 +16,13 @@ export const KickoffMeetings = () => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { meetings, loading, createMeeting } = useKickoffMeetings();
 
-  const upcomingMeetings = mockKickoffMeetings.filter(
+  const upcomingMeetings = meetings.filter(
     meeting => meeting.status === 'scheduled' || meeting.status === 'postponed'
   );
   
-  const pastMeetings = mockKickoffMeetings.filter(
+  const pastMeetings = meetings.filter(
     meeting => meeting.status === 'completed' || meeting.status === 'cancelled'
   );
 
@@ -47,7 +48,7 @@ export const KickoffMeetings = () => {
     }
   };
 
-  const renderMeetingCard = (meeting: typeof mockKickoffMeetings[0]) => {
+  const renderMeetingCard = (meeting: KickoffMeeting) => {
     const meetingDate = new Date(meeting.date);
     return (
       <Card key={meeting.id} className="mb-4">
@@ -56,7 +57,7 @@ export const KickoffMeetings = () => {
             <div>
               <CardTitle className="text-lg">{meeting.title}</CardTitle>
               <CardDescription>
-                Project: {meeting.projectName}
+                Project: {meeting.project_name}
               </CardDescription>
             </div>
             <div className="mt-2 md:mt-0">
@@ -84,7 +85,7 @@ export const KickoffMeetings = () => {
               <Users className="h-5 w-5 text-blue-600" />
               <div>
                 <p className="text-sm text-muted-foreground">Attendees</p>
-                <p className="font-medium">{meeting.attendees.length} participants</p>
+                <p className="font-medium">{meeting.attendees?.length || 0} participants</p>
               </div>
             </div>
           </div>
@@ -93,7 +94,7 @@ export const KickoffMeetings = () => {
             <div className="mt-4">
               <p className="text-sm font-medium mb-1">Key Action Items:</p>
               <div className="space-y-2">
-                {meeting.actionItems.slice(0, 2).map((item) => (
+                {(meeting.action_items || []).slice(0, 2).map((item) => (
                   <div key={item.id} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-1">
                       <CheckCircle className={`h-4 w-4 ${item.status === 'completed' ? 'text-green-500' : 'text-blue-500'}`} />
@@ -102,8 +103,8 @@ export const KickoffMeetings = () => {
                     <Badge variant="outline">{item.status}</Badge>
                   </div>
                 ))}
-                {meeting.actionItems.length > 2 && (
-                  <p className="text-sm text-muted-foreground">+{meeting.actionItems.length - 2} more action items</p>
+                {(meeting.action_items || []).length > 2 && (
+                  <p className="text-sm text-muted-foreground">+{(meeting.action_items || []).length - 2} more action items</p>
                 )}
               </div>
             </div>
@@ -149,7 +150,9 @@ export const KickoffMeetings = () => {
               <TabsTrigger value="past">Past</TabsTrigger>
             </TabsList>
             <TabsContent value="upcoming" className="pt-4">
-              {upcomingMeetings.length > 0 ? (
+              {loading ? (
+                <div className="text-center py-8 text-muted-foreground">Loading meetings...</div>
+              ) : upcomingMeetings.length > 0 ? (
                 upcomingMeetings.map(renderMeetingCard)
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
@@ -158,7 +161,9 @@ export const KickoffMeetings = () => {
               )}
             </TabsContent>
             <TabsContent value="past" className="pt-4">
-              {pastMeetings.length > 0 ? (
+              {loading ? (
+                <div className="text-center py-8 text-muted-foreground">Loading meetings...</div>
+              ) : pastMeetings.length > 0 ? (
                 pastMeetings.map(renderMeetingCard)
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
@@ -188,21 +193,21 @@ export const KickoffMeetings = () => {
                 <CheckCircle className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-muted-foreground">Completed Meetings</p>
-                  <p className="font-medium">{mockKickoffMeetings.filter(m => m.status === 'completed').length}</p>
+                  <p className="font-medium">{meetings.filter(m => m.status === 'completed').length}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <Clipboard className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-muted-foreground">Action Items</p>
-                  <p className="font-medium">{mockKickoffMeetings.reduce((acc, meeting) => acc + meeting.actionItems.length, 0)}</p>
+                  <p className="font-medium">{meetings.reduce((acc, meeting) => acc + (meeting.action_items?.length || 0), 0)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <FileText className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-muted-foreground">Documents</p>
-                  <p className="font-medium">{mockKickoffMeetings.reduce((acc, meeting) => acc + (meeting.documents?.length || 0), 0)}</p>
+                  <p className="font-medium">{meetings.reduce((acc, meeting) => acc + (meeting.documents?.length || 0), 0)}</p>
                 </div>
               </div>
             </div>
@@ -216,15 +221,15 @@ export const KickoffMeetings = () => {
           <CardContent>
             <ScrollArea className="h-[240px] pr-4">
               <div className="space-y-4">
-                {mockKickoffMeetings
+                {meetings
                   .flatMap(meeting => 
-                    meeting.actionItems.map(item => ({
+                    (meeting.action_items || []).map(item => ({
                       ...item,
-                      projectName: meeting.projectName,
+                      projectName: meeting.project_name,
                       meetingTitle: meeting.title
                     }))
                   )
-                  .sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime())
+                  .sort((a, b) => new Date(b.due_date).getTime() - new Date(a.due_date).getTime())
                   .slice(0, 7)
                   .map((item, index) => (
                     <div key={item.id}>
@@ -236,8 +241,8 @@ export const KickoffMeetings = () => {
                           </Badge>
                         </div>
                         <div className="flex justify-between text-xs text-muted-foreground">
-                          <span>Assigned to: {item.assignedTo}</span>
-                          <span>Due: {format(new Date(item.dueDate), 'MMM d, yyyy')}</span>
+                          <span>Assigned to: {item.assigned_to}</span>
+                          <span>Due: {format(new Date(item.due_date), 'MMM d, yyyy')}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">
                           {item.projectName}: {item.meetingTitle}

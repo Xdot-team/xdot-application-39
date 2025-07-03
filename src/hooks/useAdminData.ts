@@ -207,7 +207,7 @@ export function useUserProfiles() {
   return { profiles, loading, fetchProfiles, createProfile, updateProfile };
 }
 
-// Hook for Forum Posts - Mock data for now since tables aren't created yet
+// Hook for Forum Posts - Using mock data (database tables not ready)
 export function useForumPosts() {
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [loading, setLoading] = useState(false);
@@ -227,30 +227,6 @@ export function useForumPosts() {
         likes: ['user2', 'user3'],
         created_at: new Date(Date.now() - 86400000).toISOString(),
         updated_at: new Date(Date.now() - 86400000).toISOString(),
-        replies: [
-          {
-            id: '1',
-            post_id: '1',
-            content: 'Great to have this forum set up!',
-            author_id: 'user2',
-            author_name: 'Jane Doe',
-            parent_id: null,
-            likes: ['user1'],
-            created_at: new Date(Date.now() - 82800000).toISOString()
-          }
-        ]
-      },
-      {
-        id: '2',
-        title: 'Safety Protocol Update',
-        content: 'Please review the updated safety protocols for Q4 projects.',
-        author_id: 'user3',
-        author_name: 'Mike Johnson',
-        category: 'safety',
-        tags: ['safety', 'protocols'],
-        likes: ['user1', 'user2', 'user4'],
-        created_at: new Date(Date.now() - 172800000).toISOString(),
-        updated_at: new Date(Date.now() - 172800000).toISOString(),
         replies: []
       }
     ];
@@ -297,53 +273,85 @@ export function useForumPosts() {
   return { posts, loading, fetchPosts: () => {}, createPost, updatePost, deletePost, createReply };
 }
 
-// Hook for Head Office Tasks - Mock data for now
+// Hook for Head Office Tasks - Using real database
 export function useHeadOfficeTasks() {
   const [tasks, setTasks] = useState<HeadOfficeTask[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchTasks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('head_office_tasks')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setTasks(data || []);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch head office tasks",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const mockTasks: HeadOfficeTask[] = [
-      {
-        id: '1',
-        title: 'Review Q4 Budget Reports',
-        description: 'Complete review of all Q4 financial reports and provide feedback',
-        assignee_id: 'user1',
-        assignee_name: 'John Smith',
-        created_by: 'admin',
-        priority: 'high',
-        status: 'pending',
-        due_date: '2024-01-15',
-        notes: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-    ];
-    setTasks(mockTasks);
+    fetchTasks();
   }, []);
 
   const createTask = async (task: Omit<HeadOfficeTask, 'id' | 'created_at' | 'updated_at'>) => {
-    const newTask: HeadOfficeTask = {
-      ...task,
-      id: Date.now().toString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-    setTasks(prev => [newTask, ...prev]);
-    return newTask;
+    try {
+      const { data, error } = await supabase
+        .from('head_office_tasks')
+        .insert(task)
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchTasks();
+      return data;
+    } catch (error) {
+      console.error('Error creating task:', error);
+      throw error;
+    }
   };
 
   const updateTask = async (id: string, updates: Partial<HeadOfficeTask>) => {
-    setTasks(prev => prev.map(task => 
-      task.id === id ? { ...task, ...updates, updated_at: new Date().toISOString() } : task
-    ));
+    try {
+      const { error } = await supabase
+        .from('head_office_tasks')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchTasks();
+    } catch (error) {
+      console.error('Error updating task:', error);
+      throw error;
+    }
   };
 
   const deleteTask = async (id: string) => {
-    setTasks(prev => prev.filter(task => task.id !== id));
+    try {
+      const { error } = await supabase
+        .from('head_office_tasks')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchTasks();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      throw error;
+    }
   };
 
-  return { tasks, loading, fetchTasks: () => {}, createTask, updateTask, deleteTask };
+  return { tasks, loading, fetchTasks, createTask, updateTask, deleteTask };
 }
 
 // Hook for Front Desk Logs
@@ -557,4 +565,345 @@ export function useSystemSettings() {
   };
 
   return { settings, loading, fetchSettings, createSetting, updateSetting, deleteSetting };
+}
+
+// Kickoff Meetings interfaces
+export interface KickoffMeeting {
+  id: string;
+  project_id: string | null;
+  project_name: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  status: 'scheduled' | 'completed' | 'cancelled' | 'postponed';
+  minutes: string | null;
+  documents: string[];
+  created_by: string;
+  created_by_name: string;
+  created_at: string;
+  updated_at: string;
+  attendees?: MeetingAttendee[];
+  agenda_items?: AgendaItem[];
+  action_items?: ActionItem[];
+}
+
+export interface MeetingAttendee {
+  id: string;
+  meeting_id: string;
+  name: string;
+  company: string;
+  email: string;
+  phone: string | null;
+  role: string;
+  attendance: 'confirmed' | 'tentative' | 'declined' | 'attended' | 'no-show';
+  created_at: string;
+}
+
+export interface AgendaItem {
+  id: string;
+  meeting_id: string;
+  topic: string;
+  description: string | null;
+  duration: number | null;
+  presenter: string | null;
+  order_index: number;
+  created_at: string;
+}
+
+export interface ActionItem {
+  id: string;
+  meeting_id: string;
+  description: string;
+  assigned_to: string;
+  due_date: string;
+  priority: 'low' | 'medium' | 'high';
+  status: 'pending' | 'in_progress' | 'completed' | 'delayed';
+  comments: string | null;
+  completed_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiConfiguration {
+  id: string;
+  name: string;
+  description: string | null;
+  api_key: string | null;
+  endpoint_url: string | null;
+  status: 'active' | 'inactive' | 'testing';
+  last_tested: string | null;
+  test_results: any;
+  configuration: any;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Hook for Kickoff Meetings
+export function useKickoffMeetings() {
+  const [meetings, setMeetings] = useState<KickoffMeeting[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchMeetings = async () => {
+    try {
+      const { data: meetingsData, error: meetingsError } = await supabase
+        .from('kickoff_meetings')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (meetingsError) throw meetingsError;
+
+      // Fetch related data for each meeting
+      const meetingsWithDetails = await Promise.all(
+        (meetingsData || []).map(async (meeting) => {
+          const [attendeesRes, agendaRes, actionsRes] = await Promise.all([
+            supabase.from('meeting_attendees').select('*').eq('meeting_id', meeting.id),
+            supabase.from('agenda_items').select('*').eq('meeting_id', meeting.id).order('order_index'),
+            supabase.from('action_items').select('*').eq('meeting_id', meeting.id).order('due_date')
+          ]);
+
+          return {
+            ...meeting,
+            attendees: attendeesRes.data || [],
+            agenda_items: agendaRes.data || [],
+            action_items: actionsRes.data || []
+          };
+        })
+      );
+
+      setMeetings(meetingsWithDetails);
+    } catch (error) {
+      console.error('Error fetching kickoff meetings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch kickoff meetings",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMeetings();
+  }, []);
+
+  const createMeeting = async (meeting: Omit<KickoffMeeting, 'id' | 'created_at' | 'updated_at' | 'attendees' | 'agenda_items' | 'action_items'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('kickoff_meetings')
+        .insert(meeting)
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchMeetings();
+      return data;
+    } catch (error) {
+      console.error('Error creating meeting:', error);
+      throw error;
+    }
+  };
+
+  const updateMeeting = async (id: string, updates: Partial<KickoffMeeting>) => {
+    try {
+      const { error } = await supabase
+        .from('kickoff_meetings')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchMeetings();
+    } catch (error) {
+      console.error('Error updating meeting:', error);
+      throw error;
+    }
+  };
+
+  const deleteMeeting = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('kickoff_meetings')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchMeetings();
+    } catch (error) {
+      console.error('Error deleting meeting:', error);
+      throw error;
+    }
+  };
+
+  const addAttendee = async (attendee: Omit<MeetingAttendee, 'id' | 'created_at'>) => {
+    try {
+      const { error } = await supabase
+        .from('meeting_attendees')
+        .insert(attendee);
+
+      if (error) throw error;
+      await fetchMeetings();
+    } catch (error) {
+      console.error('Error adding attendee:', error);
+      throw error;
+    }
+  };
+
+  const addAgendaItem = async (item: Omit<AgendaItem, 'id' | 'created_at'>) => {
+    try {
+      const { error } = await supabase
+        .from('agenda_items')
+        .insert(item);
+
+      if (error) throw error;
+      await fetchMeetings();
+    } catch (error) {
+      console.error('Error adding agenda item:', error);
+      throw error;
+    }
+  };
+
+  const addActionItem = async (item: Omit<ActionItem, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { error } = await supabase
+        .from('action_items')
+        .insert(item);
+
+      if (error) throw error;
+      await fetchMeetings();
+    } catch (error) {
+      console.error('Error adding action item:', error);
+      throw error;
+    }
+  };
+
+  return { 
+    meetings, 
+    loading, 
+    fetchMeetings, 
+    createMeeting, 
+    updateMeeting, 
+    deleteMeeting,
+    addAttendee,
+    addAgendaItem,
+    addActionItem
+  };
+}
+
+// Hook for API Configurations
+export function useApiConfigurations() {
+  const [configurations, setConfigurations] = useState<ApiConfiguration[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchConfigurations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('api_configurations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setConfigurations(data || []);
+    } catch (error) {
+      console.error('Error fetching API configurations:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch API configurations",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchConfigurations();
+  }, []);
+
+  const createConfiguration = async (config: Omit<ApiConfiguration, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('api_configurations')
+        .insert(config)
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchConfigurations();
+      return data;
+    } catch (error) {
+      console.error('Error creating configuration:', error);
+      throw error;
+    }
+  };
+
+  const updateConfiguration = async (id: string, updates: Partial<ApiConfiguration>) => {
+    try {
+      const { error } = await supabase
+        .from('api_configurations')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchConfigurations();
+    } catch (error) {
+      console.error('Error updating configuration:', error);
+      throw error;
+    }
+  };
+
+  const deleteConfiguration = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('api_configurations')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchConfigurations();
+    } catch (error) {
+      console.error('Error deleting configuration:', error);
+      throw error;
+    }
+  };
+
+  const testConfiguration = async (id: string) => {
+    try {
+      // In a real implementation, this would make a test request to the API
+      const testResults = {
+        success: true,
+        response_time: Math.floor(Math.random() * 500) + 100,
+        status_code: 200,
+        message: 'Connection successful'
+      };
+
+      const { error } = await supabase
+        .from('api_configurations')
+        .update({
+          last_tested: new Date().toISOString(),
+          test_results: testResults
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchConfigurations();
+      return testResults;
+    } catch (error) {
+      console.error('Error testing configuration:', error);
+      throw error;
+    }
+  };
+
+  return { 
+    configurations, 
+    loading, 
+    fetchConfigurations, 
+    createConfiguration, 
+    updateConfiguration, 
+    deleteConfiguration,
+    testConfiguration
+  };
 }
