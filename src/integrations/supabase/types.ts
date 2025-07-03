@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_prediction_logs: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          id: string
+          prediction_data: Json
+          prediction_type: string
+          related_entity_id: string
+          related_entity_type: string
+          status: string
+          updated_at: string
+          validation_notes: string | null
+        }
+        Insert: {
+          confidence_score: number
+          created_at?: string
+          id?: string
+          prediction_data: Json
+          prediction_type: string
+          related_entity_id: string
+          related_entity_type: string
+          status?: string
+          updated_at?: string
+          validation_notes?: string | null
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          prediction_data?: Json
+          prediction_type?: string
+          related_entity_id?: string
+          related_entity_type?: string
+          status?: string
+          updated_at?: string
+          validation_notes?: string | null
+        }
+        Relationships: []
+      }
       budget_categories: {
         Row: {
           budget_id: string
@@ -5994,6 +6033,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      weather_data: {
+        Row: {
+          created_at: string
+          data_source: string | null
+          date: string
+          humidity: number | null
+          id: string
+          location: string
+          precipitation: number | null
+          project_impact: string | null
+          temperature_high: number | null
+          temperature_low: number | null
+          visibility: number | null
+          weather_conditions: string | null
+          wind_speed: number | null
+          work_suitability: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_source?: string | null
+          date: string
+          humidity?: number | null
+          id?: string
+          location: string
+          precipitation?: number | null
+          project_impact?: string | null
+          temperature_high?: number | null
+          temperature_low?: number | null
+          visibility?: number | null
+          weather_conditions?: string | null
+          wind_speed?: number | null
+          work_suitability?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_source?: string | null
+          date?: string
+          humidity?: number | null
+          id?: string
+          location?: string
+          precipitation?: number | null
+          project_impact?: string | null
+          temperature_high?: number | null
+          temperature_low?: number | null
+          visibility?: number | null
+          weather_conditions?: string | null
+          wind_speed?: number | null
+          work_suitability?: string | null
+        }
+        Relationships: []
       }
       work_calendars: {
         Row: {
