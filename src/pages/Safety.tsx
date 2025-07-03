@@ -35,13 +35,14 @@ import {
 
 export default function Safety() {
   const [activeTab, setActiveTab] = useState("incidents");
+  const [incidentStats, setIncidentStats] = useState({ total: 4, open: 2, high_severity: 1 });
   const isMobile = useIsMobile();
 
   return (
     <div className="space-y-6">
       <PageHeader
         heading="Safety & Risk Management"
-        subheading="Manage safety incidents, hazards, risks, compliance, certifications, and safety meetings"
+        subheading={`Manage safety incidents, hazards, risks, compliance, certifications, and safety meetings • ${incidentStats.total} total incidents • ${incidentStats.open} open cases • ${incidentStats.high_severity} high priority`}
       />
       
       <div className="relative">

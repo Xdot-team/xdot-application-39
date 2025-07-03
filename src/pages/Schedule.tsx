@@ -12,13 +12,19 @@ import { GanttView } from "@/components/schedule/GanttView";
 
 export default function Schedule() {
   const [activeTab, setActiveTab] = useState("gantt");
+  const [scheduleStats, setScheduleStats] = useState({ 
+    total_events: 12, 
+    today_events: 3, 
+    upcoming_events: 8,
+    conflicts: 2 
+  });
   const isMobile = useIsMobile();
 
   return (
     <div className="space-y-6">
       <PageHeader
         heading="Schedule Management"
-        subheading="Manage organization-wide scheduling, resource allocations, and meetings"
+        subheading={`Manage organization-wide scheduling, resource allocations, and meetings • ${scheduleStats.total_events} total events • ${scheduleStats.today_events} today • ${scheduleStats.upcoming_events} upcoming • ${scheduleStats.conflicts} conflicts`}
       />
       
       <div className="relative">
