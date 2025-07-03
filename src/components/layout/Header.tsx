@@ -50,25 +50,31 @@ export function Header() {
   
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="hidden lg:block">
-          <h1 className="text-xl font-semibold">xDOTContractor</h1>
+      <div className="container max-w-none flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center">
+          <div className="lg:hidden w-10"></div> {/* Space for mobile menu button */}
+          <div className="hidden sm:block lg:block">
+            <h1 className="text-lg sm:text-xl font-semibold truncate">xDOTContractor</h1>
+          </div>
+          <div className="sm:hidden">
+            <h1 className="text-sm font-semibold">xDOT</h1>
+          </div>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-10 sm:w-10">
+                <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-construction-accent text-white text-xs flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-construction-accent text-white text-xs flex items-center justify-center">
                     {unreadCount}
                   </span>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuContent align="end" className="w-72 sm:w-80 max-h-96 overflow-y-auto">
               <DropdownMenuLabel>Notifications</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notifications.length === 0 ? (
@@ -107,7 +113,7 @@ export function Header() {
           {/* User menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative rounded-full h-8 w-8 border">
+              <Button variant="ghost" size="icon" className="relative rounded-full h-8 w-8 sm:h-10 sm:w-10 border">
                 {authState.user?.profilePicture ? (
                   <img 
                     src={authState.user.profilePicture} 

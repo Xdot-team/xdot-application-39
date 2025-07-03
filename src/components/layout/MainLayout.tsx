@@ -24,15 +24,15 @@ export function MainLayout({ children }: MainLayoutProps) {
   }
   
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full">
       <Sidebar />
-      <div className="flex flex-col flex-1 min-h-screen">
+      <div className="flex flex-col flex-1 min-h-screen min-w-0">
         <Header />
-        <main className="flex-1 container py-6">
+        <main className="flex-1 container max-w-none px-4 sm:px-6 lg:px-8 py-4 sm:py-6 overflow-x-hidden">
           {children}
         </main>
-        <footer className="py-4 px-6 text-sm text-center text-muted-foreground border-t">
-          <p>xDOTContractor &copy; {new Date().getFullYear()}. All rights reserved.</p>
+        <footer className="py-2 sm:py-4 px-4 sm:px-6 text-xs sm:text-sm text-center text-muted-foreground border-t">
+          <p className="truncate">xDOTContractor &copy; {new Date().getFullYear()}. All rights reserved.</p>
         </footer>
       </div>
       

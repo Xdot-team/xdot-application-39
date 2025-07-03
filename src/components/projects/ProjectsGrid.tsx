@@ -20,14 +20,14 @@ const ProjectsGrid = ({ activeProjects, completedProjects, upcomingProjects }: P
 
   return (
     <Tabs defaultValue="active" value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="w-full md:w-auto">
-        <TabsTrigger value="active">Active Projects</TabsTrigger>
-        <TabsTrigger value="completed">Completed Projects</TabsTrigger>
-        <TabsTrigger value="upcoming">Upcoming Projects</TabsTrigger>
+      <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex">
+        <TabsTrigger value="active" className="text-xs sm:text-sm">Active</TabsTrigger>
+        <TabsTrigger value="completed" className="text-xs sm:text-sm">Completed</TabsTrigger>
+        <TabsTrigger value="upcoming" className="text-xs sm:text-sm">Upcoming</TabsTrigger>
       </TabsList>
       
-      <TabsContent value="active" className="space-y-4 mt-6">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <TabsContent value="active" className="space-y-4 mt-4 sm:mt-6">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           {activeProjects.map(project => (
             <Card key={project.id}>
               <CardHeader>
@@ -63,21 +63,25 @@ const ProjectsGrid = ({ activeProjects, completedProjects, upcomingProjects }: P
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <CardFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between">
                 <Button 
                   variant="outline" 
                   size="sm" 
+                  className="w-full sm:w-auto text-xs sm:text-sm"
                   onClick={() => navigate(`/projects/${project.id}`)}
                 >
                   Details
                 </Button>
-                <Button variant="outline" size="sm">Schedule</Button>
-                <Button 
-                  size="sm"
-                  onClick={() => navigate(`/projects/${project.id}`)}
-                >
-                  Dashboard
-                </Button>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button variant="outline" size="sm" className="flex-1 sm:flex-none text-xs sm:text-sm">Schedule</Button>
+                  <Button 
+                    size="sm"
+                    className="flex-1 sm:flex-none text-xs sm:text-sm"
+                    onClick={() => navigate(`/projects/${project.id}`)}
+                  >
+                    Dashboard
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           ))}

@@ -129,7 +129,7 @@ const defaultNavItems: NavItem[] = [
 ];
 
 export function Sidebar() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false); // Start closed on mobile
   const { authState } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -150,23 +150,31 @@ export function Sidebar() {
   };
 
   return (
-    <div className="relative">
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+      
       {/* Mobile toggle button */}
       <Button
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50"
+        className="lg:hidden fixed top-4 left-4 z-50 bg-background border shadow-md"
       >
-        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
       </Button>
       
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-sidebar transition-transform duration-300 ease-in-out transform",
+          "fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-sidebar transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full",
-          "lg:translate-x-0 lg:static lg:h-screen"
+          "lg:translate-x-0 lg:static lg:h-screen lg:z-30"
         )}
       >
         <div className="flex flex-col h-full">
@@ -233,6 +241,6 @@ export function Sidebar() {
           </div>
         </div>
       </aside>
-    </div>
+    </>
   );
 }

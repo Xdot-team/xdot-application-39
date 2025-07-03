@@ -64,15 +64,16 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground italic"></p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground italic text-sm sm:text-base"></p>
         </div>
-        <Button onClick={triggerNotification}>
-          <BellRing className="mr-2" />
-          Test Notification
+        <Button onClick={triggerNotification} className="self-start sm:self-auto">
+          <BellRing className="mr-2 h-4 w-4" />
+          <span className="hidden sm:inline">Test Notification</span>
+          <span className="sm:hidden">Test</span>
         </Button>
       </div>
 
@@ -97,7 +98,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
@@ -149,103 +150,103 @@ const Dashboard = () => {
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-4">Module Navigation</h2>
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Module Navigation</h2>
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/projects')}
           >
-            <ClipboardCheck className="h-8 w-8 mb-2" />
-            Projects
+            <ClipboardCheck className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Projects</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/documents')}
           >
-            <FolderOpen className="h-8 w-8 mb-2" />
-            Documents
+            <FolderOpen className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Documents</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/estimating')}
           >
-            <BarChart className="h-8 w-8 mb-2" />
-            Estimating
+            <BarChart className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Estimating</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/field')}
           >
-            <MapPin className="h-8 w-8 mb-2" />
-            Field
+            <MapPin className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Field</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/finance')}
           >
-            <DollarSign className="h-8 w-8 mb-2" />
-            Finance
+            <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Finance</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/assets')}
           >
-            <Package className="h-8 w-8 mb-2" />
-            Assets
+            <Package className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Assets</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/workforce')}
           >
-            <UserRound className="h-8 w-8 mb-2" />
-            Workforce
+            <UserRound className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Workforce</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/safety')}
           >
-            <ShieldAlert className="h-8 w-8 mb-2" />
-            Safety
+            <ShieldAlert className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Safety</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/schedule')}
           >
-            <CalendarDays className="h-8 w-8 mb-2" />
-            Schedule
+            <CalendarDays className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Schedule</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/survey')}
           >
-            <Satellite className="h-8 w-8 mb-2" />
-            Survey
+            <Satellite className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Survey</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/organization')}
           >
-            <LineChart className="h-8 w-8 mb-2" />
-            Organization
+            <LineChart className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Organization</span>
           </Button>
           <Button 
             variant="outline" 
-            className="h-24 flex flex-col items-center justify-center"
+            className="h-20 sm:h-24 flex flex-col items-center justify-center p-2 sm:p-4"
             onClick={() => handleModuleNavigation('/reports')}
           >
-            <TrendingUp className="h-8 w-8 mb-2" />
-            Reports
+            <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 mb-1 sm:mb-2" />
+            <span className="text-xs sm:text-sm font-medium">Reports</span>
           </Button>
         </div>
       </div>
@@ -257,7 +258,8 @@ const Dashboard = () => {
             <CardDescription>Overview of your latest construction projects</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
+            {/* Desktop table view */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b">
@@ -290,6 +292,30 @@ const Dashboard = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+            
+            {/* Mobile card view */}
+            <div className="md:hidden space-y-3">
+              {recentProjects.map((project) => (
+                <div key={project.id} className="border rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-medium text-sm leading-tight">{project.name}</h4>
+                    <span
+                      className={`px-2 py-1 rounded text-xs ml-2 ${
+                        project.status === "Completed" 
+                          ? "bg-green-100 text-green-800" 
+                          : project.status === "In Progress" 
+                            ? "bg-blue-100 text-blue-800" 
+                            : "bg-amber-100 text-amber-800"
+                      }`}
+                    >
+                      {project.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{project.client}</p>
+                  <p className="text-xs text-muted-foreground">Due: {new Date(project.dueDate).toLocaleDateString()}</p>
+                </div>
+              ))}
             </div>
             <div className="mt-4 flex justify-end">
               <Button variant="outline" onClick={() => handleModuleNavigation('/projects')}>View All Projects</Button>
