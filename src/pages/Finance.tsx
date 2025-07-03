@@ -6,9 +6,7 @@ import { FileText, BadgeDollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/lib/formatters";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-// Import mock data
-import { ClientInvoice, PurchaseOrder, VendorInvoice, Transaction, BudgetCategory, ProjectWIP } from "@/types/finance";
+import { useFinance } from "@/hooks/useFinance";
 
 // Import finance components
 import { FinancialOverview } from "@/components/finance/FinancialOverview";
