@@ -8,22 +8,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { UserRole } from '@/types/auth';
 import { Search, UserPlus, UserMinus, Edit, Save, X } from 'lucide-react';
-import { mockAdditionalUsers } from '@/data/mockAdminData';
-import { MOCK_USERS } from '@/contexts/AuthContext';
-import { toast } from '@/components/ui/sonner';
+import { useUserProfiles } from '@/hooks/useAdminData';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function UserManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editRole, setEditRole] = useState<UserRole>('admin');
-
-  // Combine mock users from both sources
-  const allUsers = [...MOCK_USERS, ...mockAdditionalUsers];
+  
+  const { profiles, loading, updateProfile } = useUserProfiles();
+  const { toast } = useToast();
+  const { authState } = useAuth();
   
   // Filter users based on search query
-  const filteredUsers = allUsers.filter(user => 
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredUsers = profiles.filter(user => 
+    (user.display_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (user.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -32,9 +33,21 @@ export function UserManagement() {
     setEditRole(role);
   };
 
-  const handleSave = (userId: string) => {
-    toast.success(`User role updated successfully`);
-    setEditingUserId(null);
+  const handleSave = async (userId: string) => {
+    try {
+      await updateProfile(userId, { role: editRole });
+      toast({
+        title: "Success",
+        description: "User role updated successfully",
+      });
+      setEditingUserId(null);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update user role",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -42,11 +55,26 @@ export function UserManagement() {
   };
 
   const handleAddUser = () => {
-    toast.info("This would open a user creation form in a real application");
+    toast({
+      title: "Info",
+      description: "User creation form will be implemented",
+    });
   };
 
-  const handleDeactivateUser = (userId: string) => {
-    toast.success(`User deactivated successfully`);
+  const handleDeactivateUser = async (userId: string) => {
+    try {
+      await updateProfile(userId, { status: 'inactive' });
+      toast({
+        title: "Success",
+        description: "User deactivated successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to deactivate user",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -87,10 +115,19 @@ export function UserManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8">Loading users...</TableCell>
+                  </TableRow>
+                ) : filteredUsers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8">No users found</TableCell>
+                  </TableRow>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.display_name || 'No name'}</TableCell>
+                      <TableCell>{user.email || 'No email'}</TableCell>
                     <TableCell>
                       {editingUserId === user.id ? (
                         <Select value={editRole} onValueChange={(value) => setEditRole(value as UserRole)}>
@@ -111,7 +148,7 @@ export function UserManagement() {
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell>{new Date(user.lastLogin).toLocaleDateString()}</TableCell>
+                    <TableCell>{user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}</TableCell>
                     <TableCell className="text-right">
                       {editingUserId === user.id ? (
                         <div className="flex justify-end gap-2">
@@ -124,7 +161,7 @@ export function UserManagement() {
                         </div>
                       ) : (
                         <div className="flex justify-end gap-2">
-                          <Button size="sm" variant="ghost" onClick={() => handleEdit(user.id, user.role)}>
+                          <Button size="sm" variant="ghost" onClick={() => handleEdit(user.id, user.role as UserRole)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button size="sm" variant="ghost" onClick={() => handleDeactivateUser(user.id)}>
@@ -134,7 +171,8 @@ export function UserManagement() {
                       )}
                     </TableCell>
                   </TableRow>
-                ))}
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
