@@ -16,6 +16,13 @@ import { mockOnboardings } from "@/data/mockWorkforceData";
 import { Onboarding } from "@/types/workforce";
 import { formatDate } from "@/lib/formatters";
 
+const OnboardingWorkflowForm = () => (
+  <Button size="sm">
+    <Plus className="h-4 w-4 mr-2" />
+    New Onboarding
+  </Button>
+);
+
 export function OnboardingWorkflow() {
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
@@ -85,10 +92,7 @@ export function OnboardingWorkflow() {
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <Button size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            New Onboarding
-          </Button>
+          <OnboardingWorkflowForm />
         </div>
       </div>
 
