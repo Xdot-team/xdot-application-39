@@ -97,20 +97,19 @@ export interface ToolboxMeeting {
 
 export interface RiskAssessment {
   id: string;
-  risk_number: string;
-  title: string;
-  description: string;
-  category: string;
-  probability: string;
-  impact: string;
-  risk_score: number;
-  status: string;
+  assessment_number: string;
+  assessment_date: string;
   project_id?: string;
-  identified_by: string;
-  identification_date: string;
-  source: string;
-  is_high_priority: boolean;
-  ai_confidence?: number;
+  assessed_by: string;
+  assessment_type: string;
+  scope_description: string;
+  methodology?: string;
+  status: string;
+  approval_date?: string;
+  approved_by?: string;
+  next_review_date?: string;
+  overall_risk_rating?: string;
+  recommendations?: string;
   created_at: string;
   updated_at: string;
 }
@@ -538,7 +537,7 @@ export const useRiskAssessments = () => {
       const { data, error } = await supabase
         .from('risk_assessments')
         .select('*')
-        .order('identification_date', { ascending: false });
+        .order('assessment_date', { ascending: false });
 
       if (error) throw error;
       setRisks(data || []);
@@ -560,7 +559,7 @@ export const useRiskAssessments = () => {
         .from('risk_assessments')
         .insert([{
           ...risk,
-          risk_number: `RISK-${Date.now()}`
+          assessment_number: `RISK-${Date.now()}`
         }])
         .select()
         .single();
