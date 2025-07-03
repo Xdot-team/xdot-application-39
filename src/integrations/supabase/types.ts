@@ -441,6 +441,63 @@ export type Database = {
           },
         ]
       }
+      control_points: {
+        Row: {
+          access_description: string | null
+          accuracy_class: string | null
+          coordinate_system: string | null
+          created_at: string
+          datum: string | null
+          elevation: number | null
+          established_date: string | null
+          id: string
+          latitude: number
+          longitude: number
+          monument_type: string | null
+          notes: string | null
+          point_name: string
+          updated_at: string
+          verification_status: string | null
+          verified_date: string | null
+        }
+        Insert: {
+          access_description?: string | null
+          accuracy_class?: string | null
+          coordinate_system?: string | null
+          created_at?: string
+          datum?: string | null
+          elevation?: number | null
+          established_date?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          monument_type?: string | null
+          notes?: string | null
+          point_name: string
+          updated_at?: string
+          verification_status?: string | null
+          verified_date?: string | null
+        }
+        Update: {
+          access_description?: string | null
+          accuracy_class?: string | null
+          coordinate_system?: string | null
+          created_at?: string
+          datum?: string | null
+          elevation?: number | null
+          established_date?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          monument_type?: string | null
+          notes?: string | null
+          point_name?: string
+          updated_at?: string
+          verification_status?: string | null
+          verified_date?: string | null
+        }
+        Relationships: []
+      }
       crew_members: {
         Row: {
           crew_id: string | null
@@ -482,6 +539,105 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      custom_reports: {
+        Row: {
+          configuration: Json
+          created_at: string
+          created_by: string
+          description: string | null
+          generated_count: number | null
+          id: string
+          is_public: boolean | null
+          last_generated: string | null
+          report_type: string | null
+          tags: string[] | null
+          template_id: string | null
+          title: string
+          updated_at: string
+          version: number | null
+        }
+        Insert: {
+          configuration: Json
+          created_at?: string
+          created_by: string
+          description?: string | null
+          generated_count?: number | null
+          id?: string
+          is_public?: boolean | null
+          last_generated?: string | null
+          report_type?: string | null
+          tags?: string[] | null
+          template_id?: string | null
+          title: string
+          updated_at?: string
+          version?: number | null
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          generated_count?: number | null
+          id?: string
+          is_public?: boolean | null
+          last_generated?: string | null
+          report_type?: string | null
+          tags?: string[] | null
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+          version?: number | null
+        }
+        Relationships: []
+      }
+      dashboard_widgets: {
+        Row: {
+          configuration: Json | null
+          created_at: string
+          data_source: string | null
+          id: string
+          is_active: boolean | null
+          position_x: number | null
+          position_y: number | null
+          refresh_interval: number | null
+          size: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
+          widget_type: string
+        }
+        Insert: {
+          configuration?: Json | null
+          created_at?: string
+          data_source?: string | null
+          id?: string
+          is_active?: boolean | null
+          position_x?: number | null
+          position_y?: number | null
+          refresh_interval?: number | null
+          size?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+          widget_type: string
+        }
+        Update: {
+          configuration?: Json | null
+          created_at?: string
+          data_source?: string | null
+          id?: string
+          is_active?: boolean | null
+          position_x?: number | null
+          position_y?: number | null
+          refresh_interval?: number | null
+          size?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+          widget_type?: string
+        }
+        Relationships: []
       }
       dispatch_assignments: {
         Row: {
@@ -1220,6 +1376,104 @@ export type Database = {
             columns: ["site_id"]
             isOneToOne: false
             referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eos_goals: {
+        Row: {
+          category: string
+          created_at: string
+          current_value: number | null
+          description: string | null
+          end_date: string
+          id: string
+          name: string
+          owner_name: string
+          priority: string | null
+          quarterly_targets: Json | null
+          start_date: string
+          status: string | null
+          target_value: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          end_date: string
+          id?: string
+          name: string
+          owner_name: string
+          priority?: string | null
+          quarterly_targets?: Json | null
+          start_date: string
+          status?: string | null
+          target_value: number
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          end_date?: string
+          id?: string
+          name?: string
+          owner_name?: string
+          priority?: string | null
+          quarterly_targets?: Json | null
+          start_date?: string
+          status?: string | null
+          target_value?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      eos_milestones: {
+        Row: {
+          completed: boolean | null
+          completed_date: string | null
+          created_at: string
+          description: string | null
+          due_date: string
+          goal_id: string | null
+          id: string
+          name: string
+          notes: string | null
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_date?: string | null
+          created_at?: string
+          description?: string | null
+          due_date: string
+          goal_id?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+        }
+        Update: {
+          completed?: boolean | null
+          completed_date?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string
+          goal_id?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eos_milestones_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "eos_goals"
             referencedColumns: ["id"]
           },
         ]
@@ -2648,6 +2902,66 @@ export type Database = {
           },
         ]
       }
+      kpis: {
+        Row: {
+          calculation_method: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          current_value: number
+          data_source: string | null
+          description: string | null
+          id: string
+          last_updated: string | null
+          name: string
+          period: string | null
+          target_value: number
+          threshold_critical: number | null
+          threshold_warning: number | null
+          trend: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          calculation_method?: string | null
+          category: string
+          created_at?: string
+          created_by?: string | null
+          current_value: number
+          data_source?: string | null
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          name: string
+          period?: string | null
+          target_value: number
+          threshold_critical?: number | null
+          threshold_warning?: number | null
+          trend?: string | null
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          calculation_method?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          current_value?: number
+          data_source?: string | null
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          name?: string
+          period?: string | null
+          target_value?: number
+          threshold_critical?: number | null
+          threshold_warning?: number | null
+          trend?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       labor_rates: {
         Row: {
           base_rate: number
@@ -3144,6 +3458,57 @@ export type Database = {
           },
         ]
       }
+      organization_reports: {
+        Row: {
+          created_at: string
+          data_range_end: string | null
+          data_range_start: string | null
+          description: string | null
+          file_url: string | null
+          frequency: string | null
+          generated_at: string | null
+          generated_by: string | null
+          id: string
+          metrics_included: string[] | null
+          recipients: string[] | null
+          report_type: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          data_range_end?: string | null
+          data_range_start?: string | null
+          description?: string | null
+          file_url?: string | null
+          frequency?: string | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          metrics_included?: string[] | null
+          recipients?: string[] | null
+          report_type: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          data_range_end?: string | null
+          data_range_start?: string | null
+          description?: string | null
+          file_url?: string | null
+          frequency?: string | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          metrics_included?: string[] | null
+          recipients?: string[] | null
+          report_type?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       payroll_calculations: {
         Row: {
           approved_at: string | null
@@ -3235,6 +3600,53 @@ export type Database = {
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_metrics: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          measurement_date: string
+          metric_name: string
+          project_id: string | null
+          source_id: string | null
+          source_table: string | null
+          unit: string | null
+          value: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          measurement_date: string
+          metric_name: string
+          project_id?: string | null
+          source_id?: string | null
+          source_table?: string | null
+          unit?: string | null
+          value: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          measurement_date?: string
+          metric_name?: string
+          project_id?: string | null
+          source_id?: string | null
+          source_table?: string | null
+          unit?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_metrics_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -3443,6 +3855,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      projections: {
+        Row: {
+          category: string
+          confidence_level: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          methodology: string | null
+          name: string
+          period: string
+          projection_data: Json
+          projection_type: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          confidence_level?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          methodology?: string | null
+          name: string
+          period: string
+          projection_data: Json
+          projection_type: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          confidence_level?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          methodology?: string | null
+          name?: string
+          period?: string
+          projection_data?: Json
+          projection_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       projects: {
         Row: {
@@ -3861,6 +4315,231 @@ export type Database = {
             columns: ["parent_event_id"]
             isOneToOne: false
             referencedRelation: "schedule_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_filters: {
+        Row: {
+          created_at: string
+          field_name: string
+          filter_name: string
+          filter_value: Json
+          id: string
+          is_required: boolean | null
+          operator: string
+          report_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          field_name: string
+          filter_name: string
+          filter_value: Json
+          id?: string
+          is_required?: boolean | null
+          operator: string
+          report_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          field_name?: string
+          filter_name?: string
+          filter_value?: Json
+          id?: string
+          is_required?: boolean | null
+          operator?: string
+          report_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_filters_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_metrics: {
+        Row: {
+          aggregation_type: string | null
+          calculation_formula: string | null
+          category: string
+          created_at: string
+          data_source: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          metric_name: string
+          unit: string | null
+        }
+        Insert: {
+          aggregation_type?: string | null
+          calculation_formula?: string | null
+          category: string
+          created_at?: string
+          data_source: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          metric_name: string
+          unit?: string | null
+        }
+        Update: {
+          aggregation_type?: string | null
+          calculation_formula?: string | null
+          category?: string
+          created_at?: string
+          data_source?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          metric_name?: string
+          unit?: string | null
+        }
+        Relationships: []
+      }
+      report_schedules: {
+        Row: {
+          created_at: string
+          day_of_month: number | null
+          day_of_week: number | null
+          failure_count: number | null
+          frequency: string
+          id: string
+          last_sent: string | null
+          next_scheduled: string | null
+          recipients: string[]
+          report_id: string | null
+          schedule_name: string
+          status: string | null
+          time_of_day: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          failure_count?: number | null
+          frequency: string
+          id?: string
+          last_sent?: string | null
+          next_scheduled?: string | null
+          recipients: string[]
+          report_id?: string | null
+          schedule_name: string
+          status?: string | null
+          time_of_day?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          failure_count?: number | null
+          frequency?: string
+          id?: string
+          last_sent?: string | null
+          next_scheduled?: string | null
+          recipients?: string[]
+          report_id?: string | null
+          schedule_name?: string
+          status?: string | null
+          time_of_day?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_schedules_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_templates: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          default_filters: Json | null
+          default_visualizations: Json | null
+          description: string | null
+          id: string
+          is_system_template: boolean | null
+          name: string
+          template_config: Json
+          updated_at: string
+          usage_count: number | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by?: string | null
+          default_filters?: Json | null
+          default_visualizations?: Json | null
+          description?: string | null
+          id?: string
+          is_system_template?: boolean | null
+          name: string
+          template_config: Json
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          default_filters?: Json | null
+          default_visualizations?: Json | null
+          description?: string | null
+          id?: string
+          is_system_template?: boolean | null
+          name?: string
+          template_config?: Json
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
+      report_visualizations: {
+        Row: {
+          configuration: Json | null
+          created_at: string
+          id: string
+          metrics: string[]
+          position_order: number | null
+          report_id: string | null
+          title: string
+          visualization_type: string
+        }
+        Insert: {
+          configuration?: Json | null
+          created_at?: string
+          id?: string
+          metrics: string[]
+          position_order?: number | null
+          report_id?: string | null
+          title: string
+          visualization_type: string
+        }
+        Update: {
+          configuration?: Json | null
+          created_at?: string
+          id?: string
+          metrics?: string[]
+          position_order?: number | null
+          report_id?: string | null
+          title?: string
+          visualization_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_visualizations_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "custom_reports"
             referencedColumns: ["id"]
           },
         ]
@@ -5071,6 +5750,293 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_data_points: {
+        Row: {
+          accuracy_horizontal: number | null
+          accuracy_vertical: number | null
+          created_at: string
+          description: string | null
+          elevation: number | null
+          equipment_used: string | null
+          id: string
+          latitude: number
+          longitude: number
+          metadata: Json | null
+          point_id: string
+          point_type: string | null
+          recorded_at: string | null
+          recorded_by: string | null
+          survey_project_id: string | null
+        }
+        Insert: {
+          accuracy_horizontal?: number | null
+          accuracy_vertical?: number | null
+          created_at?: string
+          description?: string | null
+          elevation?: number | null
+          equipment_used?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          metadata?: Json | null
+          point_id: string
+          point_type?: string | null
+          recorded_at?: string | null
+          recorded_by?: string | null
+          survey_project_id?: string | null
+        }
+        Update: {
+          accuracy_horizontal?: number | null
+          accuracy_vertical?: number | null
+          created_at?: string
+          description?: string | null
+          elevation?: number | null
+          equipment_used?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          metadata?: Json | null
+          point_id?: string
+          point_type?: string | null
+          recorded_at?: string | null
+          recorded_by?: string | null
+          survey_project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_data_points_survey_project_id_fkey"
+            columns: ["survey_project_id"]
+            isOneToOne: false
+            referencedRelation: "survey_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_equipment: {
+        Row: {
+          assigned_to: string | null
+          battery_level: number | null
+          created_at: string
+          current_location: unknown | null
+          equipment_id: string
+          equipment_type: string
+          id: string
+          last_sync: string | null
+          maintenance_due: string | null
+          model: string | null
+          notes: string | null
+          serial_number: string | null
+          signal_strength: number | null
+          status: string | null
+          storage_total_gb: number | null
+          storage_used_gb: number | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          battery_level?: number | null
+          created_at?: string
+          current_location?: unknown | null
+          equipment_id: string
+          equipment_type: string
+          id?: string
+          last_sync?: string | null
+          maintenance_due?: string | null
+          model?: string | null
+          notes?: string | null
+          serial_number?: string | null
+          signal_strength?: number | null
+          status?: string | null
+          storage_total_gb?: number | null
+          storage_used_gb?: number | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          battery_level?: number | null
+          created_at?: string
+          current_location?: unknown | null
+          equipment_id?: string
+          equipment_type?: string
+          id?: string
+          last_sync?: string | null
+          maintenance_due?: string | null
+          model?: string | null
+          notes?: string | null
+          serial_number?: string | null
+          signal_strength?: number | null
+          status?: string | null
+          storage_total_gb?: number | null
+          storage_used_gb?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      survey_projects: {
+        Row: {
+          assigned_surveyor: string | null
+          created_at: string
+          end_date: string | null
+          equipment_required: string[] | null
+          id: string
+          location_bounds: unknown | null
+          notes: string | null
+          priority: string | null
+          progress_percentage: number | null
+          project_id: string | null
+          start_date: string | null
+          status: string
+          survey_type: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_surveyor?: string | null
+          created_at?: string
+          end_date?: string | null
+          equipment_required?: string[] | null
+          id?: string
+          location_bounds?: unknown | null
+          notes?: string | null
+          priority?: string | null
+          progress_percentage?: number | null
+          project_id?: string | null
+          start_date?: string | null
+          status?: string
+          survey_type: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_surveyor?: string | null
+          created_at?: string
+          end_date?: string | null
+          equipment_required?: string[] | null
+          id?: string
+          location_bounds?: unknown | null
+          notes?: string | null
+          priority?: string | null
+          progress_percentage?: number | null
+          project_id?: string | null
+          start_date?: string | null
+          status?: string
+          survey_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_projects_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_reports: {
+        Row: {
+          content: Json | null
+          created_at: string
+          file_url: string | null
+          generated_at: string | null
+          generated_by: string | null
+          id: string
+          report_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          survey_project_id: string | null
+          title: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          file_url?: string | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          report_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          survey_project_id?: string | null
+          title: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          file_url?: string | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          report_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          survey_project_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_reports_survey_project_id_fkey"
+            columns: ["survey_project_id"]
+            isOneToOne: false
+            referencedRelation: "survey_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_sessions: {
+        Row: {
+          created_at: string
+          data_points_collected: number | null
+          data_quality: string | null
+          end_time: string | null
+          equipment_used: string[] | null
+          id: string
+          session_name: string
+          session_notes: string | null
+          start_time: string | null
+          survey_project_id: string | null
+          surveyor_name: string | null
+          weather_conditions: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_points_collected?: number | null
+          data_quality?: string | null
+          end_time?: string | null
+          equipment_used?: string[] | null
+          id?: string
+          session_name: string
+          session_notes?: string | null
+          start_time?: string | null
+          survey_project_id?: string | null
+          surveyor_name?: string | null
+          weather_conditions?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_points_collected?: number | null
+          data_quality?: string | null
+          end_time?: string | null
+          equipment_used?: string[] | null
+          id?: string
+          session_name?: string
+          session_notes?: string | null
+          start_time?: string | null
+          survey_project_id?: string | null
+          surveyor_name?: string | null
+          weather_conditions?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_sessions_survey_project_id_fkey"
+            columns: ["survey_project_id"]
+            isOneToOne: false
+            referencedRelation: "survey_projects"
             referencedColumns: ["id"]
           },
         ]
