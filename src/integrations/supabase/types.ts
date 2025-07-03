@@ -330,6 +330,78 @@ export type Database = {
           },
         ]
       }
+      compliance_checklists: {
+        Row: {
+          assigned_to: string
+          checklist_name: string
+          checklist_type: string
+          completion_date: string | null
+          created_at: string
+          due_date: string
+          id: string
+          inspector_signature: string | null
+          items: Json
+          notes: string | null
+          overall_compliance_score: number | null
+          project_id: string | null
+          regulation_reference: string | null
+          site_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to: string
+          checklist_name: string
+          checklist_type: string
+          completion_date?: string | null
+          created_at?: string
+          due_date: string
+          id?: string
+          inspector_signature?: string | null
+          items?: Json
+          notes?: string | null
+          overall_compliance_score?: number | null
+          project_id?: string | null
+          regulation_reference?: string | null
+          site_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string
+          checklist_name?: string
+          checklist_type?: string
+          completion_date?: string | null
+          created_at?: string
+          due_date?: string
+          id?: string
+          inspector_signature?: string | null
+          items?: Json
+          notes?: string | null
+          overall_compliance_score?: number | null
+          project_id?: string | null
+          regulation_reference?: string | null
+          site_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_checklists_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_checklists_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crew_members: {
         Row: {
           crew_id: string | null
@@ -2329,6 +2401,214 @@ export type Database = {
           },
         ]
       }
+      hazard_reports: {
+        Row: {
+          actual_completion_date: string | null
+          affected_workers: number | null
+          assigned_to: string | null
+          corrective_actions: string | null
+          created_at: string
+          description: string
+          hazard_number: string
+          hazard_type: string
+          id: string
+          location: string
+          photos: string[] | null
+          priority: string
+          project_id: string | null
+          recommended_actions: string | null
+          reported_by: string
+          reported_date: string
+          status: string
+          target_completion_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          actual_completion_date?: string | null
+          affected_workers?: number | null
+          assigned_to?: string | null
+          corrective_actions?: string | null
+          created_at?: string
+          description: string
+          hazard_number: string
+          hazard_type: string
+          id?: string
+          location: string
+          photos?: string[] | null
+          priority?: string
+          project_id?: string | null
+          recommended_actions?: string | null
+          reported_by: string
+          reported_date?: string
+          status?: string
+          target_completion_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actual_completion_date?: string | null
+          affected_workers?: number | null
+          assigned_to?: string | null
+          corrective_actions?: string | null
+          created_at?: string
+          description?: string
+          hazard_number?: string
+          hazard_type?: string
+          id?: string
+          location?: string
+          photos?: string[] | null
+          priority?: string
+          project_id?: string | null
+          recommended_actions?: string | null
+          reported_by?: string
+          reported_date?: string
+          status?: string
+          target_completion_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hazard_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_safety_analyses: {
+        Row: {
+          approval_date: string | null
+          approved_by: string | null
+          created_at: string
+          effective_date: string | null
+          emergency_procedures: string | null
+          environmental_conditions: string | null
+          equipment_required: string[] | null
+          expiry_date: string | null
+          id: string
+          job_description: string
+          job_title: string
+          jsa_number: string
+          materials_required: string[] | null
+          personnel_required: number | null
+          preparation_date: string
+          prepared_by: string
+          project_id: string | null
+          review_date: string | null
+          reviewed_by: string | null
+          site_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approval_date?: string | null
+          approved_by?: string | null
+          created_at?: string
+          effective_date?: string | null
+          emergency_procedures?: string | null
+          environmental_conditions?: string | null
+          equipment_required?: string[] | null
+          expiry_date?: string | null
+          id?: string
+          job_description: string
+          job_title: string
+          jsa_number: string
+          materials_required?: string[] | null
+          personnel_required?: number | null
+          preparation_date: string
+          prepared_by: string
+          project_id?: string | null
+          review_date?: string | null
+          reviewed_by?: string | null
+          site_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approval_date?: string | null
+          approved_by?: string | null
+          created_at?: string
+          effective_date?: string | null
+          emergency_procedures?: string | null
+          environmental_conditions?: string | null
+          equipment_required?: string[] | null
+          expiry_date?: string | null
+          id?: string
+          job_description?: string
+          job_title?: string
+          jsa_number?: string
+          materials_required?: string[] | null
+          personnel_required?: number | null
+          preparation_date?: string
+          prepared_by?: string
+          project_id?: string | null
+          review_date?: string | null
+          reviewed_by?: string | null
+          site_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_safety_analyses_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_safety_analyses_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jsa_steps: {
+        Row: {
+          created_at: string
+          id: string
+          jsa_id: string
+          potential_hazards: string[]
+          required_ppe: string[] | null
+          safety_precautions: string[]
+          special_instructions: string | null
+          step_description: string
+          step_number: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          jsa_id: string
+          potential_hazards: string[]
+          required_ppe?: string[] | null
+          safety_precautions: string[]
+          special_instructions?: string | null
+          step_description: string
+          step_number: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          jsa_id?: string
+          potential_hazards?: string[]
+          required_ppe?: string[] | null
+          safety_precautions?: string[]
+          special_instructions?: string | null
+          step_description?: string
+          step_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jsa_steps_jsa_id_fkey"
+            columns: ["jsa_id"]
+            isOneToOne: false
+            referencedRelation: "job_safety_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       labor_rates: {
         Row: {
           base_rate: number
@@ -2511,6 +2791,148 @@ export type Database = {
             columns: ["site_id"]
             isOneToOne: false
             referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_attendees: {
+        Row: {
+          attendance_status: string
+          attendee_email: string | null
+          attendee_id: string | null
+          attendee_name: string
+          attendee_type: string
+          contribution_notes: string | null
+          created_at: string
+          id: string
+          join_time: string | null
+          leave_time: string | null
+          meeting_id: string
+          role_in_meeting: string | null
+        }
+        Insert: {
+          attendance_status?: string
+          attendee_email?: string | null
+          attendee_id?: string | null
+          attendee_name: string
+          attendee_type: string
+          contribution_notes?: string | null
+          created_at?: string
+          id?: string
+          join_time?: string | null
+          leave_time?: string | null
+          meeting_id: string
+          role_in_meeting?: string | null
+        }
+        Update: {
+          attendance_status?: string
+          attendee_email?: string | null
+          attendee_id?: string | null
+          attendee_name?: string
+          attendee_type?: string
+          contribution_notes?: string | null
+          created_at?: string
+          id?: string
+          join_time?: string | null
+          leave_time?: string | null
+          meeting_id?: string
+          role_in_meeting?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_attendees_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetings: {
+        Row: {
+          action_items: Json | null
+          agenda: Json | null
+          created_at: string
+          date: string
+          description: string | null
+          documents: string[] | null
+          end_time: string
+          id: string
+          is_virtual: boolean | null
+          location: string | null
+          meeting_link: string | null
+          meeting_type: string
+          minutes: string | null
+          organizer: string
+          project_id: string | null
+          recording_url: string | null
+          recurring: boolean | null
+          recurring_pattern: string | null
+          recurring_until: string | null
+          start_time: string
+          status: string
+          timezone: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          action_items?: Json | null
+          agenda?: Json | null
+          created_at?: string
+          date: string
+          description?: string | null
+          documents?: string[] | null
+          end_time: string
+          id?: string
+          is_virtual?: boolean | null
+          location?: string | null
+          meeting_link?: string | null
+          meeting_type: string
+          minutes?: string | null
+          organizer: string
+          project_id?: string | null
+          recording_url?: string | null
+          recurring?: boolean | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          start_time: string
+          status?: string
+          timezone?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          action_items?: Json | null
+          agenda?: Json | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          documents?: string[] | null
+          end_time?: string
+          id?: string
+          is_virtual?: boolean | null
+          location?: string | null
+          meeting_link?: string | null
+          meeting_type?: string
+          minutes?: string | null
+          organizer?: string
+          project_id?: string | null
+          recording_url?: string | null
+          recurring?: boolean | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          start_time?: string
+          status?: string
+          timezone?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -3363,6 +3785,179 @@ export type Database = {
           },
         ]
       }
+      recurring_event_instances: {
+        Row: {
+          created_at: string
+          id: string
+          instance_end: string
+          instance_start: string
+          is_cancelled: boolean | null
+          is_exception: boolean | null
+          override_data: Json | null
+          parent_event_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          instance_end: string
+          instance_start: string
+          is_cancelled?: boolean | null
+          is_exception?: boolean | null
+          override_data?: Json | null
+          parent_event_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          instance_end?: string
+          instance_start?: string
+          is_cancelled?: boolean | null
+          is_exception?: boolean | null
+          override_data?: Json | null
+          parent_event_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recurring_event_instances_parent_event_id_fkey"
+            columns: ["parent_event_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resource_allocations: {
+        Row: {
+          actual_cost: number | null
+          actual_hours_worked: number | null
+          allocation_end: string
+          allocation_percentage: number | null
+          allocation_start: string
+          cost_per_hour: number | null
+          created_at: string
+          created_by: string
+          event_id: string | null
+          hours_per_day: number | null
+          id: string
+          notes: string | null
+          project_id: string | null
+          quantity_allocated: number | null
+          resource_id: string | null
+          resource_name: string
+          resource_type: string
+          status: string
+          total_estimated_cost: number | null
+          updated_at: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          actual_hours_worked?: number | null
+          allocation_end: string
+          allocation_percentage?: number | null
+          allocation_start: string
+          cost_per_hour?: number | null
+          created_at?: string
+          created_by: string
+          event_id?: string | null
+          hours_per_day?: number | null
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          quantity_allocated?: number | null
+          resource_id?: string | null
+          resource_name: string
+          resource_type: string
+          status?: string
+          total_estimated_cost?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actual_cost?: number | null
+          actual_hours_worked?: number | null
+          allocation_end?: string
+          allocation_percentage?: number | null
+          allocation_start?: string
+          cost_per_hour?: number | null
+          created_at?: string
+          created_by?: string
+          event_id?: string | null
+          hours_per_day?: number | null
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          quantity_allocated?: number | null
+          resource_id?: string | null
+          resource_name?: string
+          resource_type?: string
+          status?: string
+          total_estimated_cost?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_allocations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_allocations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resource_availability: {
+        Row: {
+          availability_end: string
+          availability_start: string
+          availability_type: string
+          capacity_percentage: number | null
+          created_at: string
+          created_by: string
+          id: string
+          notes: string | null
+          reason: string | null
+          resource_id: string
+          resource_name: string
+          resource_type: string
+          updated_at: string
+        }
+        Insert: {
+          availability_end: string
+          availability_start: string
+          availability_type: string
+          capacity_percentage?: number | null
+          created_at?: string
+          created_by: string
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          resource_id: string
+          resource_name: string
+          resource_type: string
+          updated_at?: string
+        }
+        Update: {
+          availability_end?: string
+          availability_start?: string
+          availability_type?: string
+          capacity_percentage?: number | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          resource_id?: string
+          resource_name?: string
+          resource_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       rfis: {
         Row: {
           created_at: string
@@ -3400,6 +3995,195 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      risk_assessment_items: {
+        Row: {
+          additional_controls: string | null
+          assessment_id: string
+          created_at: string
+          existing_controls: string | null
+          hazard_description: string
+          id: string
+          likelihood_score: number
+          potential_consequences: string
+          responsible_person: string | null
+          risk_category: string
+          risk_level: string | null
+          risk_score: number | null
+          severity_score: number
+          status: string
+          target_date: string | null
+        }
+        Insert: {
+          additional_controls?: string | null
+          assessment_id: string
+          created_at?: string
+          existing_controls?: string | null
+          hazard_description: string
+          id?: string
+          likelihood_score: number
+          potential_consequences: string
+          responsible_person?: string | null
+          risk_category: string
+          risk_level?: string | null
+          risk_score?: number | null
+          severity_score: number
+          status?: string
+          target_date?: string | null
+        }
+        Update: {
+          additional_controls?: string | null
+          assessment_id?: string
+          created_at?: string
+          existing_controls?: string | null
+          hazard_description?: string
+          id?: string
+          likelihood_score?: number
+          potential_consequences?: string
+          responsible_person?: string | null
+          risk_category?: string
+          risk_level?: string | null
+          risk_score?: number | null
+          severity_score?: number
+          status?: string
+          target_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_assessment_items_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "risk_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      risk_assessments: {
+        Row: {
+          approval_date: string | null
+          approved_by: string | null
+          assessed_by: string
+          assessment_date: string
+          assessment_number: string
+          assessment_type: string
+          created_at: string
+          id: string
+          methodology: string | null
+          next_review_date: string | null
+          overall_risk_rating: string | null
+          project_id: string | null
+          recommendations: string | null
+          scope_description: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approval_date?: string | null
+          approved_by?: string | null
+          assessed_by: string
+          assessment_date: string
+          assessment_number: string
+          assessment_type: string
+          created_at?: string
+          id?: string
+          methodology?: string | null
+          next_review_date?: string | null
+          overall_risk_rating?: string | null
+          project_id?: string | null
+          recommendations?: string | null
+          scope_description: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approval_date?: string | null
+          approved_by?: string | null
+          assessed_by?: string
+          assessment_date?: string
+          assessment_number?: string
+          assessment_type?: string
+          created_at?: string
+          id?: string
+          methodology?: string | null
+          next_review_date?: string | null
+          overall_risk_rating?: string | null
+          project_id?: string | null
+          recommendations?: string | null
+          scope_description?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_assessments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      risk_mitigation_actions: {
+        Row: {
+          action_description: string
+          action_type: string
+          actual_cost: number | null
+          assigned_to: string
+          completion_date: string | null
+          completion_notes: string | null
+          cost_estimate: number | null
+          created_at: string
+          due_date: string
+          effectiveness_rating: number | null
+          id: string
+          priority: string
+          risk_item_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          action_description: string
+          action_type: string
+          actual_cost?: number | null
+          assigned_to: string
+          completion_date?: string | null
+          completion_notes?: string | null
+          cost_estimate?: number | null
+          created_at?: string
+          due_date: string
+          effectiveness_rating?: number | null
+          id?: string
+          priority?: string
+          risk_item_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          action_description?: string
+          action_type?: string
+          actual_cost?: number | null
+          assigned_to?: string
+          completion_date?: string | null
+          completion_notes?: string | null
+          cost_estimate?: number | null
+          created_at?: string
+          due_date?: string
+          effectiveness_rating?: number | null
+          id?: string
+          priority?: string
+          risk_item_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_mitigation_actions_risk_item_id_fkey"
+            columns: ["risk_item_id"]
+            isOneToOne: false
+            referencedRelation: "risk_assessment_items"
             referencedColumns: ["id"]
           },
         ]
@@ -3450,6 +4234,71 @@ export type Database = {
             columns: ["vehicle_id"]
             isOneToOne: false
             referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      safety_certifications: {
+        Row: {
+          attachment_url: string | null
+          certification_name: string
+          certification_number: string | null
+          certification_type: string
+          cost: number | null
+          created_at: string
+          employee_id: string
+          expiry_date: string
+          id: string
+          issue_date: string
+          issuing_organization: string
+          notes: string | null
+          renewal_notification_days: number | null
+          renewal_required: boolean | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          certification_name: string
+          certification_number?: string | null
+          certification_type: string
+          cost?: number | null
+          created_at?: string
+          employee_id: string
+          expiry_date: string
+          id?: string
+          issue_date: string
+          issuing_organization: string
+          notes?: string | null
+          renewal_notification_days?: number | null
+          renewal_required?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_url?: string | null
+          certification_name?: string
+          certification_number?: string | null
+          certification_type?: string
+          cost?: number | null
+          created_at?: string
+          employee_id?: string
+          expiry_date?: string
+          id?: string
+          issue_date?: string
+          issuing_organization?: string
+          notes?: string | null
+          renewal_notification_days?: number | null
+          renewal_required?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safety_certifications_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -3585,6 +4434,284 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      safety_training_sessions: {
+        Row: {
+          certification_awarded: boolean | null
+          certification_expires_after_days: number | null
+          created_at: string
+          description: string | null
+          end_time: string
+          id: string
+          instructor: string
+          location: string
+          materials_required: string[] | null
+          max_attendees: number | null
+          project_id: string | null
+          session_date: string
+          session_name: string
+          start_time: string
+          status: string
+          training_type: string
+          updated_at: string
+        }
+        Insert: {
+          certification_awarded?: boolean | null
+          certification_expires_after_days?: number | null
+          created_at?: string
+          description?: string | null
+          end_time: string
+          id?: string
+          instructor: string
+          location: string
+          materials_required?: string[] | null
+          max_attendees?: number | null
+          project_id?: string | null
+          session_date: string
+          session_name: string
+          start_time: string
+          status?: string
+          training_type: string
+          updated_at?: string
+        }
+        Update: {
+          certification_awarded?: boolean | null
+          certification_expires_after_days?: number | null
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          id?: string
+          instructor?: string
+          location?: string
+          materials_required?: string[] | null
+          max_attendees?: number | null
+          project_id?: string | null
+          session_date?: string
+          session_name?: string
+          start_time?: string
+          status?: string
+          training_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safety_training_sessions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schedule_conflicts: {
+        Row: {
+          affected_events: string[]
+          affected_resources: string[]
+          auto_detected: boolean | null
+          conflict_type: string
+          created_at: string
+          description: string
+          detected_at: string
+          id: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          status: string
+        }
+        Insert: {
+          affected_events: string[]
+          affected_resources: string[]
+          auto_detected?: boolean | null
+          conflict_type: string
+          created_at?: string
+          description: string
+          detected_at?: string
+          id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          status?: string
+        }
+        Update: {
+          affected_events?: string[]
+          affected_resources?: string[]
+          auto_detected?: boolean | null
+          conflict_type?: string
+          created_at?: string
+          description?: string
+          detected_at?: string
+          id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      schedule_events: {
+        Row: {
+          all_day: boolean | null
+          assigned_to: string[] | null
+          attachments: string[] | null
+          attendees: string[] | null
+          category: string
+          color_code: string | null
+          completion_percentage: number | null
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string
+          event_type: string
+          id: string
+          location: string | null
+          notes: string | null
+          notification_times: number[] | null
+          notifications_enabled: boolean | null
+          parent_event_id: string | null
+          priority: string
+          project_id: string | null
+          recurring_interval: number | null
+          recurring_pattern: string | null
+          recurring_until: string | null
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          all_day?: boolean | null
+          assigned_to?: string[] | null
+          attachments?: string[] | null
+          attendees?: string[] | null
+          category: string
+          color_code?: string | null
+          completion_percentage?: number | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date: string
+          event_type: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          notification_times?: number[] | null
+          notifications_enabled?: boolean | null
+          parent_event_id?: string | null
+          priority?: string
+          project_id?: string | null
+          recurring_interval?: number | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          all_day?: boolean | null
+          assigned_to?: string[] | null
+          attachments?: string[] | null
+          attendees?: string[] | null
+          category?: string
+          color_code?: string | null
+          completion_percentage?: number | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          notification_times?: number[] | null
+          notifications_enabled?: boolean | null
+          parent_event_id?: string | null
+          priority?: string
+          project_id?: string | null
+          recurring_interval?: number | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedule_events_parent_event_id_fkey"
+            columns: ["parent_event_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "schedule_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schedule_templates: {
+        Row: {
+          created_at: string
+          created_by: string
+          dependencies: Json | null
+          description: string | null
+          estimated_duration_days: number | null
+          id: string
+          is_public: boolean | null
+          last_used_at: string | null
+          milestones: Json | null
+          project_category: string | null
+          resource_requirements: Json | null
+          template_data: Json
+          template_name: string
+          template_type: string
+          updated_at: string
+          usage_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          dependencies?: Json | null
+          description?: string | null
+          estimated_duration_days?: number | null
+          id?: string
+          is_public?: boolean | null
+          last_used_at?: string | null
+          milestones?: Json | null
+          project_category?: string | null
+          resource_requirements?: Json | null
+          template_data?: Json
+          template_name: string
+          template_type: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          dependencies?: Json | null
+          description?: string | null
+          estimated_duration_days?: number | null
+          id?: string
+          is_public?: boolean | null
+          last_used_at?: string | null
+          milestones?: Json | null
+          project_category?: string | null
+          resource_requirements?: Json | null
+          template_data?: Json
+          template_name?: string
+          template_type?: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Relationships: []
       }
       site_visit_reports: {
         Row: {
@@ -4274,6 +5401,145 @@ export type Database = {
           },
         ]
       }
+      toolbox_attendance: {
+        Row: {
+          concerns_raised: string | null
+          created_at: string
+          employee_id: string | null
+          id: string
+          meeting_id: string
+          questions_asked: string | null
+          signature: string | null
+          worker_name: string
+        }
+        Insert: {
+          concerns_raised?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          meeting_id: string
+          questions_asked?: string | null
+          signature?: string | null
+          worker_name: string
+        }
+        Update: {
+          concerns_raised?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          meeting_id?: string
+          questions_asked?: string | null
+          signature?: string | null
+          worker_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "toolbox_attendance_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "toolbox_attendance_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "toolbox_meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      toolbox_meetings: {
+        Row: {
+          action_items: string[] | null
+          attendee_count: number | null
+          created_at: string
+          crew_id: string | null
+          duration_minutes: number | null
+          emergency_procedures_reviewed: boolean | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          foreman: string
+          hazards_identified: string[] | null
+          id: string
+          meeting_date: string
+          meeting_time: string
+          ppe_required: string[] | null
+          project_id: string | null
+          safety_concerns: string[] | null
+          site_id: string | null
+          topics_discussed: string[]
+          weather_conditions: string | null
+          work_planned: string | null
+        }
+        Insert: {
+          action_items?: string[] | null
+          attendee_count?: number | null
+          created_at?: string
+          crew_id?: string | null
+          duration_minutes?: number | null
+          emergency_procedures_reviewed?: boolean | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          foreman: string
+          hazards_identified?: string[] | null
+          id?: string
+          meeting_date: string
+          meeting_time: string
+          ppe_required?: string[] | null
+          project_id?: string | null
+          safety_concerns?: string[] | null
+          site_id?: string | null
+          topics_discussed: string[]
+          weather_conditions?: string | null
+          work_planned?: string | null
+        }
+        Update: {
+          action_items?: string[] | null
+          attendee_count?: number | null
+          created_at?: string
+          crew_id?: string | null
+          duration_minutes?: number | null
+          emergency_procedures_reviewed?: boolean | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          foreman?: string
+          hazards_identified?: string[] | null
+          id?: string
+          meeting_date?: string
+          meeting_time?: string
+          ppe_required?: string[] | null
+          project_id?: string | null
+          safety_concerns?: string[] | null
+          site_id?: string | null
+          topics_discussed?: string[]
+          weather_conditions?: string | null
+          work_planned?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "toolbox_meetings_crew_id_fkey"
+            columns: ["crew_id"]
+            isOneToOne: false
+            referencedRelation: "field_crews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "toolbox_meetings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "toolbox_meetings_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "field_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tools_inventory: {
         Row: {
           assigned_to_project_id: string | null
@@ -4351,6 +5617,60 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      training_attendance: {
+        Row: {
+          attendance_status: string
+          certification_issued: boolean | null
+          certification_number: string | null
+          created_at: string
+          employee_id: string | null
+          id: string
+          notes: string | null
+          pass_fail: string | null
+          score: number | null
+          session_id: string
+        }
+        Insert: {
+          attendance_status?: string
+          certification_issued?: boolean | null
+          certification_number?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          pass_fail?: string | null
+          score?: number | null
+          session_id: string
+        }
+        Update: {
+          attendance_status?: string
+          certification_issued?: boolean | null
+          certification_number?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          pass_fail?: string | null
+          score?: number | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_attendance_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "safety_training_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       utility_adjustments: {
         Row: {
@@ -4668,6 +5988,80 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "vendor_invoices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_calendars: {
+        Row: {
+          break_times: Json | null
+          calendar_name: string
+          calendar_type: string
+          created_at: string
+          created_by: string
+          description: string | null
+          effective_from: string
+          effective_until: string | null
+          holidays: Json | null
+          id: string
+          is_default: boolean | null
+          overtime_rules: Json | null
+          project_id: string | null
+          shift_patterns: Json | null
+          timezone: string | null
+          updated_at: string
+          work_days: number[]
+          work_hours_end: string
+          work_hours_start: string
+        }
+        Insert: {
+          break_times?: Json | null
+          calendar_name: string
+          calendar_type: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          effective_from: string
+          effective_until?: string | null
+          holidays?: Json | null
+          id?: string
+          is_default?: boolean | null
+          overtime_rules?: Json | null
+          project_id?: string | null
+          shift_patterns?: Json | null
+          timezone?: string | null
+          updated_at?: string
+          work_days?: number[]
+          work_hours_end?: string
+          work_hours_start?: string
+        }
+        Update: {
+          break_times?: Json | null
+          calendar_name?: string
+          calendar_type?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          effective_from?: string
+          effective_until?: string | null
+          holidays?: Json | null
+          id?: string
+          is_default?: boolean | null
+          overtime_rules?: Json | null
+          project_id?: string | null
+          shift_patterns?: Json | null
+          timezone?: string | null
+          updated_at?: string
+          work_days?: number[]
+          work_hours_end?: string
+          work_hours_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_calendars_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
