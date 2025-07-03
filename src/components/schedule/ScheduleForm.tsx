@@ -15,15 +15,13 @@ import { useScheduleEvents } from '@/hooks/useScheduleData';
 const scheduleEventSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
-  event_type: z.enum(['project_milestone', 'equipment_maintenance', 'employee_shift', 'training_session', 'meeting', 'inspection', 'other']),
-  category: z.enum(['project', 'equipment', 'labor', 'training', 'meeting', 'inspection', 'other']),
+  event_type: z.enum(['meeting', 'milestone', 'task', 'reminder', 'deadline']),
   priority: z.enum(['low', 'medium', 'high']),
   start_date: z.string().min(1, 'Start date is required'),
   end_date: z.string().min(1, 'End date is required'),
   all_day: z.boolean().default(false),
   location: z.string().optional(),
-  assigned_to: z.array(z.string()).default([]),
-  color_code: z.string().default('#3b82f6'),
+  attendees: z.array(z.string()).default([]),
 });
 
 type ScheduleEventFormData = z.infer<typeof scheduleEventSchema>;
@@ -37,15 +35,13 @@ export const ScheduleForm = () => {
     defaultValues: {
       title: '',
       description: '',
-      event_type: 'other',
-      category: 'other',
+      event_type: 'task',
       priority: 'medium',
       start_date: '',
       end_date: '',
       all_day: false,
       location: '',
-      assigned_to: [],
-      color_code: '#3b82f6',
+      attendees: [],
     },
   });
 
@@ -53,20 +49,19 @@ export const ScheduleForm = () => {
     try {
       await createEvent({
         title: data.title,
-        description: data.description || '',
+        description: data.description || null,
         event_type: data.event_type,
-        category: data.category,
-        priority: data.priority,
         start_date: data.start_date,
         end_date: data.end_date,
         all_day: data.all_day,
-        location: data.location || '',
-        assigned_to: data.assigned_to,
-        attendees: [],
-        color_code: data.color_code,
-        created_by: 'Current User', // TODO: Replace with actual user
-        status: 'scheduled',
-        completion_percentage: 0,
+        location: data.location || null,
+        project_id: null,
+        created_by_name: 'Current User', // TODO: Replace with actual user
+        attendees: data.attendees,
+        recurrence_rule: null,
+        status: 'confirmed',
+        priority: data.priority,
+        notes: null,
       });
       form.reset();
       setOpen(false);
@@ -146,39 +141,11 @@ export const ScheduleForm = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="project_milestone">Project Milestone</SelectItem>
-                        <SelectItem value="equipment_maintenance">Equipment Maintenance</SelectItem>
-                        <SelectItem value="employee_shift">Employee Shift</SelectItem>
-                        <SelectItem value="training_session">Training Session</SelectItem>
                         <SelectItem value="meeting">Meeting</SelectItem>
-                        <SelectItem value="inspection">Inspection</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="project">Project</SelectItem>
-                        <SelectItem value="equipment">Equipment</SelectItem>
-                        <SelectItem value="labor">Labor</SelectItem>
-                        <SelectItem value="training">Training</SelectItem>
-                        <SelectItem value="meeting">Meeting</SelectItem>
-                        <SelectItem value="inspection">Inspection</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="milestone">Milestone</SelectItem>
+                        <SelectItem value="task">Task</SelectItem>
+                        <SelectItem value="reminder">Reminder</SelectItem>
+                        <SelectItem value="deadline">Deadline</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

@@ -111,9 +111,49 @@ export function useOrganizationReports() {
   return { reports, loading, fetchReports, createReport, updateReport, deleteReport };
 }
 
-// Hook for KPIs (placeholder)
+// KPI interface
+export interface KPI {
+  id: string;
+  name: string;
+  description?: string;
+  category: string;
+  current_value: number;
+  target_value: number;
+  unit: string;
+  trend: 'up' | 'down' | 'stable';
+  period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual';
+  last_updated: string;
+}
+
+// Hook for KPIs
 export function useKPIs() {
-  const [kpis, setKpis] = useState([]);
+  const [kpis, setKpis] = useState<KPI[]>([]);
   const [loading, setLoading] = useState(false);
-  return { kpis, loading };
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const createKPI = async (kpi: Omit<KPI, 'id'>) => {
+    try {
+      const newKPI = {
+        ...kpi,
+        id: Date.now().toString(),
+      };
+      setKpis(prev => [newKPI, ...prev]);
+      return newKPI;
+    } catch (error) {
+      console.error('Error creating KPI:', error);
+      throw error;
+    }
+  };
+
+  const updateKPI = async (id: string, updates: Partial<KPI>) => {
+    try {
+      setKpis(prev => prev.map(k => k.id === id ? { ...k, ...updates } : k));
+    } catch (error) {
+      console.error('Error updating KPI:', error);
+      throw error;
+    }
+  };
+
+  return { kpis, loading, error, createKPI, updateKPI };
 }

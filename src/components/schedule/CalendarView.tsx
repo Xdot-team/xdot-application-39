@@ -38,16 +38,16 @@ export function CalendarView() {
     start: new Date(event.start_date),
     end: new Date(event.end_date),
     allDay: event.all_day,
-    category: event.category,
+    category: 'project', // default category
     resource: {
       type: event.event_type,
       priority: event.priority,
       status: event.status,
       location: event.location,
-      assignedTo: event.assigned_to?.[0] || 'Unassigned',
+      assignedTo: event.attendees?.[0] || 'Unassigned',
       notes: event.description,
-      category: event.category,
-      completion: event.completion_percentage
+      category: 'project',
+      completion: 0
     }
   }));
 

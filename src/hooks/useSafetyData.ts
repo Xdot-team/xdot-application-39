@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -168,9 +168,38 @@ export function useSafetyIncidents() {
   return { incidents, loading };
 }
 
-// Hook for Safety Training (placeholder)
+// Safety Training interface
+export interface SafetyTraining {
+  id: string;
+  session_name: string;
+  training_type: string;
+  session_date: string;
+  start_time: string;
+  instructor: string;
+  location: string;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+}
+
+// Hook for Safety Training
 export function useSafetyTraining() {
-  const [training, setTraining] = useState([]);
+  const [sessions, setSessions] = useState<SafetyTraining[]>([]);
   const [loading, setLoading] = useState(false);
-  return { training, loading };
+  
+  // Mock data for now
+  React.useEffect(() => {
+    setSessions([
+      {
+        id: '1',
+        session_name: 'Fall Protection Training',
+        training_type: 'Safety',
+        session_date: new Date().toISOString(),
+        start_time: '09:00',
+        instructor: 'Safety Officer',
+        location: 'Training Room A',
+        status: 'scheduled'
+      }
+    ]);
+  }, []);
+
+  return { sessions, loading };
 }
