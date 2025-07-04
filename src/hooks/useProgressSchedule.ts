@@ -1,82 +1,95 @@
 
-import { useQuery } from '@tanstack/react-query';
-import { useProject } from './useProjects';
-import { useProjectMilestones } from './useProjectMilestones';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
-export interface ProgressScheduleData {
+export interface ProgressData {
   date: string;
   plannedProgress: number;
   actualProgress: number;
-  plannedCost: number;
-  actualCost: number;
-  milestones: any[];
+  milestones: {
+    id: string;
+    title: string;
+    due_date: string;
+    completed: boolean;
+  }[];
 }
 
-export const useProgressScheduleData = (projectId: string) => {
-  const { data: project } = useProject(projectId);
-  const { data: milestones = [] } = useProjectMilestones(projectId);
-  
-  return useQuery({
-    queryKey: ['progress-schedule', projectId],
-    queryFn: async () => {
-      if (!project) return [];
-      
-      const startDate = project.startDate ? new Date(project.startDate) : new Date();
-      const endDate = project.endDate ? new Date(project.endDate) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
-      const currentDate = new Date();
-      
-      const totalDuration = endDate.getTime() - startDate.getTime();
-      const budget = project.budgetAllocated || project.contractValue || 0;
-      const currentProgress = project.progressPercentage || 0;
-      const budgetSpent = project.budgetSpent || 0;
-      
-      // Generate weekly data points
-      const data: ProgressScheduleData[] = [];
-      const weeksTotal = Math.ceil(totalDuration / (7 * 24 * 60 * 60 * 1000));
-      
-      for (let i = 0; i <= weeksTotal; i++) {
-        const date = new Date(startDate.getTime() + (i * 7 * 24 * 60 * 60 * 1000));
-        const weekProgress = Math.min((i / weeksTotal) * 100, 100);
+export function useProgressScheduleData(projectId: string) {
+  const [data, setData] = useState<ProgressData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchProgressData = async () => {
+      try {
+        // Fetch schedule events for the project
+        const { data: events, error: eventsError } = await supabase
+          .from('schedule_events')
+          .select('*')
+          .eq('project_id', projectId)
+          .order('start_date');
+
+        if (eventsError) throw eventsError;
+
+        // Transform events into progress data
+        const progressData: ProgressData[] = [];
+        const today = new Date();
         
-        let actualProgress = 0;
-        let actualCost = 0;
-        
-        if (date <= currentDate) {
-          // Calculate actual progress using S-curve
-          const timeProgress = Math.min(i / weeksTotal, 1);
-          actualProgress = Math.min(
-            (3 * Math.pow(timeProgress, 2) - 2 * Math.pow(timeProgress, 3)) * currentProgress,
-            currentProgress
-          );
-          actualCost = (actualProgress / 100) * budget;
+        // Generate data for the last 30 days and next 30 days
+        for (let i = -30; i <= 30; i++) {
+          const date = new Date(today);
+          date.setDate(today.getDate() + i);
+          const dateStr = date.toISOString().split('T')[0];
+
+          // Calculate planned progress (linear progression)
+          const plannedProgress = Math.min(100, Math.max(0, ((i + 30) / 60) * 100));
           
-          // Use actual spent amount for current week
-          if (i === Math.floor((currentDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000))) {
-            actualCost = budgetSpent;
-          }
+          // Calculate actual progress based on completed events
+          const completedEvents = events?.filter(event => 
+            event.status === 'completed' && 
+            new Date(event.end_date) <= date
+          ).length || 0;
+          
+          const totalEvents = events?.length || 1;
+          const actualProgress = (completedEvents / totalEvents) * 100;
+
+          // Find milestones for this date
+          const milestones = events?.filter(event => 
+            event.event_type === 'milestone' &&
+            new Date(event.start_date).toDateString() === date.toDateString()
+          ).map(event => ({
+            id: event.id,
+            title: event.title,
+            due_date: event.start_date,
+            completed: event.status === 'completed'
+          })) || [];
+
+          progressData.push({
+            date: dateStr,
+            plannedProgress: Math.round(plannedProgress),
+            actualProgress: Math.round(actualProgress),
+            milestones
+          });
         }
-        
-        // Find milestones for this week
-        const weekStart = new Date(date);
-        const weekEnd = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
-        const weekMilestones = milestones.filter(milestone => {
-          if (!milestone.due_date) return false;
-          const milestoneDate = new Date(milestone.due_date);
-          return milestoneDate >= weekStart && milestoneDate < weekEnd;
+
+        setData(progressData);
+      } catch (error) {
+        console.error('Error fetching progress data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch progress data",
+          variant: "destructive",
         });
-        
-        data.push({
-          date: date.toISOString().split('T')[0],
-          plannedProgress: weekProgress,
-          actualProgress: date <= currentDate ? actualProgress : 0,
-          plannedCost: (weekProgress / 100) * budget,
-          actualCost: date <= currentDate ? actualCost : 0,
-          milestones: weekMilestones
-        });
+      } finally {
+        setIsLoading(false);
       }
-      
-      return data;
-    },
-    enabled: !!project,
-  });
-};
+    };
+
+    if (projectId) {
+      fetchProgressData();
+    }
+  }, [projectId, toast]);
+
+  return { data, isLoading };
+}

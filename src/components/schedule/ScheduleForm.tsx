@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,40 +9,52 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useScheduleEvents } from '@/hooks/useScheduleData';
 
 const scheduleEventSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
-  event_type: z.enum(['meeting', 'milestone', 'task', 'reminder', 'deadline']),
+  event_type: z.enum(['meeting', 'milestone', 'task', 'reminder', 'deadline', 'project_milestone', 'equipment_maintenance', 'employee_shift', 'training_session', 'inspection', 'other']),
   priority: z.enum(['low', 'medium', 'high']),
   start_date: z.string().min(1, 'Start date is required'),
   end_date: z.string().min(1, 'End date is required'),
   all_day: z.boolean().default(false),
   location: z.string().optional(),
-  attendees: z.array(z.string()).default([]),
+  category: z.enum(['project', 'equipment', 'labor', 'training', 'meeting', 'inspection', 'other']),
+  status: z.enum(['tentative', 'confirmed', 'cancelled', 'scheduled', 'in_progress', 'completed', 'postponed']).default('confirmed'),
+  project_id: z.string().optional(),
+  project_name: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 type ScheduleEventFormData = z.infer<typeof scheduleEventSchema>;
 
-export const ScheduleForm = () => {
-  const [open, setOpen] = React.useState(false);
+interface ScheduleFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialData?: Partial<ScheduleEventFormData>;
+}
+
+export const ScheduleForm = ({ isOpen, onClose, initialData }: ScheduleFormProps) => {
   const { createEvent } = useScheduleEvents();
 
   const form = useForm<ScheduleEventFormData>({
     resolver: zodResolver(scheduleEventSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: initialData?.title || '',
+      description: initialData?.description || '',
       event_type: 'task',
       priority: 'medium',
-      start_date: '',
-      end_date: '',
+      start_date: initialData?.start_date || '',
+      end_date: initialData?.end_date || '',
       all_day: false,
-      location: '',
-      attendees: [],
+      location: initialData?.location || '',
+      category: 'other',
+      status: 'confirmed',
+      project_id: initialData?.project_id || '',
+      project_name: initialData?.project_name || '',
+      notes: initialData?.notes || '',
     },
   });
 
@@ -55,30 +68,29 @@ export const ScheduleForm = () => {
         end_date: data.end_date,
         all_day: data.all_day,
         location: data.location || null,
-        project_id: null,
+        project_id: data.project_id || null,
+        project_name: data.project_name || null,
         created_by_name: 'Current User', // TODO: Replace with actual user
-        attendees: data.attendees,
+        attendees: [],
         recurrence_rule: null,
-        status: 'confirmed',
+        status: data.status,
         priority: data.priority,
-        notes: null,
+        notes: data.notes || null,
+        category: data.category,
+        progress_percentage: 0,
+        dependencies: [],
+        assignees: [],
       });
       form.reset();
-      setOpen(false);
+      onClose();
     } catch (error) {
       console.error('Failed to create schedule event:', error);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Event
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Schedule Event</DialogTitle>
         </DialogHeader>
@@ -146,6 +158,39 @@ export const ScheduleForm = () => {
                         <SelectItem value="task">Task</SelectItem>
                         <SelectItem value="reminder">Reminder</SelectItem>
                         <SelectItem value="deadline">Deadline</SelectItem>
+                        <SelectItem value="project_milestone">Project Milestone</SelectItem>
+                        <SelectItem value="equipment_maintenance">Equipment Maintenance</SelectItem>
+                        <SelectItem value="employee_shift">Employee Shift</SelectItem>
+                        <SelectItem value="training_session">Training Session</SelectItem>
+                        <SelectItem value="inspection">Inspection</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="project">Project</SelectItem>
+                        <SelectItem value="equipment">Equipment</SelectItem>
+                        <SelectItem value="labor">Labor</SelectItem>
+                        <SelectItem value="training">Training</SelectItem>
+                        <SelectItem value="meeting">Meeting</SelectItem>
+                        <SelectItem value="inspection">Inspection</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -154,28 +199,57 @@ export const ScheduleForm = () => {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select priority" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="tentative">Tentative</SelectItem>
+                        <SelectItem value="confirmed">Confirmed</SelectItem>
+                        <SelectItem value="scheduled">Scheduled</SelectItem>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                        <SelectItem value="postponed">Postponed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
@@ -206,6 +280,22 @@ export const ScheduleForm = () => {
               />
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="project_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Associated project" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="all_day"
@@ -227,8 +317,22 @@ export const ScheduleForm = () => {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Additional notes" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
               <Button type="submit">Create Event</Button>

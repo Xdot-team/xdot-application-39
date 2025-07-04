@@ -1,24 +1,86 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-// Schedule Events interfaces
+// Database interfaces matching our new schema
 export interface ScheduleEvent {
   id: string;
   title: string;
   description: string | null;
-  event_type: 'meeting' | 'milestone' | 'task' | 'reminder' | 'deadline';
+  event_type: 'meeting' | 'milestone' | 'task' | 'reminder' | 'deadline' | 'project_milestone' | 'equipment_maintenance' | 'employee_shift' | 'training_session' | 'inspection' | 'other';
   start_date: string;
   end_date: string;
   all_day: boolean;
   location: string | null;
   project_id: string | null;
+  project_name: string | null;
   created_by_name: string;
-  attendees: string[];
+  attendees: any[];
   recurrence_rule: string | null;
-  status: 'tentative' | 'confirmed' | 'cancelled';
+  status: 'tentative' | 'confirmed' | 'cancelled' | 'scheduled' | 'in_progress' | 'completed' | 'postponed';
   priority: 'low' | 'medium' | 'high';
   notes: string | null;
+  category: 'project' | 'equipment' | 'labor' | 'training' | 'meeting' | 'inspection' | 'other';
+  progress_percentage: number;
+  dependencies: any[];
+  assignees: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ResourceAllocation {
+  id: string;
+  resource_id: string;
+  resource_name: string;
+  resource_type: 'employee' | 'equipment' | 'material';
+  project_id: string | null;
+  project_name: string;
+  start_date: string;
+  end_date: string;
+  hours_per_day: number | null;
+  quantity: number | null;
+  notes: string | null;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Meeting {
+  id: string;
+  title: string;
+  description: string | null;
+  date: string;
+  start_time: string;
+  end_time: string;
+  location: string;
+  organizer: string;
+  attendees: any[];
+  agenda: any[];
+  minutes: string | null;
+  related_project_id: string | null;
+  related_project_name: string | null;
+  virtual: boolean;
+  meeting_link: string | null;
+  documents: any[];
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ScheduleConflict {
+  id: string;
+  conflict_type: 'resource_double_booking' | 'schedule_overlap' | 'capacity_exceeded' | 'dependency_violation';
+  resource_id: string | null;
+  resource_type: string | null;
+  conflicting_event_ids: any;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  suggested_resolution: string | null;
+  status: 'unresolved' | 'acknowledged' | 'resolved' | 'ignored';
+  detected_at: string;
+  resolved_at: string | null;
+  resolved_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -31,32 +93,13 @@ export function useScheduleEvents() {
 
   const fetchEvents = async () => {
     try {
-      // Use fallback data if table doesn't exist yet
-      const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      
-      setEvents([
-        {
-          id: '1',
-          title: 'Project Kickoff Meeting',
-          description: 'Initial project planning meeting',
-          event_type: 'meeting',
-          start_date: tomorrow.toISOString(),
-          end_date: new Date(tomorrow.getTime() + 2 * 60 * 60 * 1000).toISOString(),
-          all_day: false,
-          location: 'Conference Room A',
-          project_id: null,
-          created_by_name: 'Project Manager',
-          attendees: ['john@example.com', 'jane@example.com'],
-          recurrence_rule: null,
-          status: 'confirmed',
-          priority: 'high',
-          notes: 'Bring project specifications',
-          created_at: now.toISOString(),
-          updated_at: now.toISOString()
-        }
-      ]);
+      const { data, error } = await supabase
+        .from('schedule_events')
+        .select('*')
+        .order('start_date', { ascending: true });
+
+      if (error) throw error;
+      setEvents(data || []);
     } catch (error) {
       console.error('Error fetching schedule events:', error);
       toast({
@@ -71,53 +114,290 @@ export function useScheduleEvents() {
 
   useEffect(() => {
     fetchEvents();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('schedule_events_changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'schedule_events' },
+        () => fetchEvents()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const createEvent = async (event: Omit<ScheduleEvent, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const newEvent = {
-        ...event,
-        id: Date.now().toString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      setEvents(prev => [...prev, newEvent]);
+      const { data, error } = await supabase
+        .from('schedule_events')
+        .insert(event)
+        .select()
+        .single();
+
+      if (error) throw error;
+      
       toast({
         title: "Success",
         description: "Event created successfully",
       });
-      return newEvent;
+      return data;
     } catch (error) {
       console.error('Error creating event:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create event",
+        variant: "destructive",
+      });
       throw error;
     }
   };
 
   const updateEvent = async (id: string, updates: Partial<ScheduleEvent>) => {
     try {
-      setEvents(prev => prev.map(e => e.id === id ? { ...e, ...updates, updated_at: new Date().toISOString() } : e));
+      const { error } = await supabase
+        .from('schedule_events')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+      
       toast({
         title: "Success",
         description: "Event updated successfully",
       });
     } catch (error) {
       console.error('Error updating event:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update event",
+        variant: "destructive",
+      });
       throw error;
     }
   };
 
   const deleteEvent = async (id: string) => {
     try {
-      setEvents(prev => prev.filter(e => e.id !== id));
+      const { error } = await supabase
+        .from('schedule_events')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
       toast({
         title: "Success",
         description: "Event deleted successfully",
       });
     } catch (error) {
       console.error('Error deleting event:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete event",
+        variant: "destructive",
+      });
       throw error;
     }
   };
 
   return { events, loading, fetchEvents, createEvent, updateEvent, deleteEvent };
+}
+
+// Hook for Resource Allocations
+export function useResourceAllocations() {
+  const [allocations, setAllocations] = useState<ResourceAllocation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchAllocations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('resource_allocations')
+        .select('*')
+        .order('start_date', { ascending: true });
+
+      if (error) throw error;
+      setAllocations(data || []);
+    } catch (error) {
+      console.error('Error fetching resource allocations:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch resource allocations",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllocations();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('resource_allocations_changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'resource_allocations' },
+        () => fetchAllocations()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return { allocations, loading, fetchAllocations };
+}
+
+// Hook for Meetings
+export function useMeetings() {
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchMeetings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('meetings')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (error) throw error;
+      setMeetings(data || []);
+    } catch (error) {
+      console.error('Error fetching meetings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch meetings",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMeetings();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('meetings_changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'meetings' },
+        () => fetchMeetings()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const createMeeting = async (meeting: Omit<Meeting, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('meetings')
+        .insert(meeting)
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Meeting created successfully",
+      });
+      return data;
+    } catch (error) {
+      console.error('Error creating meeting:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create meeting",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  return { meetings, loading, fetchMeetings, createMeeting };
+}
+
+// Hook for Schedule Conflicts
+export function useScheduleConflicts() {
+  const [conflicts, setConflicts] = useState<ScheduleConflict[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchConflicts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('schedule_conflicts')
+        .select('*')
+        .order('detected_at', { ascending: false });
+
+      if (error) throw error;
+      setConflicts(data || []);
+    } catch (error) {
+      console.error('Error fetching schedule conflicts:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch schedule conflicts",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchConflicts();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('schedule_conflicts_changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'schedule_conflicts' },
+        () => fetchConflicts()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const resolveConflict = async (id: string, resolution: string) => {
+    try {
+      const { error } = await supabase
+        .from('schedule_conflicts')
+        .update({
+          status: 'resolved',
+          resolved_at: new Date().toISOString(),
+          resolved_by: 'Current User', // TODO: Replace with actual user
+          suggested_resolution: resolution
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Conflict resolved successfully",
+      });
+    } catch (error) {
+      console.error('Error resolving conflict:', error);
+      toast({
+        title: "Error",
+        description: "Failed to resolve conflict",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  return { conflicts, loading, fetchConflicts, resolveConflict };
 }

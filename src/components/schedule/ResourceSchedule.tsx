@@ -1,161 +1,291 @@
 
 import React, { useState } from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { mockResourceAllocations } from '@/data/mockScheduleData';
+import { useResourceAllocations } from '@/hooks/useScheduleData';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  format, 
-  addDays, 
-  startOfWeek, 
-  isSameDay 
-} from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Users, Wrench, Package, Calendar, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval, isWithinInterval, parseISO } from 'date-fns';
 
 export function ResourceSchedule() {
-  const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
-  
-  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-  
-  const resourcesByType = {
-    equipment: mockResourceAllocations.filter(r => r.resourceType === 'equipment'),
-    employee: mockResourceAllocations.filter(r => r.resourceType === 'employee'),
-    material: mockResourceAllocations.filter(r => r.resourceType === 'material')
-  };
+  const { allocations, loading } = useResourceAllocations();
+  const [selectedResourceType, setSelectedResourceType] = useState<'all' | 'employee' | 'equipment' | 'material'>('all');
+  const [selectedWeek, setSelectedWeek] = useState(new Date());
 
-  const isAllocated = (resourceId: string, day: Date) => {
-    return mockResourceAllocations.some(allocation => 
-      allocation.resourceId === resourceId &&
-      new Date(allocation.startDate) <= day &&
-      new Date(allocation.endDate) >= day
-    );
-  };
-  
-  const getAllocationForDay = (resourceId: string, day: Date) => {
-    return mockResourceAllocations.find(allocation => 
-      allocation.resourceId === resourceId &&
-      new Date(allocation.startDate) <= day &&
-      new Date(allocation.endDate) >= day
-    );
-  };
-  
-  const getStatusColor = (status: string) => {
-    switch(status) {
-      case 'scheduled':
-        return 'bg-blue-100 text-blue-800';
-      case 'in_progress':
-        return 'bg-green-100 text-green-800';
-      case 'completed':
-        return 'bg-gray-100 text-gray-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+  const weekStart = startOfWeek(selectedWeek);
+  const weekEnd = endOfWeek(selectedWeek);
+  const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
+
+  // Filter allocations by resource type
+  const filteredAllocations = allocations.filter(allocation => 
+    selectedResourceType === 'all' || allocation.resource_type === selectedResourceType
+  );
+
+  // Group allocations by resource
+  const resourceGroups = filteredAllocations.reduce((groups, allocation) => {
+    const key = `${allocation.resource_type}-${allocation.resource_id}`;
+    if (!groups[key]) {
+      groups[key] = {
+        resource_id: allocation.resource_id,
+        resource_name: allocation.resource_name,
+        resource_type: allocation.resource_type,
+        allocations: []
+      };
+    }
+    groups[key].allocations.push(allocation);
+    return groups;
+  }, {} as Record<string, any>);
+
+  const getResourceIcon = (type: string) => {
+    switch (type) {
+      case 'employee': return <Users className="h-4 w-4" />;
+      case 'equipment': return <Wrench className="h-4 w-4" />;
+      case 'material': return <Package className="h-4 w-4" />;
+      default: return <Calendar className="h-4 w-4" />;
     }
   };
-  
-  const previousWeek = () => {
-    setWeekStart(addDays(weekStart, -7));
-  };
-  
-  const nextWeek = () => {
-    setWeekStart(addDays(weekStart, 7));
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'in_progress': return 'bg-amber-100 text-amber-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const formatResourceType = (type: string) => {
-    return type.charAt(0).toUpperCase() + type.slice(1);
+  const calculateUtilization = (resource: any) => {
+    const totalHours = resource.allocations.reduce((sum: number, allocation: any) => {
+      if (allocation.resource_type === 'employee' && allocation.hours_per_day) {
+        const start = parseISO(allocation.start_date);
+        const end = parseISO(allocation.end_date);
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        return sum + (allocation.hours_per_day * days);
+      }
+      return sum;
+    }, 0);
+    
+    const availableHours = 40 * 4; // 40 hours per week, 4 weeks
+    return Math.min(100, (totalHours / availableHours) * 100);
   };
+
+  const getConflicts = (resource: any) => {
+    const conflicts = [];
+    const sortedAllocations = resource.allocations.sort((a: any, b: any) => 
+      new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+    );
+
+    for (let i = 0; i < sortedAllocations.length - 1; i++) {
+      const current = sortedAllocations[i];
+      const next = sortedAllocations[i + 1];
+      
+      if (new Date(current.end_date) > new Date(next.start_date)) {
+        conflicts.push({
+          allocation1: current,
+          allocation2: next,
+          overlap: `${format(new Date(next.start_date), 'MMM d')} - ${format(new Date(current.end_date), 'MMM d')}`
+        });
+      }
+    }
+    
+    return conflicts;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Clock className="mx-auto h-8 w-8 text-muted-foreground animate-spin mb-4" />
+          <p className="text-sm text-muted-foreground">Loading resource schedules...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" onClick={previousWeek}>
-            <ChevronLeft className="h-4 w-4" />
+    <div className="space-y-6">
+      {/* Filter Controls */}
+      <div className="flex flex-wrap items-center gap-4">
+        <Select value={selectedResourceType} onValueChange={(value: any) => setSelectedResourceType(value)}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Filter by resource type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Resources</SelectItem>
+            <SelectItem value="employee">Employees</SelectItem>
+            <SelectItem value="equipment">Equipment</SelectItem>
+            <SelectItem value="material">Materials</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setSelectedWeek(new Date(selectedWeek.getTime() - 7 * 24 * 60 * 60 * 1000))}
+          >
+            Previous Week
           </Button>
           <span className="text-sm font-medium">
-            {format(weekStart, 'MMM d, yyyy')} - {format(addDays(weekStart, 6), 'MMM d, yyyy')}
+            {format(weekStart, 'MMM d')} - {format(weekEnd, 'MMM d, yyyy')}
           </span>
-          <Button variant="outline" size="sm" onClick={nextWeek}>
-            <ChevronRight className="h-4 w-4" />
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setSelectedWeek(new Date(selectedWeek.getTime() + 7 * 24 * 60 * 60 * 1000))}
+          >
+            Next Week
           </Button>
         </div>
-        <Button variant="outline" size="sm">
-          <Filter className="h-4 w-4 mr-2" />
-          Filter Resources
-        </Button>
       </div>
-      
-      {Object.entries(resourcesByType).map(([resourceType, allocations]) => (
-        <div key={resourceType} className="rounded-md border shadow-sm">
-          <div className="bg-muted px-4 py-2 border-b">
-            <h3 className="font-semibold">{formatResourceType(resourceType)} Resources</h3>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-muted/50">
-                <TableRow>
-                  <TableHead className="sticky left-0 bg-muted/50 w-[200px]">Resource</TableHead>
-                  {days.map(day => (
-                    <TableHead key={day.toISOString()} className="text-center min-w-[120px]">
-                      <div className="text-xs font-medium">{format(day, 'EEE')}</div>
-                      <div className="text-sm">{format(day, 'MMM d')}</div>
-                    </TableHead>
+
+      <Tabs defaultValue="schedule" className="w-full">
+        <TabsList>
+          <TabsTrigger value="schedule">Resource Schedule</TabsTrigger>
+          <TabsTrigger value="utilization">Utilization</TabsTrigger>
+          <TabsTrigger value="conflicts">Conflicts</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="schedule" className="space-y-4">
+          {Object.values(resourceGroups).map((resource: any) => (
+            <Card key={`${resource.resource_type}-${resource.resource_id}`}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {getResourceIcon(resource.resource_type)}
+                    <div>
+                      <CardTitle className="text-lg">{resource.resource_name}</CardTitle>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {resource.resource_type} • {resource.allocations.length} allocation(s)
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant="outline">
+                    {Math.round(calculateUtilization(resource))}% utilized
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {resource.allocations.map((allocation: any) => (
+                    <div key={allocation.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium">{allocation.project_name}</h4>
+                          <Badge className={getStatusColor(allocation.status)}>
+                            {allocation.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>{format(parseISO(allocation.start_date), 'MMM d')} - {format(parseISO(allocation.end_date), 'MMM d')}</span>
+                          {allocation.hours_per_day && (
+                            <span>{allocation.hours_per_day}h/day</span>
+                          )}
+                          {allocation.quantity && (
+                            <span>{allocation.quantity} units</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {allocations.map(allocation => {
-                  const uniqueResourceIds = [...new Set(allocations.map(a => a.resourceId))];
-                  if (!uniqueResourceIds.includes(allocation.resourceId)) return null;
-                  
-                  // Only process each resource once
-                  if (allocations.findIndex(a => a.resourceId === allocation.resourceId) !== allocations.indexOf(allocation)) {
-                    return null;
-                  }
-                  
-                  return (
-                    <TableRow key={allocation.resourceId}>
-                      <TableCell className="font-medium sticky left-0 bg-white">
-                        {allocation.resourceName}
-                      </TableCell>
-                      {days.map(day => {
-                        const dayAllocation = getAllocationForDay(allocation.resourceId, day);
-                        return (
-                          <TableCell 
-                            key={day.toISOString()} 
-                            className={`text-center ${isAllocated(allocation.resourceId, day) ? 'bg-blue-50' : ''}`}
-                          >
-                            {dayAllocation && (
-                              <div className="flex flex-col items-center justify-center h-full">
-                                <Badge className={getStatusColor(dayAllocation.status)}>
-                                  {dayAllocation.projectName}
-                                </Badge>
-                                <span className="text-xs mt-1">
-                                  {dayAllocation.hoursPerDay ? `${dayAllocation.hoursPerDay}h` : ''}
-                                  {dayAllocation.quantity ? `${dayAllocation.quantity} units` : ''}
-                                </span>
-                              </div>
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="utilization" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Object.values(resourceGroups).map((resource: any) => {
+              const utilization = calculateUtilization(resource);
+              return (
+                <Card key={`util-${resource.resource_type}-${resource.resource_id}`}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      {getResourceIcon(resource.resource_type)}
+                      <CardTitle className="text-base">{resource.resource_name}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Utilization</span>
+                        <span className="font-medium">{Math.round(utilization)}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            utilization > 90 ? 'bg-red-500' : 
+                            utilization > 70 ? 'bg-amber-500' : 
+                            'bg-green-500'
+                          }`}
+                          style={{ width: `${Math.min(100, utilization)}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {resource.allocations.length} active allocation{resource.allocations.length !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
-        </div>
-      ))}
+        </TabsContent>
+
+        <TabsContent value="conflicts" className="space-y-4">
+          {Object.values(resourceGroups).map((resource: any) => {
+            const conflicts = getConflicts(resource);
+            if (conflicts.length === 0) return null;
+
+            return (
+              <Card key={`conflict-${resource.resource_type}-${resource.resource_id}`}>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-amber-500" />
+                    <CardTitle className="text-lg text-amber-700">
+                      {resource.resource_name} - Schedule Conflicts
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {conflicts.map((conflict: any, index: number) => (
+                      <div key={index} className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-medium text-amber-900">Overlapping Allocations</h4>
+                          <Badge variant="outline" className="text-amber-700 border-amber-300">
+                            {conflict.overlap}
+                          </Badge>
+                        </div>
+                        <div className="space-y-1 text-sm">
+                          <p><strong>Project 1:</strong> {conflict.allocation1.project_name}</p>
+                          <p><strong>Project 2:</strong> {conflict.allocation2.project_name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+          
+          {Object.values(resourceGroups).every((resource: any) => getConflicts(resource).length === 0) && (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No Resource Conflicts</h3>
+                <p className="text-sm text-muted-foreground">
+                  All resources are properly allocated with no overlapping schedules.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
