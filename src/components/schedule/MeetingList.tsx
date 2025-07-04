@@ -254,7 +254,7 @@ export function MeetingList() {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                      {meeting.virtual ? (
+                      {meeting.is_virtual ? (
                         <>
                           <Video className="h-4 w-4 text-muted-foreground" />
                           <span>Virtual Meeting</span>
@@ -275,7 +275,7 @@ export function MeetingList() {
                     </div>
                     
                     <div className="flex gap-2">
-                      {meeting.virtual && meeting.meeting_link && (
+                      {meeting.is_virtual && meeting.meeting_link && (
                         <Button variant="outline" size="sm" asChild>
                           <a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer">
                             <Video className="h-4 w-4 mr-1" />
@@ -348,8 +348,8 @@ export function MeetingList() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Location</Label>
-                  <p className="text-sm">
-                    {selectedMeeting.virtual ? 'Virtual Meeting' : selectedMeeting.location}
+                  <p className="text-sm mt-1">
+                    {selectedMeeting.is_virtual ? 'Virtual Meeting' : selectedMeeting.location}
                   </p>
                 </div>
               </div>
@@ -368,7 +368,7 @@ export function MeetingList() {
                 <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>
                   Close
                 </Button>
-                {selectedMeeting.virtual && selectedMeeting.meeting_link && (
+                {selectedMeeting.is_virtual && selectedMeeting.meeting_link && (
                   <Button asChild>
                     <a href={selectedMeeting.meeting_link} target="_blank" rel="noopener noreferrer">
                       <Video className="h-4 w-4 mr-2" />

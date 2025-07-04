@@ -3,45 +3,56 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-// Database interfaces matching our new schema
+// Database interfaces matching the actual database schema
 export interface ScheduleEvent {
   id: string;
   title: string;
   description: string | null;
-  event_type: 'meeting' | 'milestone' | 'task' | 'reminder' | 'deadline' | 'project_milestone' | 'equipment_maintenance' | 'employee_shift' | 'training_session' | 'inspection' | 'other';
+  event_type: string;
   start_date: string;
   end_date: string;
-  all_day: boolean;
+  all_day: boolean | null;
   location: string | null;
   project_id: string | null;
-  project_name: string | null;
-  created_by_name: string;
-  attendees: any[];
-  recurrence_rule: string | null;
-  status: 'tentative' | 'confirmed' | 'cancelled' | 'scheduled' | 'in_progress' | 'completed' | 'postponed';
-  priority: 'low' | 'medium' | 'high';
+  created_by: string;
+  attendees: string[] | null;
+  assigned_to: string[] | null;
+  status: string;
+  priority: string;
   notes: string | null;
-  category: 'project' | 'equipment' | 'labor' | 'training' | 'meeting' | 'inspection' | 'other';
-  progress_percentage: number;
-  dependencies: any[];
-  assignees: any[];
+  category: string;
+  completion_percentage: number | null;
+  attachments: string[] | null;
+  color_code: string | null;
+  recurring_pattern: string | null;
+  recurring_interval: number | null;
+  recurring_until: string | null;
+  notifications_enabled: boolean | null;
+  notification_times: number[] | null;
+  parent_event_id: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export interface ResourceAllocation {
   id: string;
-  resource_id: string;
+  resource_id: string | null;
   resource_name: string;
-  resource_type: 'employee' | 'equipment' | 'material';
-  project_id: string | null;
-  project_name: string;
-  start_date: string;
-  end_date: string;
+  resource_type: string;
+  project_id: string | null;  
+  allocation_start: string;
+  allocation_end: string;
   hours_per_day: number | null;
-  quantity: number | null;
+  quantity_allocated: number | null;
   notes: string | null;
-  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  status: string;
+  created_by: string;
+  actual_cost: number | null;
+  actual_hours_worked: number | null;
+  allocation_percentage: number | null;
+  cost_per_hour: number | null;
+  event_id: string | null;
+  total_estimated_cost: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -53,36 +64,40 @@ export interface Meeting {
   date: string;
   start_time: string;
   end_time: string;
-  location: string;
+  location: string | null;
   organizer: string;
-  attendees: any[];
-  agenda: any[];
+  agenda: any | null;
   minutes: string | null;
-  related_project_id: string | null;
-  related_project_name: string | null;
-  virtual: boolean;
+  project_id: string | null;
+  is_virtual: boolean | null;
   meeting_link: string | null;
-  documents: any[];
-  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  meeting_type: string;
+  documents: string[] | null;
+  status: string;
+  action_items: any | null;
+  recurring: boolean | null;
+  recurring_pattern: string | null;
+  recurring_until: string | null;
+  timezone: string | null;
+  recording_url: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export interface ScheduleConflict {
   id: string;
-  conflict_type: 'resource_double_booking' | 'schedule_overlap' | 'capacity_exceeded' | 'dependency_violation';
-  resource_id: string | null;
-  resource_type: string | null;
-  conflicting_event_ids: any;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  conflict_type: string;
+  affected_events: string[];
+  affected_resources: string[];
+  severity: string;
   description: string;
-  suggested_resolution: string | null;
-  status: 'unresolved' | 'acknowledged' | 'resolved' | 'ignored';
+  resolution_notes: string | null;
+  status: string;
   detected_at: string;
   resolved_at: string | null;
   resolved_by: string | null;
+  auto_detected: boolean | null;
   created_at: string;
-  updated_at: string;
 }
 
 // Hook for Schedule Events
@@ -129,7 +144,7 @@ export function useScheduleEvents() {
     };
   }, []);
 
-  const createEvent = async (event: Omit<ScheduleEvent, 'id' | 'created_at' | 'updated_at'>) => {
+  const createEvent = async (event: any) => {
     try {
       const { data, error } = await supabase
         .from('schedule_events')
@@ -217,7 +232,7 @@ export function useResourceAllocations() {
       const { data, error } = await supabase
         .from('resource_allocations')
         .select('*')
-        .order('start_date', { ascending: true });
+        .order('allocation_start', { ascending: true });
 
       if (error) throw error;
       setAllocations(data || []);
@@ -297,7 +312,7 @@ export function useMeetings() {
     };
   }, []);
 
-  const createMeeting = async (meeting: Omit<Meeting, 'id' | 'created_at' | 'updated_at'>) => {
+  const createMeeting = async (meeting: any) => {
     try {
       const { data, error } = await supabase
         .from('meetings')
@@ -378,7 +393,7 @@ export function useScheduleConflicts() {
           status: 'resolved',
           resolved_at: new Date().toISOString(),
           resolved_by: 'Current User', // TODO: Replace with actual user
-          suggested_resolution: resolution
+          resolution_notes: resolution
         })
         .eq('id', id);
 

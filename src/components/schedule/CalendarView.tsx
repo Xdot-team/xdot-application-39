@@ -46,10 +46,10 @@ export function CalendarView() {
       priority: event.priority,
       status: event.status,
       location: event.location,
-      assignedTo: event.assignees?.[0]?.name || 'Unassigned',
+      assignedTo: event.assigned_to || ['Unassigned'],
       notes: event.description,
       category: event.category,
-      completion: event.progress_percentage
+      completion: event.completion_percentage
     }
   }));
 

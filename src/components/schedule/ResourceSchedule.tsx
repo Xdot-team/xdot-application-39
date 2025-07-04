@@ -60,8 +60,8 @@ export function ResourceSchedule() {
   const calculateUtilization = (resource: any) => {
     const totalHours = resource.allocations.reduce((sum: number, allocation: any) => {
       if (allocation.resource_type === 'employee' && allocation.hours_per_day) {
-        const start = parseISO(allocation.start_date);
-        const end = parseISO(allocation.end_date);
+        const start = parseISO(allocation.allocation_start);
+        const end = parseISO(allocation.allocation_end);
         const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
         return sum + (allocation.hours_per_day * days);
       }
@@ -75,18 +75,18 @@ export function ResourceSchedule() {
   const getConflicts = (resource: any) => {
     const conflicts = [];
     const sortedAllocations = resource.allocations.sort((a: any, b: any) => 
-      new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+      new Date(a.allocation_start).getTime() - new Date(b.allocation_start).getTime()
     );
 
     for (let i = 0; i < sortedAllocations.length - 1; i++) {
       const current = sortedAllocations[i];
       const next = sortedAllocations[i + 1];
       
-      if (new Date(current.end_date) > new Date(next.start_date)) {
+      if (new Date(current.allocation_end) > new Date(next.allocation_start)) {
         conflicts.push({
           allocation1: current,
           allocation2: next,
-          overlap: `${format(new Date(next.start_date), 'MMM d')} - ${format(new Date(current.end_date), 'MMM d')}`
+          overlap: `${format(new Date(next.allocation_start), 'MMM d')} - ${format(new Date(current.allocation_end), 'MMM d')}`
         });
       }
     }
@@ -180,12 +180,12 @@ export function ResourceSchedule() {
                           </Badge>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>{format(parseISO(allocation.start_date), 'MMM d')} - {format(parseISO(allocation.end_date), 'MMM d')}</span>
+                          <span>{format(parseISO(allocation.allocation_start), 'MMM d')} - {format(parseISO(allocation.allocation_end), 'MMM d')}</span>
                           {allocation.hours_per_day && (
                             <span>{allocation.hours_per_day}h/day</span>
                           )}
-                          {allocation.quantity && (
-                            <span>{allocation.quantity} units</span>
+                          {allocation.quantity_allocated && (
+                            <span>{allocation.quantity_allocated} units</span>
                           )}
                         </div>
                       </div>

@@ -191,19 +191,17 @@ export default function Schedule() {
                         </div>
                       </div>
                       
-                      {conflict.suggested_resolution && (
+                      {conflict.resolution_notes && (
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
-                          <h5 className="text-sm font-medium text-blue-900 mb-1">Suggested Resolution:</h5>
-                          <p className="text-sm text-blue-800">{conflict.suggested_resolution}</p>
+                          <h5 className="text-sm font-medium text-blue-900 mb-1">Resolution Notes:</h5>
+                          <p className="text-sm text-blue-800">{conflict.resolution_notes}</p>
                         </div>
                       )}
                       
-                      {conflict.resource_id && (
-                        <div className="mt-3 text-sm">
-                          <span className="font-medium">Affected Resource: </span>
-                          <span className="capitalize">{conflict.resource_type} - {conflict.resource_id}</span>
-                        </div>
-                      )}
+                      <div className="mt-3 text-sm">
+                        <span className="font-medium">Affected Events: </span>
+                        <span>{conflict.affected_events.join(', ')}</span>
+                      </div>
                       
                       {conflict.resolved_at && (
                         <div className="mt-3 text-xs text-muted-foreground">
