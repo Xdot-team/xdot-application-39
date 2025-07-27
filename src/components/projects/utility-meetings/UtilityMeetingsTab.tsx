@@ -4,10 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CalendarDays, Users, Clock, FileText, Plus } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import UtilityMeetingList from "./UtilityMeetingList";
 import { useToast } from "@/hooks/use-toast";
+import UtilityMeetingForm from "../../utility/UtilityMeetingForm";
+import { useUtilityMeetings } from "@/hooks/useUtilityMeetings";
 
 interface UtilityMeetingsTabProps {
   projectId: string;
@@ -15,14 +18,31 @@ interface UtilityMeetingsTabProps {
 
 const UtilityMeetingsTab = ({ projectId }: UtilityMeetingsTabProps) => {
   const [view, setView] = useState<"upcoming" | "past">("upcoming");
+  const [showNewMeetingDialog, setShowNewMeetingDialog] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  
+  const { meetings, createMeeting, loading } = useUtilityMeetings(projectId);
 
   const handleNewMeeting = () => {
-    toast({
-      title: "Create Meeting",
-      description: "Meeting creation form will be shown here",
-    });
+    setShowNewMeetingDialog(true);
+  };
+
+  const handleCreateMeeting = async (meetingData: any) => {
+    try {
+      await createMeeting(meetingData);
+      setShowNewMeetingDialog(false);
+      toast({
+        title: "Success",
+        description: "Utility meeting created successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create meeting. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -160,6 +180,19 @@ const UtilityMeetingsTab = ({ projectId }: UtilityMeetingsTabProps) => {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={showNewMeetingDialog} onOpenChange={setShowNewMeetingDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Utility Meeting</DialogTitle>
+          </DialogHeader>
+          <UtilityMeetingForm
+            onSubmit={handleCreateMeeting}
+            onCancel={() => setShowNewMeetingDialog(false)}
+            initialData={{ project_id: projectId }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

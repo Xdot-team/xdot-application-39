@@ -111,10 +111,11 @@ export const UtilityConflictsList = ({
               <TableRow>
                 <TableHead>ID</TableHead>
                 <TableHead>Project</TableHead>
-                <TableHead>Utility</TableHead>
+                <TableHead>Utility Name</TableHead>
+                <TableHead>Utility Type</TableHead>
                 <TableHead>Location</TableHead>
-                <TableHead>Scheduled Date</TableHead>
-                <TableHead>Contact</TableHead>
+                <TableHead>Point of Contact</TableHead>
+                <TableHead>Duration (Days)</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
@@ -128,6 +129,9 @@ export const UtilityConflictsList = ({
                   </TableCell>
                   <TableCell>{conflict.project_id || 'N/A'}</TableCell>
                   <TableCell>
+                    <div className="font-medium">{conflict.utility_name || 'Not specified'}</div>
+                  </TableCell>
+                  <TableCell>
                     <span className={getUtilityColor(conflict.utility_type)}>
                       {conflict.utility_type.charAt(0).toUpperCase() + conflict.utility_type.slice(1)}
                     </span>
@@ -136,12 +140,6 @@ export const UtilityConflictsList = ({
                     <div className="flex items-center gap-1">
                       <MapPin className="h-3 w-3 text-muted-foreground" />
                       {conflict.location}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3 text-muted-foreground" />
-                      {new Date(conflict.scheduled_date).toLocaleDateString()}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -154,6 +152,9 @@ export const UtilityConflictsList = ({
                         </div>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    {conflict.utility_project_duration ? `${conflict.utility_project_duration} days` : 'Not specified'}
                   </TableCell>
                   <TableCell>{getPriorityBadge(conflict.priority)}</TableCell>
                   <TableCell>{getStatusBadge(conflict.status)}</TableCell>

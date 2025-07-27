@@ -228,6 +228,10 @@ const Field = () => {
               <AlertTriangle className="h-4 w-4" />
               Utility Conflicts
             </TabsTrigger>
+            <TabsTrigger value="utility-meetings" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Calendar className="h-4 w-4" />
+              Utility Meetings
+            </TabsTrigger>
             <TabsTrigger value="map" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <MapPin className="h-4 w-4" />
               Map
@@ -243,10 +247,6 @@ const Field = () => {
             <TabsTrigger value="workers" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
               Workers
-            </TabsTrigger>
-            <TabsTrigger value="utility-meetings" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Calendar className="h-4 w-4" />
-              Utility Meetings
             </TabsTrigger>
             <TabsTrigger value="punchlist" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <AlertTriangle className="h-4 w-4" />

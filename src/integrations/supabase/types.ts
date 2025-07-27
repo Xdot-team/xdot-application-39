@@ -7312,8 +7312,11 @@ export type Database = {
           resolved_by: string | null
           resolved_date: string | null
           scheduled_date: string
+          special_requirements: string | null
           status: string
           updated_at: string
+          utility_name: string | null
+          utility_project_duration: number | null
           utility_type: string
         }
         Insert: {
@@ -7335,8 +7338,11 @@ export type Database = {
           resolved_by?: string | null
           resolved_date?: string | null
           scheduled_date: string
+          special_requirements?: string | null
           status?: string
           updated_at?: string
+          utility_name?: string | null
+          utility_project_duration?: number | null
           utility_type: string
         }
         Update: {
@@ -7358,8 +7364,11 @@ export type Database = {
           resolved_by?: string | null
           resolved_date?: string | null
           scheduled_date?: string
+          special_requirements?: string | null
           status?: string
           updated_at?: string
+          utility_name?: string | null
+          utility_project_duration?: number | null
           utility_type?: string
         }
         Relationships: []
@@ -7380,6 +7389,7 @@ export type Database = {
           id: string
           is_virtual: boolean | null
           location: string | null
+          meeting_comments: string | null
           meeting_link: string | null
           meeting_type: string
           minutes: string | null
@@ -7392,6 +7402,8 @@ export type Database = {
           status: string
           title: string
           updated_at: string
+          utility_contact_info: string | null
+          utility_owner_company: string | null
           utility_type: string
         }
         Insert: {
@@ -7409,6 +7421,7 @@ export type Database = {
           id?: string
           is_virtual?: boolean | null
           location?: string | null
+          meeting_comments?: string | null
           meeting_link?: string | null
           meeting_type?: string
           minutes?: string | null
@@ -7421,6 +7434,8 @@ export type Database = {
           status?: string
           title: string
           updated_at?: string
+          utility_contact_info?: string | null
+          utility_owner_company?: string | null
           utility_type: string
         }
         Update: {
@@ -7438,6 +7453,7 @@ export type Database = {
           id?: string
           is_virtual?: boolean | null
           location?: string | null
+          meeting_comments?: string | null
           meeting_link?: string | null
           meeting_type?: string
           minutes?: string | null
@@ -7450,6 +7466,8 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string
+          utility_contact_info?: string | null
+          utility_owner_company?: string | null
           utility_type?: string
         }
         Relationships: []

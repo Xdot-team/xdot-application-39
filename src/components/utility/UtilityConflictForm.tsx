@@ -19,6 +19,7 @@ interface UtilityConflictFormProps {
 export const UtilityConflictForm = ({ onSubmit, onCancel, initialData }: UtilityConflictFormProps) => {
   const [formData, setFormData] = useState({
     utility_type: initialData?.utility_type || 'water',
+    utility_name: initialData?.utility_name || '',
     location: initialData?.location || '',
     scheduled_date: initialData?.scheduled_date || '',
     contact_name: initialData?.contact_name || '',
@@ -28,9 +29,11 @@ export const UtilityConflictForm = ({ onSubmit, onCancel, initialData }: Utility
     priority: initialData?.priority || 'medium',
     description: initialData?.description || '',
     estimated_duration_hours: initialData?.estimated_duration_hours || 0,
+    utility_project_duration: initialData?.utility_project_duration || 0,
     cost_impact: initialData?.cost_impact || 0,
     affected_areas: initialData?.affected_areas || [],
     related_work_orders: initialData?.related_work_orders || [],
+    special_requirements: initialData?.special_requirements || '',
   });
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -92,6 +95,16 @@ export const UtilityConflictForm = ({ onSubmit, onCancel, initialData }: Utility
               <SelectItem value="critical">Critical</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="utility_name">Utility Name</Label>
+          <Input
+            id="utility_name"
+            placeholder="e.g., Pacific Gas & Electric, AT&T"
+            value={formData.utility_name}
+            onChange={(e) => handleInputChange('utility_name', e.target.value)}
+          />
         </div>
       </div>
 
@@ -178,6 +191,18 @@ export const UtilityConflictForm = ({ onSubmit, onCancel, initialData }: Utility
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="utility_project_duration">Utility Project Duration (Days)</Label>
+          <Input
+            id="utility_project_duration"
+            type="number"
+            min="0"
+            placeholder="Duration for non-concurrent activities"
+            value={formData.utility_project_duration}
+            onChange={(e) => handleInputChange('utility_project_duration', parseInt(e.target.value) || 0)}
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="cost_impact">Cost Impact ($)</Label>
           <Input
             id="cost_impact"
@@ -197,6 +222,17 @@ export const UtilityConflictForm = ({ onSubmit, onCancel, initialData }: Utility
           value={formData.description}
           onChange={(e) => handleInputChange('description', e.target.value)}
           placeholder="Describe the utility conflict..."
+          rows={3}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="special_requirements">Special Requirements/Comments</Label>
+        <Textarea
+          id="special_requirements"
+          value={formData.special_requirements}
+          onChange={(e) => handleInputChange('special_requirements', e.target.value)}
+          placeholder="Enter any special requirements or additional comments..."
           rows={3}
         />
       </div>

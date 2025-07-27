@@ -67,6 +67,7 @@ export interface UtilityConflict {
   id: string;
   project_id?: string;
   utility_type: 'water' | 'gas' | 'electric' | 'telecom' | 'sewer' | 'other';
+  utility_name?: string;
   location: string;
   scheduled_date: string;
   contact_name: string;
@@ -79,9 +80,11 @@ export interface UtilityConflict {
   resolved_date?: string;
   resolved_by?: string;
   estimated_duration_hours?: number;
+  utility_project_duration?: number;
   cost_impact?: number;
   affected_areas?: string[];
   related_work_orders?: string[];
+  special_requirements?: string;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -93,6 +96,8 @@ export interface UtilityMeeting {
   title: string;
   description?: string;
   utility_type: 'water' | 'gas' | 'electric' | 'telecom' | 'sewer' | 'other';
+  utility_owner_company?: string;
+  utility_contact_info?: string;
   meeting_type: 'coordination' | 'site_visit' | 'planning' | 'emergency' | 'follow_up';
   date: string;
   start_time: string;
@@ -102,6 +107,7 @@ export interface UtilityMeeting {
   meeting_link?: string;
   agenda?: any[];
   minutes?: string;
+  meeting_comments?: string;
   attendees?: any[];
   action_items?: any[];
   status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'postponed';
