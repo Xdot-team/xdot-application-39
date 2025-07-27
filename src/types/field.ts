@@ -63,6 +63,60 @@ export interface UtilityAdjustment {
   relatedDocuments?: string[];
 }
 
+export interface UtilityConflict {
+  id: string;
+  project_id?: string;
+  utility_type: 'water' | 'gas' | 'electric' | 'telecom' | 'sewer' | 'other';
+  location: string;
+  scheduled_date: string;
+  contact_name: string;
+  contact_phone?: string;
+  contact_email?: string;
+  status: 'active' | 'resolved' | 'pending' | 'cancelled';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  description?: string;
+  resolution_notes?: string;
+  resolved_date?: string;
+  resolved_by?: string;
+  estimated_duration_hours?: number;
+  cost_impact?: number;
+  affected_areas?: string[];
+  related_work_orders?: string[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UtilityMeeting {
+  id: string;
+  project_id?: string;
+  title: string;
+  description?: string;
+  utility_type: 'water' | 'gas' | 'electric' | 'telecom' | 'sewer' | 'other';
+  meeting_type: 'coordination' | 'site_visit' | 'planning' | 'emergency' | 'follow_up';
+  date: string;
+  start_time: string;
+  end_time: string;
+  location?: string;
+  is_virtual?: boolean;
+  meeting_link?: string;
+  agenda?: any[];
+  minutes?: string;
+  attendees?: any[];
+  action_items?: any[];
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'postponed';
+  documents?: string[];
+  related_project_id?: string;
+  related_project_name?: string;
+  organizer_name: string;
+  organizer_email?: string;
+  follow_up_required?: boolean;
+  follow_up_date?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface FieldWorker {
   id: string;
   name: string;

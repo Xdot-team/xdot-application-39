@@ -9,6 +9,8 @@ import { DispatchManager } from '@/components/field/DispatchManager';
 import { SiteWalkthrough } from '@/components/field/SiteWalkthrough';
 import { SubcontractorManagement } from '@/components/subcontractors/SubcontractorManagement';
 import { FieldDataCollectionDialog } from '@/components/field/FieldDataCollectionDialog';
+import UtilityConflictsTab from '@/components/utility/UtilityConflictsTab';
+import UtilityMeetingsTab from '@/components/projects/utility-meetings/UtilityMeetingsTab';
 import { 
   usePunchlistItems, 
   useWorkOrders, 
@@ -216,23 +218,23 @@ const Field = () => {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="map" className="space-y-6">
+        <Tabs defaultValue="walkthrough" className="space-y-6">
           <TabsList className="flex flex-wrap gap-1 bg-transparent p-0 h-auto">
+            <TabsTrigger value="walkthrough" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <ClipboardList className="h-4 w-4" />
+              Walkthrough
+            </TabsTrigger>
+            <TabsTrigger value="utility-conflicts" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <AlertTriangle className="h-4 w-4" />
+              Utility Conflicts
+            </TabsTrigger>
             <TabsTrigger value="map" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <MapPin className="h-4 w-4" />
               Map
             </TabsTrigger>
-            <TabsTrigger value="punchlist" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <AlertTriangle className="h-4 w-4" />
-              Punchlist
-            </TabsTrigger>
             <TabsTrigger value="dispatch" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Activity className="h-4 w-4" />
               Dispatch
-            </TabsTrigger>
-            <TabsTrigger value="walkthrough" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <ClipboardList className="h-4 w-4" />
-              Walkthrough
             </TabsTrigger>
             <TabsTrigger value="subcontractors" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Building className="h-4 w-4" />
@@ -241,6 +243,14 @@ const Field = () => {
             <TabsTrigger value="workers" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
               Workers
+            </TabsTrigger>
+            <TabsTrigger value="utility-meetings" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Calendar className="h-4 w-4" />
+              Utility Meetings
+            </TabsTrigger>
+            <TabsTrigger value="punchlist" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <AlertTriangle className="h-4 w-4" />
+              Punchlist
             </TabsTrigger>
           </TabsList>
 
@@ -258,6 +268,14 @@ const Field = () => {
 
           <TabsContent value="walkthrough" className="space-y-4">
             <SiteWalkthrough />
+          </TabsContent>
+
+          <TabsContent value="utility-conflicts" className="space-y-4">
+            <UtilityConflictsTab projectId={selectedProjectId} />
+          </TabsContent>
+
+          <TabsContent value="utility-meetings" className="space-y-4">
+            <UtilityMeetingsTab projectId={selectedProjectId} />
           </TabsContent>
 
           <TabsContent value="subcontractors" className="space-y-4">

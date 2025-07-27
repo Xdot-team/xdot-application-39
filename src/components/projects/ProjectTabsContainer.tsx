@@ -10,6 +10,7 @@ import ScopeWipTab from "./scope-wip/ScopeWipTab";
 import ProgressScheduleTab from "./progress-schedule/ProgressScheduleTab";
 import CostCompletionTab from "./cost-completion/CostCompletionTab";
 import UtilityMeetingsTab from "./utility-meetings/UtilityMeetingsTab";
+import UtilityConflictsTab from "@/components/utility/UtilityConflictsTab";
 import NotificationsTab from "./notifications/NotificationsTab";
 import AIABillingTab from "./aia-billing/AIABillingTab";
 import ChangeOrdersTab from "./change-orders/ChangeOrdersTab";
@@ -43,6 +44,7 @@ const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
           <TabsTrigger value="progressSchedule">Progress Schedule</TabsTrigger>
           <TabsTrigger value="costCompletion">Cost to Completion</TabsTrigger>
           <TabsTrigger value="utilityMeetings">Utility Meetings</TabsTrigger>
+          <TabsTrigger value="utilityConflicts">Utility Conflicts</TabsTrigger>
           <TabsTrigger value="notifications">
             Notifications
             {notificationCount > 0 && (
@@ -83,6 +85,10 @@ const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
           
           <TabsContent value="utilityMeetings">
             <UtilityMeetingsTab projectId={projectId} />
+          </TabsContent>
+          
+          <TabsContent value="utilityConflicts">
+            <UtilityConflictsTab projectId={projectId} />
           </TabsContent>
           
           <TabsContent value="notifications">
