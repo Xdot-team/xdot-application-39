@@ -107,7 +107,7 @@ const UtilityConflictsTab = ({ projectId }: UtilityConflictsTabProps) => {
               New Conflict
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create Utility Conflict</DialogTitle>
             </DialogHeader>
