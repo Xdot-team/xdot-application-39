@@ -55,12 +55,21 @@ const UtilityConflictsTab = ({ projectId }: UtilityConflictsTabProps) => {
     try {
       await createConflict({
         ...conflictData,
-        project_id: projectId,
+        project_id: projectId || null,
         created_by: 'Current User', // Replace with actual user
       });
       setIsCreateDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "Utility conflict created successfully",
+      });
     } catch (error) {
-      // Error is handled in the hook
+      console.error('Error creating conflict:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create utility conflict",
+        variant: "destructive",
+      });
     }
   };
 

@@ -46,7 +46,10 @@ export const UtilityConflictForm = ({ onSubmit, onCancel, initialData }: Utility
     onSubmit({
       ...formData,
       scheduled_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '',
-    } as any);
+      estimated_duration_hours: Number(formData.estimated_duration_hours) || 0,
+      utility_project_duration: Number(formData.utility_project_duration) || 0,
+      cost_impact: Number(formData.cost_impact) || 0,
+    });
   };
 
   const handleInputChange = (field: string, value: any) => {

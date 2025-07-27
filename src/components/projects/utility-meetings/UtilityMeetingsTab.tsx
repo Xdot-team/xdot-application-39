@@ -30,13 +30,17 @@ const UtilityMeetingsTab = ({ projectId }: UtilityMeetingsTabProps) => {
 
   const handleCreateMeeting = async (meetingData: any) => {
     try {
-      await createMeeting(meetingData);
+      await createMeeting({
+        ...meetingData,
+        project_id: projectId || null,
+      });
       setShowNewMeetingDialog(false);
       toast({
         title: "Success",
         description: "Utility meeting created successfully.",
       });
     } catch (error) {
+      console.error('Error creating meeting:', error);
       toast({
         title: "Error",
         description: "Failed to create meeting. Please try again.",
