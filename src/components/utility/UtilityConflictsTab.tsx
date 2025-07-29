@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, MapPin, Phone, AlertTriangle, CheckCircle, Clock, Plus, Search, Filter } from 'lucide-react';
 import { useUtilityConflicts } from '@/hooks/useUtilityConflicts';
 import { UtilityConflictsList } from './UtilityConflictsList';
-import { UtilityConflictForm } from './UtilityConflictForm';
+import UtilityConflictForm from './UtilityConflictForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 

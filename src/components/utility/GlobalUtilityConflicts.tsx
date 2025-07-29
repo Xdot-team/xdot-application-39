@@ -262,7 +262,7 @@ const GlobalUtilityConflicts = ({
               <div>
                 <span className="text-sm font-medium">Duration:</span>
                 <p className="text-sm text-muted-foreground">
-                  Duration: {conflict.expected_duration_days} days
+                  Duration: {conflict.estimated_duration_hours || 8} hours
                 </p>
               </div>
 

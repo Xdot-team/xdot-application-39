@@ -9,8 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useUtilityMeetings } from '@/hooks/useUtilityMeetings';
 import { UtilityMeeting } from '@/types/field';
 import { Project } from '@/types/projects';
-import { UtilityMeetingForm } from '@/components/utility/UtilityMeetingForm';
-import { Search, Plus, Calendar, MapPin, Users, Clock } from 'lucide-react';
+import UtilityMeetingForm from '@/components/utility/UtilityMeetingForm';
+import { Search, Plus, Calendar, MapPin, Users, Clock, AlertTriangle, Shield, Video, Building, CalendarDays } from 'lucide-react';
 
 interface GlobalUtilityMeetingsProps {
   meetings: UtilityMeeting[];
@@ -42,11 +42,11 @@ const GlobalUtilityMeetings = ({
     const statusColors = {
       scheduled: 'default',
       completed: 'success',
-      cancelled: 'secondary'
+      cancelled: 'outline'
     };
     
     return (
-      <Badge variant={statusColors[status as keyof typeof statusColors] || 'default'}>
+      <Badge variant={(statusColors[status as keyof typeof statusColors] as any) || 'default'}>
         {status}
       </Badge>
     );
@@ -144,7 +144,6 @@ const GlobalUtilityMeetings = ({
             <UtilityMeetingForm
               onSubmit={handleCreateMeeting}
               onCancel={() => setShowCreateDialog(false)}
-              projects={projects}
               defaultProjectId={selectedProjectId}
             />
           </DialogContent>
@@ -242,22 +241,22 @@ const GlobalUtilityMeetings = ({
                 </div>
                 <div>
                   <span className="text-sm font-medium">Format:</span>
-                  <p className="text-sm capitalize">{meeting.meeting_format}</p>
+                  <p className="text-sm capitalize">{meeting.is_virtual ? 'Virtual' : 'In-Person'}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  <span>{new Date(meeting.meeting_date).toLocaleDateString()}</span>
+                  <span>{new Date(meeting.date).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <span>{meeting.meeting_time}</span>
+                  <span>{meeting.start_time}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  <span>{meeting.location}</span>
+                  {meeting.is_virtual ? <Video className="h-3 w-3" /> : <Building className="h-3 w-3" />}
+                  <span>{meeting.is_virtual ? 'Virtual' : (meeting.location || 'TBD')}</span>
                 </div>
               </div>
 

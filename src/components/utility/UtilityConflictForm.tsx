@@ -34,7 +34,7 @@ const UtilityConflictForm = ({
     priority: initialData?.priority || 'medium',
     status: initialData?.status || 'active',
     cost_impact: initialData?.cost_impact || 0,
-    expected_duration_days: initialData?.expected_duration_days || 1,
+    estimated_duration_hours: initialData?.estimated_duration_hours || 8,
     resolution_notes: initialData?.resolution_notes || '',
     resolved_by: initialData?.resolved_by || ''
   });
@@ -45,7 +45,9 @@ const UtilityConflictForm = ({
     const conflictData = {
       ...formData,
       cost_impact: Number(formData.cost_impact),
-      expected_duration_days: Number(formData.expected_duration_days)
+      estimated_duration_hours: Number(formData.estimated_duration_hours),
+      scheduled_date: new Date().toISOString().split('T')[0],
+      created_by: 'Current User' // This should come from auth context
     };
 
     onSubmit(conflictData);
@@ -159,13 +161,13 @@ const UtilityConflictForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="expected_duration_days">Expected Duration (days)</Label>
+          <Label htmlFor="estimated_duration_hours">Expected Duration (hours)</Label>
           <Input
-            id="expected_duration_days"
+            id="estimated_duration_hours"
             type="number"
-            value={formData.expected_duration_days}
-            onChange={(e) => handleInputChange('expected_duration_days', e.target.value)}
-            placeholder="1"
+            value={formData.estimated_duration_hours}
+            onChange={(e) => handleInputChange('estimated_duration_hours', e.target.value)}
+            placeholder="8"
             min="1"
           />
         </div>
