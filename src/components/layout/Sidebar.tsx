@@ -22,7 +22,8 @@ import {
   LineChart,
   Satellite,
   ShieldAlert,
-  Mail
+  Mail,
+  Zap
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { UserRole } from '@/types/auth';
@@ -64,6 +65,12 @@ const defaultNavItems: NavItem[] = [
     title: 'Field',
     href: '/field',
     icon: MapPin,
+    allowedRoles: ['admin', 'project_manager', 'field_worker'],
+  },
+  {
+    title: 'Utility',
+    href: '/utility',
+    icon: Zap,
     allowedRoles: ['admin', 'project_manager', 'field_worker'],
   },
   {

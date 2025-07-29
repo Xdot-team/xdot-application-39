@@ -22,6 +22,7 @@ import Reports from '@/pages/Reports';
 import Admin from '@/pages/Admin';
 import Estimating from '@/pages/Estimating';
 import OutlookPluginPage from '@/pages/OutlookPlugin';
+import Utility from '@/pages/Utility';
 import Index from '@/pages/Index';
 import NotFound from '@/pages/NotFound';
 
@@ -37,6 +38,7 @@ function App() {
           <Route path="/documents" element={<Documents />} />
           <Route path="/estimating" element={<Estimating />} />
           <Route path="/field" element={<Field />} />
+          <Route path="/utility" element={<Utility />} />
           <Route path="/finance" element={<Finance />} />
           <Route path="/assets" element={<Assets />} />
           <Route path="/workforce" element={<Workforce />} />
