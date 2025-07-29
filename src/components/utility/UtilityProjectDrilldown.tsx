@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { UtilityConflict, UtilityMeeting } from '@/types/field';
 import { Project } from '@/types/projects';
 import UtilityConflictsTab from '@/components/utility/UtilityConflictsTab';
-import UtilityMeetingsTab from '@/components/projects/utility-meetings/UtilityMeetingsTab';
+import UtilityMeetingsTab from '@/components/utility/UtilityMeetingsTab';
 import { AlertTriangle, Calendar, DollarSign, Clock, TrendingUp } from 'lucide-react';
 
 interface UtilityProjectDrilldownProps {

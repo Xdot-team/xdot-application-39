@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { requireAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,11 +12,23 @@ import UtilityProjectFilter from '@/components/utility/UtilityProjectFilter';
 import GlobalUtilityConflicts from '@/components/utility/GlobalUtilityConflicts';
 import GlobalUtilityMeetings from '@/components/utility/GlobalUtilityMeetings';
 import UtilityProjectDrilldown from '@/components/utility/UtilityProjectDrilldown';
+import UtilityConflictsTab from '@/components/utility/UtilityConflictsTab';
+import UtilityMeetingsTab from '@/components/utility/UtilityMeetingsTab';
 import { Zap, AlertTriangle, Calendar } from 'lucide-react';
 
 const Utility = () => {
+  const [searchParams] = useSearchParams();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Check for project parameter in URL
+  useEffect(() => {
+    const projectParam = searchParams.get('project');
+    if (projectParam) {
+      setSelectedProjectId(projectParam);
+      setActiveTab('project-drilldown');
+    }
+  }, [searchParams]);
   
   const { data: projects = [] } = useProjects();
   const { conflicts: allConflicts, loading: conflictsLoading } = useUtilityConflicts();
@@ -113,52 +126,70 @@ const Utility = () => {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="conflicts">All Conflicts</TabsTrigger>
-          <TabsTrigger value="meetings">All Meetings</TabsTrigger>
-          <TabsTrigger value="project" disabled={!selectedProjectId}>
-            {selectedProject ? selectedProject.name : 'Select Project'}
-          </TabsTrigger>
-        </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="conflicts">All Conflicts</TabsTrigger>
+            <TabsTrigger value="meetings">All Meetings</TabsTrigger>
+            <TabsTrigger value="project-conflicts" disabled={!selectedProjectId}>
+              Project Conflicts
+            </TabsTrigger>
+            <TabsTrigger value="project-meetings" disabled={!selectedProjectId}>
+              Project Meetings
+            </TabsTrigger>
+            <TabsTrigger value="project-drilldown" disabled={!selectedProjectId}>
+              Project Overview
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <UtilityOverview 
-            projects={projects}
-            conflicts={filteredConflicts}
-            meetings={filteredMeetings}
-            selectedProjectId={selectedProjectId}
-          />
-        </TabsContent>
-
-        <TabsContent value="conflicts" className="space-y-6">
-          <GlobalUtilityConflicts 
-            conflicts={filteredConflicts}
-            projects={projects}
-            loading={conflictsLoading}
-            selectedProjectId={selectedProjectId}
-          />
-        </TabsContent>
-
-        <TabsContent value="meetings" className="space-y-6">
-          <GlobalUtilityMeetings 
-            meetings={filteredMeetings}
-            projects={projects}
-            loading={meetingsLoading}
-            selectedProjectId={selectedProjectId}
-          />
-        </TabsContent>
-
-        <TabsContent value="project" className="space-y-6">
-          {selectedProject && (
-            <UtilityProjectDrilldown 
-              project={selectedProject}
+          <TabsContent value="overview">
+            <UtilityOverview 
+              projects={projects}
               conflicts={filteredConflicts}
               meetings={filteredMeetings}
+              selectedProjectId={selectedProjectId}
             />
-          )}
-        </TabsContent>
+          </TabsContent>
+
+          <TabsContent value="conflicts">
+            <GlobalUtilityConflicts 
+              conflicts={filteredConflicts}
+              projects={projects}
+              loading={conflictsLoading}
+              selectedProjectId={selectedProjectId}
+            />
+          </TabsContent>
+
+          <TabsContent value="meetings">
+            <GlobalUtilityMeetings 
+              meetings={filteredMeetings}
+              projects={projects}
+              loading={meetingsLoading}
+              selectedProjectId={selectedProjectId}
+            />
+          </TabsContent>
+
+          <TabsContent value="project-conflicts">
+            {selectedProjectId && (
+              <UtilityConflictsTab projectId={selectedProjectId} />
+            )}
+          </TabsContent>
+
+          <TabsContent value="project-meetings">
+            {selectedProjectId && (
+              <UtilityMeetingsTab projectId={selectedProjectId} showProjectNavigation={false} />
+            )}
+          </TabsContent>
+
+          <TabsContent value="project-drilldown">
+            {selectedProjectId && selectedProject && (
+              <UtilityProjectDrilldown 
+                project={selectedProject}
+                conflicts={filteredConflicts}
+                meetings={filteredMeetings}
+              />
+            )}
+          </TabsContent>
       </Tabs>
     </div>
   );

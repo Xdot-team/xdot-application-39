@@ -14,7 +14,7 @@ import ProjectNotesTab from './notes/ProjectNotesTab';
 import ScopeWipTab from './scope-wip/ScopeWipTab';
 import ProgressScheduleTab from './progress-schedule/ProgressScheduleTab';
 import CostCompletionTab from './cost-completion/CostCompletionTab';
-import UtilityMeetingsTab from './utility-meetings/UtilityMeetingsTab';
+import { ExternalLink } from 'lucide-react';
 import NotificationsTab from './notifications/NotificationsTab';
 import DocumentsTab from './documents/DocumentsTab';
 import RFIsTab from './rfis/RFIsTab';
@@ -184,7 +184,7 @@ const ProjectDetails = () => {
           <TabsTrigger value="scopeWip">Scope WIP</TabsTrigger>
           <TabsTrigger value="progressSchedule">Progress Schedule</TabsTrigger>
           <TabsTrigger value="costCompletion">Cost to Completion</TabsTrigger>
-          <TabsTrigger value="utilityMeetings">Utility Meetings</TabsTrigger>
+          <TabsTrigger value="utility">Utility Management</TabsTrigger>
         </TabsList>
         
         <div className="mt-6">
@@ -295,8 +295,19 @@ const ProjectDetails = () => {
             <CostCompletionTab projectId={project.id} />
           </TabsContent>
           
-          <TabsContent value="utilityMeetings">
-            <UtilityMeetingsTab projectId={project.id} />
+          <TabsContent value="utility">
+            <div className="space-y-6">
+              <div className="text-center py-8">
+                <h3 className="text-lg font-medium mb-2">Utility Management</h3>
+                <p className="text-muted-foreground mb-4">
+                  Utility conflicts and meetings are now managed in the dedicated Utility module for better organization and cross-project visibility.
+                </p>
+                <Button onClick={() => navigate(`/utility?project=${project.id}`)}>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Open Utility Module
+                </Button>
+              </div>
+            </div>
           </TabsContent>
         </div>
       </Tabs>

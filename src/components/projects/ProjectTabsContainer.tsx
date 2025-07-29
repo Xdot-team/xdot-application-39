@@ -9,8 +9,9 @@ import ProjectNotesTab from "./notes/ProjectNotesTab";
 import ScopeWipTab from "./scope-wip/ScopeWipTab";
 import ProgressScheduleTab from "./progress-schedule/ProgressScheduleTab";
 import CostCompletionTab from "./cost-completion/CostCompletionTab";
-import UtilityMeetingsTab from "./utility-meetings/UtilityMeetingsTab";
-import UtilityConflictsTab from "@/components/utility/UtilityConflictsTab";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import NotificationsTab from "./notifications/NotificationsTab";
 import AIABillingTab from "./aia-billing/AIABillingTab";
 import ChangeOrdersTab from "./change-orders/ChangeOrdersTab";
@@ -27,6 +28,7 @@ interface ProjectTabsContainerProps {
 const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
   const [activeProjectTab, setActiveProjectTab] = useState("overview");
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const notificationCount = 4; // Mock value for unread notifications
 
   return (
@@ -43,8 +45,7 @@ const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
           <TabsTrigger value="scopeWip">Scope WIP</TabsTrigger>
           <TabsTrigger value="progressSchedule">Progress Schedule</TabsTrigger>
           <TabsTrigger value="costCompletion">Cost to Completion</TabsTrigger>
-          <TabsTrigger value="utilityMeetings">Utility Meetings</TabsTrigger>
-          <TabsTrigger value="utilityConflicts">Utility Conflicts</TabsTrigger>
+          <TabsTrigger value="utility">Utility Management</TabsTrigger>
           <TabsTrigger value="notifications">
             Notifications
             {notificationCount > 0 && (
@@ -83,12 +84,19 @@ const ProjectTabsContainer = ({ projectId }: ProjectTabsContainerProps) => {
             <CostCompletionTab projectId={projectId} />
           </TabsContent>
           
-          <TabsContent value="utilityMeetings">
-            <UtilityMeetingsTab projectId={projectId} />
-          </TabsContent>
-          
-          <TabsContent value="utilityConflicts">
-            <UtilityConflictsTab projectId={projectId} />
+          <TabsContent value="utility">
+            <div className="space-y-6">
+              <div className="text-center py-8">
+                <h3 className="text-lg font-medium mb-2">Utility Management</h3>
+                <p className="text-muted-foreground mb-4">
+                  Utility conflicts and meetings are now managed in the dedicated Utility module for better organization and cross-project visibility.
+                </p>
+                <Button onClick={() => navigate(`/utility?project=${projectId}`)}>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Open Utility Module
+                </Button>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="notifications">

@@ -9,7 +9,7 @@ import { useUtilityMeetings } from "@/hooks/useUtilityMeetings";
 import { format } from "date-fns";
 
 interface UtilityMeetingListProps {
-  projectId: string;
+  projectId?: string;
   isPast: boolean;
 }
 
@@ -90,10 +90,10 @@ const UtilityMeetingList = ({ projectId, isPast }: UtilityMeetingListProps) => {
                       <MapPin className="h-4 w-4 text-muted-foreground" />
                       <span>{meeting.location}</span>
                     </div>
-                    {meeting.utility_owner_company && (
+                    {meeting.attendees && meeting.attendees.length > 0 && (
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4 text-muted-foreground" />
-                        <span>{meeting.utility_owner_company}</span>
+                        <span>{meeting.attendees[0]?.company || 'Attendees: ' + meeting.attendees.length}</span>
                       </div>
                     )}
                     <div className="flex items-center gap-2">
@@ -112,10 +112,10 @@ const UtilityMeetingList = ({ projectId, isPast }: UtilityMeetingListProps) => {
                 </div>
               </div>
               
-              {meeting.meeting_comments && (
+              {meeting.agenda && (
                 <div className="mt-4 pt-4 border-t">
-                  <h4 className="text-sm font-semibold mb-2">Comments</h4>
-                  <p className="text-sm text-muted-foreground">{meeting.meeting_comments}</p>
+                  <h4 className="text-sm font-semibold mb-2">Agenda</h4>
+                  <p className="text-sm text-muted-foreground">{meeting.agenda}</p>
                 </div>
               )}
             </div>

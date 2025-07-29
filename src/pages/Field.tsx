@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { EnhancedPunchlistManager } from '@/components/field/EnhancedPunchlistManager';
 import { InteractiveFieldMap } from '@/components/field/InteractiveFieldMap';
@@ -9,8 +10,7 @@ import { DispatchManager } from '@/components/field/DispatchManager';
 import { SiteWalkthrough } from '@/components/field/SiteWalkthrough';
 import { SubcontractorManagement } from '@/components/subcontractors/SubcontractorManagement';
 import { FieldDataCollectionDialog } from '@/components/field/FieldDataCollectionDialog';
-import UtilityConflictsTab from '@/components/utility/UtilityConflictsTab';
-import UtilityMeetingsTab from '@/components/projects/utility-meetings/UtilityMeetingsTab';
+import { useNavigate } from 'react-router-dom';
 import { 
   usePunchlistItems, 
   useWorkOrders, 
@@ -36,6 +36,7 @@ import {
 const Field = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
   const [isFieldDataDialogOpen, setIsFieldDataDialogOpen] = useState(false);
+  const navigate = useNavigate();
   
   // Get all field data
   const { punchlistItems, isLoading: punchlistLoading } = usePunchlistItems(selectedProjectId);
@@ -85,10 +86,19 @@ const Field = () => {
               Manage field activities, track progress, and coordinate teams
             </p>
           </div>
-          <FieldDataCollectionDialog 
-            open={isFieldDataDialogOpen} 
-            onOpenChange={setIsFieldDataDialogOpen} 
-          />
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/utility')}
+            >
+              <Building className="mr-2 h-4 w-4" />
+              Utility Module
+            </Button>
+            <FieldDataCollectionDialog 
+              open={isFieldDataDialogOpen} 
+              onOpenChange={setIsFieldDataDialogOpen} 
+            />
+          </div>
         </div>
 
         {/* Overview Statistics */}
@@ -224,14 +234,6 @@ const Field = () => {
               <ClipboardList className="h-4 w-4" />
               Walkthrough
             </TabsTrigger>
-            <TabsTrigger value="utility-conflicts" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <AlertTriangle className="h-4 w-4" />
-              Utility Conflicts
-            </TabsTrigger>
-            <TabsTrigger value="utility-meetings" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Calendar className="h-4 w-4" />
-              Utility Meetings
-            </TabsTrigger>
             <TabsTrigger value="map" className="flex items-center gap-2 bg-background border hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <MapPin className="h-4 w-4" />
               Map
@@ -270,13 +272,6 @@ const Field = () => {
             <SiteWalkthrough />
           </TabsContent>
 
-          <TabsContent value="utility-conflicts" className="space-y-4">
-            <UtilityConflictsTab projectId={selectedProjectId} />
-          </TabsContent>
-
-          <TabsContent value="utility-meetings" className="space-y-4">
-            <UtilityMeetingsTab projectId={selectedProjectId} />
-          </TabsContent>
 
           <TabsContent value="subcontractors" className="space-y-4">
             <SubcontractorManagement />
